@@ -9,6 +9,8 @@ import { AppMenu } from './AppMenu';
 import { AppConfig } from './AppConfig';
 
 import Dashboard from './components/Dashboard';
+import Users from './pages/Users';
+
 
 
 import PrimeReact from 'primereact/api';
@@ -234,7 +236,8 @@ const App = () => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
-                  
+                    <Route path="/Usuarios" component={Users} />
+
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
