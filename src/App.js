@@ -135,64 +135,80 @@ const App = () => {
 
     const menu = [
         {
-            label: 'Inicio',
+            label: 'Inicio', icon: 'pi pi-fw pi-home',
             items: [{
-                label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/'
+                label: 'Dashboard', icon: 'pi pi-fw pi-chart-pie', to: '/'
             }]
         },
         {
-            label: 'Componentes', icon: 'pi pi-fw pi-sitemap',
+            label: 'Configuracion',
             items: [
                 {
-                    label: 'Configuracion', icon: 'pi pi-fw pi-bookmark',
-                    items: [
-                        { label: 'Permisos', icon: 'pi pi-fw pi-bookmark' },
-                        { label: 'Roles', icon: 'pi pi-fw pi-bookmark' }
-                
-                    ]
-                },
-                {
-                    label: 'Compras', icon: 'pi pi-fw pi-bookmark',
-                    items: [
-                        { label: 'Proveedores', icon: 'pi pi-fw pi-bookmark' },
-                        { label: 'Compras', icon: 'pi pi-fw pi-bookmark' }
-                
-                    ]
-                },
-                {
-                    label: 'Productos', icon: 'pi pi-fw pi-bookmark',
-                    items: [
-                        { label: 'Catergorias', icon: 'pi pi-fw pi-bookmark' },
-                        { label: 'Marca', icon: 'pi pi-fw pi-bookmark' },
-                        { label: 'Productos', icon: 'pi pi-fw pi-bookmark' }
+                    label: 'Permisos', icon: 'pi pi-fw pi-cog',
 
-                
-                    ]
                 },
                 {
-                    label: 'Ventas', icon: 'pi pi-fw pi-bookmark',
-                    items: [
-                        { label: 'Clientes', icon: 'pi pi-fw pi-bookmark' },
-                        { label: 'Mis Ventas', icon: 'pi pi-fw pi-bookmark' }
-                
-                    ]
+                    label: 'Roles', icon: 'pi pi-fw pi-user',
+
                 },
-                //{ label: 'Configuracion', icon: 'pi pi-fw pi-id-card', to: '/Usuarios' },
-                
-                //{ label: 'Compras', icon: 'pi pi-fw pi-check-square', to: '/input' },
-                //{ label: "Productos", icon: "pi pi-fw pi-bookmark", to: "/floatlabel" },
-                //{ label: "Ventas", icon: "pi pi-fw pi-exclamation-circle", to: "invalidstate" },
-                //{ label: 'Usuarios', icon: 'pi pi-fw pi-mobile', to: '/button' }
             ]
         },
+        {
+            label: 'Compras',
+            items: [
+                {
+                    label: 'Proveedores', icon: 'pi pi-fw pi-building',
+
+                },
+                {
+                    label: 'Compras', icon: 'pi pi-fw pi-shopping-bag',
+
+                },
+            ]
+        },
+        {
+            label: 'Productos',
+            items: [
+                {
+                    label: 'Categorias', icon: 'pi pi-fw pi-book',
+
+                },
+                {
+                    label: 'Marcas', icon: 'pi pi-fw pi-car',
+
+                },
+                {
+                    label: 'Productos', icon: 'pi pi-fw pi-box',
+
+                }
+            ]
+        },
+        {
+            label: 'Ventas',
+            items: [
+                {
+                    label: 'Clientes', icon: 'pi pi-fw pi-users',
+
+                },
+                {
+                    label: 'Ventas', icon: 'pi pi-fw pi-credit-card',
+
+                },
+                {
+                    label: 'Historial de ventas', icon: 'pi pi-fw pi-book',
+
+                },
+            ]
+        },
+
         {
             label: 'Gestion de Usuarios',
             items: [
                 { label: 'Usuarios', icon: 'pi-users', to: '/Usuarios', badge: "NEW" },
             ]
         }
-       
-       
+
+
     ];
 
     const addClass = (element, className) => {
@@ -234,7 +250,7 @@ const App = () => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
-                  
+
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
