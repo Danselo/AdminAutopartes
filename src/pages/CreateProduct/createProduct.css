@@ -1,0 +1,40 @@
+.create-product-tittle{
+    display: flex;
+    justify-content: center;
+
+}
+
+.create-product-upload-img{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+
+}
+
+.create-product-upload-img p{
+    
+    margin:auto 20px  ;
+
+}
+
+.create-product-form{
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    justify-content: center;
+    margin: 1.5rem auto;
+    row-gap: 1rem;
+    
+}
+
+.jjj{
+   
+    width: 20rem;
+}
+
+.create-product-buttons{
+    display: flex;
+    justify-content: center;
+    column-gap: 2rem;
+    margin-bottom: 1rem;
+}
