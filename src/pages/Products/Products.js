@@ -11,7 +11,7 @@ export default function Products() {
             <div className="tittle-product">
                 <h3>Gestión de productos</h3>
             </div>
-            <Link to={"/pages/CreateProduct/CreateProduct"}>
+            <Link to={"/pages/Products/CreateProduct"}>
                 <Button label="Agregar producto" icon="pi pi-plus-circle" className="p-button-raised p-button-info button-add-product" />
             </Link>
             {/* <div className="container-search-product">

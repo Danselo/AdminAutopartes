@@ -12,7 +12,7 @@ export const TableProducts = () => {
     }, []);
 
     return (
-        <DataTable value={products} paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <DataTable header="Productos" stripedRows value={products} paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
             <Column field="id" sortable header="Id"></Column>
             <Column field="nombre" sortable header="Nombre"></Column>
             <Column header="Imagen" sortable body={imageBodyTemplate}></Column>

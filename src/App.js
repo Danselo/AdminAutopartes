@@ -23,7 +23,9 @@ import "./assets/demo/Demos.scss";
 import "./assets/layout/layout.scss";
 import "./App.scss";
 import Products from "./pages/Products/Products";
-import CreateProduct from "./pages/CreateProduct/CreateProduct";
+import CreateProduct from "./pages/Products/CreateProduct";
+import Providers from "./pages/Providers/Providers";
+import CreateProvider from "./pages/Providers/CreateProvider";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -164,6 +166,7 @@ const App = () => {
                 {
                     label: "Proveedores",
                     icon: "pi pi-fw pi-building",
+                    to: "/pages/Providers/Providers",
                 },
                 {
                     label: "Compras",
@@ -248,7 +251,10 @@ const App = () => {
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
                     <Route path="/pages/Products/Products" exact render={() => <Products />} />
-                    <Route path="/pages/CreateProduct/CreateProduct" exact render={() => <CreateProduct />} />
+                    <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
+                    <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
+
+                    <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
