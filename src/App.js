@@ -26,7 +26,7 @@ import Products from "./pages/Products/Products";
 import CreateProduct from "./pages/Products/CreateProduct";
 import Providers from "./pages/Providers/Providers";
 import CreateProvider from "./pages/Providers/CreateProvider";
-
+import HistorySales from"./pages/HistorySales/HistorySales";
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
@@ -206,6 +206,7 @@ const App = () => {
                 {
                     label: "Historial de ventas",
                     icon: "pi pi-fw pi-book",
+                    to:"/pages/HistorySales/HistorySales",
                 },
             ],
         },
@@ -255,6 +256,7 @@ const App = () => {
                     <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
 
                     <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
+                    <Route path="/pages/HistorySales/HistorySales" exact render={() => <HistorySales />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
