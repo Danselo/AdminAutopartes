@@ -26,9 +26,13 @@ import Products from "./pages/Products/Products";
 import CreateProduct from "./pages/Products/CreateProduct";
 import Providers from "./pages/Providers/Providers";
 import CreateProvider from "./pages/Providers/CreateProvider";
-import HistorySales from"./pages/HistorySales/HistorySales";
 import Client from"./pages/Client/Client";
 import CreateClient from "./pages/Client/CreateClient";
+import Sales from"./pages/Sales/Sales";
+import CreateSales from "./pages/Sales/CreateSales";
+import HistorySales from"./pages/HistorySales/HistorySales";
+
+
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -201,11 +205,12 @@ const App = () => {
                 {
                     label: "Clientes",
                     icon: "pi pi-fw pi-users",
-                    to: "/pages/Client/Client"
+                    to: "/pages/Client/Client",
                 },
                 {
                     label: "Ventas",
                     icon: "pi pi-fw pi-credit-card",
+                    to:"/pages/Sales/Sales",
                 },
                 {
                     label: "Historial de ventas",
@@ -262,6 +267,8 @@ const App = () => {
                     <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
+                    <Route path="/pages/Sales/Sales" exact render={() => <Sales />} />
+                    <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
                     <Route path="/pages/HistorySales/HistorySales" exact render={() => <HistorySales />} />
 
                 </div>
