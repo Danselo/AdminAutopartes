@@ -35,7 +35,6 @@ import HistorySales from "./pages/HistorySales/HistorySales";
 
 import Users from "./pages/Users/Users";
 
-import CreateProduct from "./pages/CreateProduct/CreateProduct";
 import CreateUser from "./pages/CreateUser/CreateUser";
 
 const App = () => {
