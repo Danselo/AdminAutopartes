@@ -27,6 +27,9 @@ import CreateProduct from "./pages/Products/CreateProduct";
 import Providers from "./pages/Providers/Providers";
 import CreateProvider from "./pages/Providers/CreateProvider";
 import HistorySales from"./pages/HistorySales/HistorySales";
+import Client from"./pages/Client/Client";
+import CreateClient from "./pages/Client/CreateClient";
+
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
@@ -198,6 +201,7 @@ const App = () => {
                 {
                     label: "Clientes",
                     icon: "pi pi-fw pi-users",
+                    to: "/pages/Client/Client"
                 },
                 {
                     label: "Ventas",
@@ -256,7 +260,10 @@ const App = () => {
                     <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
 
                     <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
+                    <Route path="/pages/Client/Client" exact render={() => <Client />} />
+                    <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
                     <Route path="/pages/HistorySales/HistorySales" exact render={() => <HistorySales />} />
+
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
