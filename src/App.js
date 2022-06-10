@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import classNames from "classnames";
 import { Route, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
@@ -23,7 +24,11 @@ import "./assets/demo/Demos.scss";
 import "./assets/layout/layout.scss";
 import "./App.scss";
 import Products from "./pages/Products/Products";
+import Users from "./pages/Users/Users";
+
 import CreateProduct from "./pages/CreateProduct/CreateProduct";
+import CreateUser from "./pages/CreateUser/CreateUser";
+
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -209,7 +214,7 @@ const App = () => {
 
         {
             label: "Gestion de Usuarios",
-            items: [{ label: "Usuarios", icon: "pi pi-fw pi-users", to: "/Usuarios" }],
+            items: [{ label: "Usuarios", icon: "pi pi-fw pi-users", to: "/pages/Users/Users" }],
         },
     ];
 
@@ -249,6 +254,9 @@ const App = () => {
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
                     <Route path="/pages/Products/Products" exact render={() => <Products />} />
                     <Route path="/pages/CreateProduct/CreateProduct" exact render={() => <CreateProduct />} />
+                    <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
+                    <Route path="/pages/Users/Users" exact render={() => <Users />} />
+
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
