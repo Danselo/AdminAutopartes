@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import classNames from "classnames";
 import { Route, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
@@ -26,13 +27,16 @@ import Products from "./pages/Products/Products";
 import CreateProduct from "./pages/Products/CreateProduct";
 import Providers from "./pages/Providers/Providers";
 import CreateProvider from "./pages/Providers/CreateProvider";
-import Client from"./pages/Client/Client";
+import Client from "./pages/Client/Client";
 import CreateClient from "./pages/Client/CreateClient";
-import Sales from"./pages/Sales/Sales";
+import Sales from "./pages/Sales/Sales";
 import CreateSales from "./pages/Sales/CreateSales";
-import HistorySales from"./pages/HistorySales/HistorySales";
+import HistorySales from "./pages/HistorySales/HistorySales";
 
+import Users from "./pages/Users/Users";
 
+import CreateProduct from "./pages/CreateProduct/CreateProduct";
+import CreateUser from "./pages/CreateUser/CreateUser";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -210,19 +214,19 @@ const App = () => {
                 {
                     label: "Ventas",
                     icon: "pi pi-fw pi-credit-card",
-                    to:"/pages/Sales/Sales",
+                    to: "/pages/Sales/Sales",
                 },
                 {
                     label: "Historial de ventas",
                     icon: "pi pi-fw pi-book",
-                    to:"/pages/HistorySales/HistorySales",
+                    to: "/pages/HistorySales/HistorySales",
                 },
             ],
         },
 
         {
             label: "Gestion de Usuarios",
-            items: [{ label: "Usuarios", icon: "pi pi-fw pi-users", to: "/Usuarios" }],
+            items: [{ label: "Usuarios", icon: "pi pi-fw pi-users", to: "/pages/Users/Users" }],
         },
     ];
 
@@ -270,7 +274,9 @@ const App = () => {
                     <Route path="/pages/Sales/Sales" exact render={() => <Sales />} />
                     <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
                     <Route path="/pages/HistorySales/HistorySales" exact render={() => <HistorySales />} />
-
+                    <Route path="/pages/CreateProduct/CreateProduct" exact render={() => <CreateProduct />} />
+                    <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
+                    <Route path="/pages/Users/Users" exact render={() => <Users />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
