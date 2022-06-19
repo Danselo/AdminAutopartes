@@ -17,6 +17,7 @@ export default function CreateProduct() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
+  
     const confirm1 = () => {
         confirmDialog({
             message: "¿Esta seguro que desea crear este producto?",

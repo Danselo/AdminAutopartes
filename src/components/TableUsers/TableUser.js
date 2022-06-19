@@ -1,9 +1,9 @@
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
-import { imageBodyTemplate, buttonBodyTemplate } from "./columnTemplates";
+import { buttonBodyTemplate } from "./columnTemplates";
 
-export const TableUsers = () => {
+export const TableUser = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {

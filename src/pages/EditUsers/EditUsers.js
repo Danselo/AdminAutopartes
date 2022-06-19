@@ -8,7 +8,7 @@ import { Toast } from "primereact/toast";
 
 export default function CreateUser() {
     const accept = () => {
-        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario creado exitosamente", life: 3000 });
+        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario editado exitosamente", life: 3000 });
     };
    
     const reject = () => {
@@ -37,10 +37,10 @@ export default function CreateUser() {
     };
    
     const toast = useRef(null);
-    const [value2, setValue2] = useState("");
-    const [value3, setValue3] = useState("");
-    const [value4, setValue4] = useState("");
-    const [value5, setValue5] = useState("");
+    const [value2, setValue2] = useState("armando@gmail.com");
+    const [value3, setValue3] = useState("Armando");
+    const [value4, setValue4] = useState("Apellido");
+    const [value5, setValue5] = useState(300215548);
 
 
     // const [value, setValue] = useState("");
@@ -70,7 +70,7 @@ export default function CreateUser() {
                 <Button label="Regresar" icon="pi pi-angle-left" className="p-button-sm p-button-danger" />
             </Link>
             <div className="text-center">
-                <h3>Agregar un Nuevo Usuario</h3>
+                <h3>Editar Usuario</h3>
             </div>
             
             <div className="create-product-form">
