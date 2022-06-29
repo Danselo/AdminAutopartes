@@ -10,11 +10,11 @@ export default function CreateUser() {
     const accept = () => {
         toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario creado exitosamente", life: 3000 });
     };
-   
+
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    
+
     const confirm1 = () => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar este Usuario?",
@@ -35,19 +35,15 @@ export default function CreateUser() {
             reject,
         });
     };
-   
+
     const toast = useRef(null);
     const [value2, setValue2] = useState("");
     const [value3, setValue3] = useState("");
     const [value4, setValue4] = useState("");
     const [value5, setValue5] = useState("");
 
-
-    // const [value, setValue] = useState("");
-
     const [selectedRoles, setSelectedRoles] = useState(null);
 
-    
     const roles = [
         { name: "Administrador1", code: "AD1" },
         { name: "Administrador de Productos", code: "ADP" },
@@ -55,8 +51,6 @@ export default function CreateUser() {
         { name: "Administrador Secundario", code: "ADS" },
         { name: "Admin tres", code: "ADT" },
     ];
-
-  
 
     const onRolesChange = (e) => {
         setSelectedRoles(e.value);
@@ -72,44 +66,37 @@ export default function CreateUser() {
             <div className="text-center">
                 <h3>Agregar un Nuevo Usuario</h3>
             </div>
-            
+
             <div className="create-product-form">
-               
                 <div className="row">
                     <div className="col-sm-12 pt-5">
-                            <span className="p-float-label">
+                        <span className="p-float-label">
                             <InputText className="jjj" id="email" value={value2} onChange={(e) => setValue2(e.target.value)} />
                             <label htmlFor="email">Correo Electronico</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5 ">
-                            <span className="p-float-label">
+                        <span className="p-float-label">
                             <InputText className="jjj" id="username" value={value3} onChange={(e) => setValue3(e.target.value)} />
                             <label htmlFor="username">Nombre</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5">
-                            <span className="p-float-label">
+                        <span className="p-float-label">
                             <InputText className="jjj" id="lastname" value={value4} onChange={(e) => setValue4(e.target.value)} />
                             <label htmlFor="lastname">Apellido</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5">
-                            <span className="p-float-label">
+                        <span className="p-float-label">
                             <InputText className="jjj" id="telefono" value={value5} onChange={(e) => setValue5(e.target.value)} />
                             <label htmlFor="telefono">Telefono</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5">
-                <Dropdown value={selectedRoles} options={roles} onChange={onRolesChange} optionLabel="name" placeholder="Seleccione Rol" />
-
+                        <Dropdown value={selectedRoles} options={roles} onChange={onRolesChange} optionLabel="name" placeholder="Seleccione Rol" />
                     </div>
-
                 </div>
-                
-                
-                
-
             </div>
             <div className="create-product-buttons">
                 {/* <Button label="Crear" className="p-button-success" />

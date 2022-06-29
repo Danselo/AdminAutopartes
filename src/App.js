@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import classNames from "classnames";
 import { Route, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
@@ -24,24 +24,26 @@ import "./assets/demo/Demos.scss";
 import "./assets/layout/layout.scss";
 import "./App.scss";
 import Products from "./pages/Products/Products";
+import CreateProduct from "./pages/Products/CreateProduct";
+import Providers from "./pages/Providers/Providers";
+import CreateProvider from "./pages/Providers/CreateProvider";
+import Client from "./pages/Client/Client";
+import CreateClient from "./pages/Client/CreateClient";
+import Sales from "./pages/Sales/Sales";
+import CreateSales from "./pages/Sales/CreateSales";
+import HistorySales from "./pages/HistorySales/HistorySales";
 import Users from "./pages/Users/Users";
 import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
-
-
-
-
 import CreateProduct from "./pages/CreateProduct/CreateProduct";
 import CreateUser from "./pages/CreateUser/CreateUser";
 import CreateRol from "./pages/CreateRol/CreateRol";
 import CreateBrand from "./pages/CreateBrand/CreateBrand";
-
-
-import  EditUsers from "./pages/EditUsers/EditUsers";
-import  EditBrand from "./pages/EditBrand/EditBrand";
-
-
-
+import EditUsers from "./pages/EditUsers/EditUsers";
+import EditBrand from "./pages/EditBrand/EditBrand";
+import CreateUser from "./pages/CreateUser/CreateUser";
+import SalesDetails from "./pages/Sales/SalesDetails";
+import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -166,11 +168,10 @@ const App = () => {
         {
             label: "Configuracion",
             items: [
-               
                 {
                     label: "Roles",
                     icon: "pi pi-fw pi-user",
-                    to: "/pages/Roles/Roles" 
+                    to: "/pages/Roles/Roles",
                 },
             ],
         },
@@ -180,6 +181,7 @@ const App = () => {
                 {
                     label: "Proveedores",
                     icon: "pi pi-fw pi-building",
+                    to: "/pages/Providers/Providers",
                 },
                 {
                     label: "Compras",
@@ -212,14 +214,17 @@ const App = () => {
                 {
                     label: "Clientes",
                     icon: "pi pi-fw pi-users",
+                    to: "/pages/Client/Client",
                 },
                 {
                     label: "Ventas",
                     icon: "pi pi-fw pi-credit-card",
+                    to: "/Sales",
                 },
                 {
                     label: "Historial de ventas",
                     icon: "pi pi-fw pi-book",
+                    to: "/HistorySales",
                 },
             ],
         },
@@ -265,22 +270,26 @@ const App = () => {
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
                     <Route path="/pages/Products/Products" exact render={() => <Products />} />
+                    <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
+                    <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
+
+                    <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
+                    <Route path="/pages/Client/Client" exact render={() => <Client />} />
+                    <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
+                    <Route path="/Sales" exact render={() => <Sales />} />
+                    <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
+                    <Route path="/HistorySales" exact render={() => <HistorySales />} />
+                    <Route path="/HistorySalesDetails" exact render={() => <HistorySalesDetails />} />
                     <Route path="/pages/CreateProduct/CreateProduct" exact render={() => <CreateProduct />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/CreateRol/CreateRol" exact render={() => <CreateRol />} />
                     <Route path="/pages/CreateBrand/CreateBrand" exact render={() => <CreateBrand />} />
-
-
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
                     <Route path="/pages/EditUsers/EditUsers" exact render={() => <EditUsers />} />
                     <Route path="/pages/Roles/Roles" exact render={() => <Roles />} />
                     <Route path="/pages/Brand/Brand" exact render={() => <Brand />} />
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
-
-
-
-
-
+                    <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
