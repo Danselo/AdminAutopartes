@@ -35,13 +35,11 @@ import HistorySales from "./pages/HistorySales/HistorySales";
 import Users from "./pages/Users/Users";
 import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
-import CreateProduct from "./pages/CreateProduct/CreateProduct";
 import CreateUser from "./pages/CreateUser/CreateUser";
 import CreateRol from "./pages/CreateRol/CreateRol";
 import CreateBrand from "./pages/CreateBrand/CreateBrand";
 import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
-import CreateUser from "./pages/CreateUser/CreateUser";
 import SalesDetails from "./pages/Sales/SalesDetails";
 import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
 
@@ -272,7 +270,6 @@ const App = () => {
                     <Route path="/pages/Products/Products" exact render={() => <Products />} />
                     <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
                     <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
-
                     <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
@@ -280,7 +277,6 @@ const App = () => {
                     <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
                     <Route path="/HistorySales" exact render={() => <HistorySales />} />
                     <Route path="/HistorySalesDetails" exact render={() => <HistorySalesDetails />} />
-                    <Route path="/pages/CreateProduct/CreateProduct" exact render={() => <CreateProduct />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/CreateRol/CreateRol" exact render={() => <CreateRol />} />
                     <Route path="/pages/CreateBrand/CreateBrand" exact render={() => <CreateBrand />} />
