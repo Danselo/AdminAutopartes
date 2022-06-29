@@ -30,7 +30,9 @@ export const TableSales = () => {
             <Column field="id_cliente" sortable header="Id cliente"></Column>
             <Column field="fecha_venta" sortable header="Fecha venta"></Column>
             <Column field="estado_venta" sortable header="Estado venta"></Column>
+            <Link to={"/SalesDetails"}>
             <Column body={buttonBodyTemplate} sortable header="Detalle"></Column>
+            </Link>
         </DataTable>
     );
 };
