@@ -35,6 +35,7 @@ import HistorySales from "./pages/HistorySales/HistorySales";
 import Users from "./pages/Users/Users";
 import CreateUser from "./pages/CreateUser/CreateUser";
 import SalesDetails from "./pages/Sales/SalesDetails";
+import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -160,10 +161,6 @@ const App = () => {
             label: "Configuracion",
             items: [
                 {
-                    label: "Permisos",
-                    icon: "pi pi-fw pi-cog",
-                },
-                {
                     label: "Roles",
                     icon: "pi pi-fw pi-user",
                 },
@@ -212,12 +209,12 @@ const App = () => {
                 {
                     label: "Ventas",
                     icon: "pi pi-fw pi-credit-card",
-                    to: "/pages/Sales/Sales",
+                    to: "/Sales",
                 },
                 {
                     label: "Historial de ventas",
                     icon: "pi pi-fw pi-book",
-                    to: "/pages/HistorySales/HistorySales",
+                    to: "/HistorySales",
                 },
             ],
         },
@@ -269,9 +266,10 @@ const App = () => {
                     <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
-                    <Route path="/pages/Sales/Sales" exact render={() => <Sales />} />
+                    <Route path="/Sales" exact render={() => <Sales />} />
                     <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
-                    <Route path="/pages/HistorySales/HistorySales" exact render={() => <HistorySales />} />
+                    <Route path="/HistorySales" exact render={() => <HistorySales />} />
+                    <Route path="/HistorySalesDetails" exact render={() => <HistorySalesDetails />} />
                     <Route path="/pages/CreateProduct/CreateProduct" exact render={() => <CreateProduct />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
