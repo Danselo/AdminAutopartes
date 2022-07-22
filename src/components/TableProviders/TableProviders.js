@@ -2,7 +2,7 @@ import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
 import "./dataTableProviders.css";
-import { buttonBodyTemplate } from "./columnTemplateProviders";
+import buttonBodyTemplate from "./columnTemplateProviders";
 
 export const TableProviders = () => {
     const [providers, setProviders] = useState([]);

@@ -42,6 +42,7 @@ import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
 import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
+import EditProvider from "./pages/Providers/EditProvider";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -270,7 +271,7 @@ const App = () => {
                     <Route path="/pages/Products/Products" exact render={() => <Products />} />
                     <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
                     <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
-                    <Route path="/pages/Providers/Providers" exact render={() => <Providers />} />
+                    <Route path="/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
                     <Route path="/Sales" exact render={() => <Sales />} />
@@ -286,6 +287,7 @@ const App = () => {
                     <Route path="/pages/Brand/Brand" exact render={() => <Brand />} />
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
+                    <Route path="/EditProvider" exact render={() => <EditProvider />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
