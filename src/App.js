@@ -43,6 +43,9 @@ import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
 import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
 import EditProvider from "./pages/Providers/EditProvider";
+import Categories from "./pages/Categories/Categories";
+import CreateCategories from "./pages/Categories/CreateCategories";
+import EditCategories from "./pages/Categories/EditCategories";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -194,6 +197,7 @@ const App = () => {
                 {
                     label: "Categorias",
                     icon: "pi pi-fw pi-book",
+                    to: "/Categories",
                 },
                 {
                     label: "Marcas",
@@ -288,6 +292,14 @@ const App = () => {
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
                     <Route path="/EditProvider" exact render={() => <EditProvider />} />
+
+
+
+
+
+                    <Route path="/Categories" exact render={() => <Categories />} />
+                    <Route path="/CreateCategories" exact render={() => <CreateCategories />} />
+                    <Route path="/EditCategories" exact render={() => <EditCategories />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
