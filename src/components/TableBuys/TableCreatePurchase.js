@@ -1,10 +1,10 @@
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
-import "./dataTableCreateSales.css";
-import { buttonBodyTemplate } from "./columnTemplateCreateSales";
+// import "./dataTableCreateSales.css";
+import { buttonBodyTemplate } from "./columnTemplateCreatePurchase";
 
-export const TableCreateSales = () => {
+export const TableCreatePurchase = () => {
     const [createSales, setCreateSales] = useState([]);
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export const TableCreateSales = () => {
     }, []);
 
     return (
-        <DataTable header="Agregar producto a la venta" value={createSales} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <DataTable header="Agregar producto a la compra" value={createSales} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
             <Column field="nombre_producto" sortable header="Nombre producto"></Column>
             <Column field="cantidad" sortable header="Cantidad"></Column>
             <Column field="precio_unitario" sortable header="Precio unitario"></Column>

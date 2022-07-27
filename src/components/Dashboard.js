@@ -29,7 +29,7 @@ const Dashboard = (props) => {
     const [products, setProducts] = useState(null);
     // const menu1 = useRef(null);
     // const menu2 = useRef(null);
-    const [lineOptions, setLineOptions] = useState(null);
+    const [lineOptions] = useState(null);
 
     const days = [
         { name: "Lunes", code: "L" },

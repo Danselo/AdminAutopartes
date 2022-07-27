@@ -43,6 +43,8 @@ import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
 import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
 import EditProvider from "./pages/Providers/EditProvider";
+import Buys from "./pages/Buys/Buys";
+import CreatePurchase from "./pages/Buys/CreatePurschase";
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -180,11 +182,12 @@ const App = () => {
                 {
                     label: "Proveedores",
                     icon: "pi pi-fw pi-building",
-                    to: "/pages/Providers/Providers",
+                    to: "/Providers",
                 },
                 {
                     label: "Compras",
                     icon: "pi pi-fw pi-shopping-bag",
+                    to: "/Buys",
                 },
             ],
         },
@@ -288,6 +291,8 @@ const App = () => {
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
                     <Route path="/EditProvider" exact render={() => <EditProvider />} />
+                    <Route path="/Buys" exact render={() => <Buys />} />
+                    <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
