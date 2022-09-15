@@ -5,13 +5,18 @@ import { Link } from "react-router-dom";
 import { TableBrand } from "../../components/TableBrand/TableBrand";
 
 
+
 export default function Brand() {
+    
+    
+
+//   if (!post) return null;
     return (
         <div>
             <div className="text-center">
                 <h3>Marcas Registradas</h3>
             </div>
-            <Link to={"/pages/CreateBrand/CreateBrand"}>
+            <Link to={"/CreateBrand"}>
             <Button label="Registrar Marca" icon=" pi pi-plus-circle"  className="p-button-raised p-button-info"/>
             </Link>
             <div className="container search-user p-2">

@@ -37,7 +37,7 @@ import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
 import CreateUser from "./pages/CreateUser/CreateUser";
 import CreateRol from "./pages/CreateRol/CreateRol";
-import CreateBrand from "./pages/CreateBrand/CreateBrand";
+import CreateBrand from "./pages/Brand/CreateBrand";
 import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
@@ -48,6 +48,7 @@ import CreatePurchase from "./pages/Buys/CreatePurschase";
 import Categories from "./pages/Categories/Categories";
 import CreateCategories from "./pages/Categories/CreateCategories";
 import EditCategories from "./pages/Categories/EditCategories";
+
 
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
@@ -205,7 +206,7 @@ const App = () => {
                 {
                     label: "Marcas",
                     icon: "pi pi-fw pi-car",
-                    to: "/pages/Brand/Brand",
+                    to: "/Brand",
                 },
                 {
                     label: "Productos",
@@ -287,11 +288,11 @@ const App = () => {
                     <Route path="/HistorySalesDetails" exact render={() => <HistorySalesDetails />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/CreateRol/CreateRol" exact render={() => <CreateRol />} />
-                    <Route path="/pages/CreateBrand/CreateBrand" exact render={() => <CreateBrand />} />
+                    <Route path="/CreateBrand" exact render={() => <CreateBrand />} />
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
                     <Route path="/pages/EditUsers/EditUsers" exact render={() => <EditUsers />} />
                     <Route path="/pages/Roles/Roles" exact render={() => <Roles />} />
-                    <Route path="/pages/Brand/Brand" exact render={() => <Brand />} />
+                    <Route path="/Brand" exact render={() => <Brand />} />
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
                     <Route path="/EditProvider" exact render={() => <EditProvider />} />

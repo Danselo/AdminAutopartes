@@ -1,31 +1,48 @@
-import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
+import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { buttonBodyTemplate } from "./columnTemplates";
-import { buttonBodyTemplate2 } from "./columnTemplates2";
+import axios from 'axios'
 
+const url = 'http://localhost:5000/brands/'
 
 export const TableBrand = () => {
-    const [users, setUsers] = useState([]);
+    const [brands, setBrands] = useState([]);
+  
 
-    useEffect(() => {
-        setUsers([{ idMarca: 1467, nombre: "Ford", NroProductosRegistrados: 13}]);
+   useEffect(() => {
+    axios.get(url).then((response) => {
+        console.log(response)
+        setBrands(response.data);           
+    });
+}, []);
 
 
-    }, []);
-    
+
+
+
+// useEffect(() => {
+//     // setBrands([{ idMarca: 1467, nombre: "Ford", NroProductosRegistrados: 13}]);
+//     setBrands(data)
+// }, []);
+
 
     
 
     return (
-        <DataTable value={users} paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
-            <Column field="idMarca" sortable header="Id"></Column>
-            <Column field="nombre" sortable header="Nombre"></Column>
-            <Column field="NroProductosRegistrados" sortable header="Nro Productos Registrados"></Column>
-            <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
-            <Column body={buttonBodyTemplate2} sortable header="Detalles de productos registrados"></Column>
-
-
+        <DataTable value={brands}
+        stripedRows
+        paginator
+        responsiveLayout="scroll" 
+        dataKey="id" 
+        emptyMessage="No se encontraron datos" 
+        className="table-product" 
+        rows={10}
+        size="small">
+            <Column field="id" sortable header="Id"></Column>
+            <Column field="name" sortable header="Nombre"></Column>
+            {/* <Column field="NroProductosRegistrados" sortable header="Nro Productos Registrados"></Column> */}
+            <Column body={buttonBodyTemplate}  header="Acciones"></Column>
         </DataTable>
     );
 };

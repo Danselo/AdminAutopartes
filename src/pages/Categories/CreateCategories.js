@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
+import axios from 'axios'
+
+const url = 'http://localhost:5000/categories/create'
 
 export default function CreateCategories() {
     const accept = () => {
@@ -19,7 +22,7 @@ export default function CreateCategories() {
             message: "¿Esta seguro que desea agregar esta Categoria?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            accept,
+            accept : () => CreateCategory(),
             reject,
         });
     };
@@ -36,19 +39,19 @@ export default function CreateCategories() {
     };
    
     const toast = useRef(null);
-    const [value2, setValue2] = useState("");
+    const [categoryName, setCategoryName] = useState("");
   
-
+    function CreateCategory() {
+        axios
+          .post(url, {
+            name: categoryName,           
+          })
+          .then((response) => {
+            setCategoryName(response.data);
+          });
+      }
 
     // const [value, setValue] = useState("");
-
-
-
-    
-    
-
-  
-
 
     return (
         <div>
@@ -66,7 +69,7 @@ export default function CreateCategories() {
                 <div className="row">
                     <div className="col-sm-12 pt-5">
                             <span className="p-float-label">
-                            <InputText className="jjj" id="name" value={value2} onChange={(e) => setValue2(e.target.value)} />
+                            <InputText className="jjj" id="name" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} />
                             <label htmlFor="text">Nombre Categoria</label>
                         </span>
                     </div>
