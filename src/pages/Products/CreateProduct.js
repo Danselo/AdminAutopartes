@@ -9,6 +9,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import "./createProduct.css";
 
+
 export default function CreateProduct() {
     const accept = () => {
         toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Producto creado exitosamente", life: 3000 });
