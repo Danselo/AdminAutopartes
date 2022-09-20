@@ -40,6 +40,7 @@ export default function CreateBrand() {
    
     const toast = useRef(null);
     const [brandName, setBrandName] = useState("");
+    const [newBrand, setNewBrand] = useState("");
     // const [newBrandData, setNewBrandData] = useState(null)
   
     function createBrand() {
@@ -48,7 +49,7 @@ export default function CreateBrand() {
             name: brandName,           
           })
           .then((response) => {
-            setBrandName(response.data);
+            setNewBrand(response.data);
           });
       }
     

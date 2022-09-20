@@ -73,19 +73,9 @@ export default function CreateCategories() {
                             <label htmlFor="text">Nombre Categoria</label>
                         </span>
                     </div>
-                    
-
                 </div>
-                
-                
-                
-
             </div>
             <div className="create-product-buttons">
-                {/* <Button label="Crear" className="p-button-success" />
-                <Link to={"/pages/Products/Products"}>
-                    <Button label="Cancelar" className="p-button-danger" />
-                </Link> */}
                 <Button onClick={confirm1} icon="pi pi-check" label="Crear" className="mr-2"></Button>
                 <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
             </div>

@@ -1,8 +1,8 @@
 import React from "react";
-import { TableClient } from "../../components/TableClient/TableClient";
+import { TableVehicle } from "../../components/TableVehicle/TableVehicle";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import "./client.css";
+import "./vehicle.css";
 import { Link } from "react-router-dom";
 
 export default function Providers() {
@@ -25,7 +25,7 @@ export default function Providers() {
                     </div>
                 </div>
             </div>
-            <TableClient className="table-products" />
+            <TableVehicle className="table-products" />
         </div>
     );
 }

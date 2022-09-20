@@ -20,6 +20,8 @@ export const TableVehicle = () => {
         <DataTable header="Vehiculos" value={Vehicle} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
             <Column field="id_vehiculo" sortable header="Id vehiculo"></Column>
             <Column field="nombre" sortable header="Nombre"></Column>
+            <Column field="marca" sortable header="Marca"></Column>
+            <Column field="modelo" sortable header="Modelo"></Column>
             <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
         </DataTable>
     );

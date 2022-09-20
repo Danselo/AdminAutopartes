@@ -16,16 +16,6 @@ export const TableCategories = () => {
             setCategories(response.data);           
         });
     }, []);
-
-    // useEffect(() => {
-    //     setCategories([{ id_categoria: 1467, nombre: "Ford", productos_registrados: 13}]);
-
-
-    // }, []);
-    
-
-    
-
     return (
         <DataTable value={categories} 
         paginator responsiveLayout="scroll" 

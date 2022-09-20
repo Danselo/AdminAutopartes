@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
@@ -8,23 +8,30 @@ import { FileUpload } from "primereact/fileupload";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import "./createProduct.css";
+import axios from 'axios'
+import { ProductService } from "../../service/ProductService";
 
+const urlCategories = 'http://localhost:5000/categories/'
+const urlVehicles = 'http://localhost:5000/vehicles'
 
 export default function CreateProduct() {
-    const accept = () => {
-        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Producto creado exitosamente", life: 3000 });
+
+    const _productService = new ProductService();
+
+    const acceptModalConfirmation = (lifeTime) => {
+       
     };
 
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
   
-    const confirm1 = () => {
+    const createProductConfirmation = () => {
         confirmDialog({
             message: "¿Esta seguro que desea crear este producto?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            accept,
+            accept: createProduct,
             reject,
         });
     };
@@ -35,7 +42,7 @@ export default function CreateProduct() {
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
-            accept,
+            accept : acceptModalConfirmation,
             reject,
         });
     };
@@ -43,35 +50,41 @@ export default function CreateProduct() {
         toast.current.show({ severity: "info", summary: "Success", detail: "File Uploaded with Basic Mode" });
     };
     const toast = useRef(null);
-    const [value2, setValue2] = useState("");
-    const [value, setValue] = useState("");
-
-    const [selectedBrand, setSelectedBrand] = useState(null);
+    const [selectedVehicle, setSelectedVehicle] = useState([null]);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [productName, setProductName] = useState("");
+    const [productDescription, setProductDescription] = useState("");
+    const [vehicles, setVehicles] = useState([]);
+    const [categories, setCategories] = useState([]);
+    
+    useEffect(() => {
+        axios.get(urlVehicles).then((response) => {
+            setVehicles(response.data);    
+        });    
+        axios.get(urlCategories).then((response) => {
+            setCategories(response.data);    
+        });
+    }, []);
 
-    const brands = [
-        { name: "Ford", code: "FD" },
-        { name: "Toyota", code: "TY" },
-        { name: "Honda", code: "HD" },
-        { name: "Kia", code: "KA" },
-        { name: "Chevrolet", code: "CL" },
-    ];
-    const categories = [
-        { name: "Baterias", code: "FD" },
-        { name: "Aceites", code: "TY" },
-        { name: "Empaques", code: "HD" },
-        { name: "Tornilleria", code: "KA" },
-        { name: "Luces", code: "CL" },
-    ];
-
-    const onBrandChange = (e) => {
-        setSelectedBrand(e.value);
+    const onVehicleChange = (e) => {
+        setSelectedVehicle(e.value);
     };
-
     const onCategoriesChange = (e) => {
         setSelectedCategory(e.value);
     };
 
+    function createProduct() {
+        _productService.createProduct(productName, productDescription, selectedVehicle.id, selectedCategory.id )
+        .then((data) => {
+            const lifeTime = 3000;
+            toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Producto creado exitosamente", life: lifeTime });
+            setTimeout(() => {
+               console.log('Redirigiendo a otra pagina') 
+            }, lifeTime);
+            console.log('product created successfully', data);
+        })      
+        .catch(console.error);
+      }
     return (
         <div>
             <Toast ref={toast} />
@@ -88,20 +101,16 @@ export default function CreateProduct() {
             </div>
             <div className="create-product-form">
                 <span className="p-float-label">
-                    <InputText className="jjj" id="username" value={value2} onChange={(e) => setValue2(e.target.value)} />
+                    <InputText className="jjj" id="username" value={productName} onChange={(e) => setProductName(e.target.value)} />
                     <label htmlFor="username">Nombre producto</label>
                 </span>
 
-                <Dropdown value={selectedBrand} options={brands} onChange={onBrandChange} optionLabel="name" placeholder="Seleccione marca" />
+                <Dropdown value={selectedVehicle} options={vehicles} onChange={onVehicleChange} optionLabel="name" placeholder="Seleccione marca" />
                 <Dropdown value={selectedCategory} options={categories} onChange={onCategoriesChange} optionLabel="name" placeholder="Seleccione categoria" />
-                <InputTextarea rows={5} cols={30} value={value} onChange={(e) => setValue(e.target.value)} />
+                <InputTextarea rows={5} cols={30} value={productDescription} onChange={(e) => setProductDescription(e.target.value)} />
             </div>
             <div className="create-product-buttons">
-                {/* <Button label="Crear" className="p-button-success" />
-                <Link to={"/pages/Products/Products"}>
-                    <Button label="Cancelar" className="p-button-danger" />
-                </Link> */}
-                <Button onClick={confirm1} icon="pi pi-check" label="Crear" className="mr-2"></Button>
+                <Button onClick={createProductConfirmation} icon="pi pi-check" label="Crear" className="mr-2"></Button>
                 <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
             </div>
         </div>
