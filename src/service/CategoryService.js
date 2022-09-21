@@ -5,8 +5,8 @@ const baseCategoryURL = config.baseURL +'/categories'
 
 export class CategoryService {
 
-    getProductsSmall() {
-        return axios.get('assets/demo/data/products-small.json').then(res => res.data.data);
+    getCategory(id) {
+        return axios.get(`${baseCategoryURL}/${id}`).then(res => res.data.data);
     }
 
     // createCategory(name, description, idVehicle, idCategory,) {
@@ -25,8 +25,9 @@ export class CategoryService {
     //   }
 
     deleteCategory(id){
+        
         return axios
-        .delete(`${baseCategoryURL}/${id}`)
+        .delete(`${baseCategoryURL}/delete/${id}`)
         .then(() => {
           alert("Categoria eliminada")
         });

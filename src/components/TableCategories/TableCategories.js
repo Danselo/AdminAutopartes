@@ -25,7 +25,8 @@ export const TableCategories = () => {
         rows={10}>
             <Column field="id" sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
-            <Column body={buttonBodyTemplate}  header="Acciones"></Column>
+            <Column body={buttonBodyTemplate} header="Acciones"></Column>
+            <Column body={buttonBodyTemplate} header="Acciones"></Column>
             
 
 
