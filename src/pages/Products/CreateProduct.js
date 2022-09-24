@@ -105,7 +105,7 @@ export default function CreateProduct() {
                     <label htmlFor="username">Nombre producto</label>
                 </span>
 
-                <Dropdown value={selectedVehicle} options={vehicles} onChange={onVehicleChange} optionLabel="name" placeholder="Seleccione marca" />
+                <Dropdown value={selectedVehicle} options={vehicles} onChange={onVehicleChange} optionLabel="name" placeholder="Seleccione vehiculo" />
                 <Dropdown value={selectedCategory} options={categories} onChange={onCategoriesChange} optionLabel="name" placeholder="Seleccione categoria" />
                 <InputTextarea rows={5} cols={30} value={productDescription} onChange={(e) => setProductDescription(e.target.value)} />
             </div>

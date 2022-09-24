@@ -1,8 +1,10 @@
 import axios from 'axios';
-import config from '../config/config';
+// import config from './../config/config';
 
-const baseCategoryURL = config.baseURL +'/categories'
+// const baseCategoryURL = process.env.REACT_APP_BASE_URL +'/categories'
+// console.log(baseCategoryURL)
 
+const baseCategoryURL = 'http://localhost:5000/categories'
 export class CategoryService {
 
     getCategory(id) {
@@ -29,7 +31,7 @@ export class CategoryService {
         return axios
         .delete(`${baseCategoryURL}/delete/${id}`)
         .then(() => {
-          alert("Categoria eliminada")
+          console.log("Categoria eliminada")
         });
 
     }

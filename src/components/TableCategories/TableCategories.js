@@ -1,35 +1,41 @@
-import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
+import "./dataTableCategories.css"
 import { Column } from "primereact/column";
-import { buttonBodyTemplate } from "./columnTemplateCategories";
+import { DataTable } from "primereact/datatable";
 import axios from  'axios';
+
 
 const url = 'http://localhost:5000/categories/'
 
 
-export const TableCategories = () => {
+export const TableCategories = ({idCategory}) => {
     const [categories, setCategories] = useState([]);
-
+    const [selectedProduct, setSelectedProduct] = useState([]);
+    function setCategoryId(params) {
+        setSelectedProduct(params)
+        idCategory(params.id)       
+    }
     useEffect(() => {
         axios.get(url).then((response) => {
-            console.log(response)
             setCategories(response.data);           
         });
     }, []);
     return (
         <DataTable value={categories} 
         paginator responsiveLayout="scroll" 
-        dataKey="id" 
         emptyMessage="No se encontraron datos" 
-        className="table-product" 
-        rows={10}>
-            <Column field="id" sortable header="Id"></Column>
+        className="table-categories" 
+        showGridlines
+        rows={10} 
+        selection={selectedProduct}
+        onSelectionChange={e => setCategoryId(e.value) } 
+        dataKey="id" 
+
+         
+       >
+            <Column selectionMode="single" headerStyle={{width: '3em'}} onClick = {() => setCategoryId()}></Column>
+            <Column field="id" sortable header="Id categoria" ></Column>
             <Column field="name" sortable header="Nombre"></Column>
-            <Column body={buttonBodyTemplate} header="Acciones"></Column>
-            <Column body={buttonBodyTemplate} header="Acciones"></Column>
-            
-
-
         </DataTable>
     );
 };

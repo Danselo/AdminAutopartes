@@ -5,18 +5,16 @@ import { InputText } from "primereact/inputtext";
 import "./vehicle.css";
 import { Link } from "react-router-dom";
 
-export default function Providers() {
+export default function Vehicles() {
     return (
         <div>
             <div className="tittle-product">
                 <h3>Gestión de Vehiculos</h3>
             </div>
-            <Link to={"/CreateVehicle"}>
+            <Link to={"/Vehicles/create"}>
                 <Button label="Agregar vehiculo" icon="pi pi-plus-circle" className="p-button-raised p-button-info button-add-product" />
             </Link>
-            {/* <div className="container-search-product">
-                <input label="buscarProducto" name="buscarProducto" placeholder="Buscar producto" className="search-product"></input>
-            </div> */}
+        
             <div className="container-search-product">
                 <div className="col-12 md:col-3">
                     <div className="p-inputgroup">

@@ -1,18 +1,17 @@
 import React from "react";
 import { Button } from "primereact/button";
-import { Link } from "react-router-dom";
 import {CategoryService} from '../../service/CategoryService';
 
 
-export const buttonBodyTemplate = () => {
+export const buttonBodyTemplateCategories = (selectedProduct) => {
     
 
     const _categoryService = new CategoryService();
     
-    function deleteCategory() {
+    function deleteCategory(id) {
         
 
-         _categoryService.deleteCategory()
+         _categoryService.deleteCategory(id)
          .then((data) => {
             
              console.log('Categoria eliminada exitosamente', data);
@@ -23,10 +22,9 @@ export const buttonBodyTemplate = () => {
     return (
         <div className="button-column p-0">
           
-            <Link to={"/EditCategories"}>
-            <Button icon=" pi pi-pencil" className="p-button-info" />
-            </Link>
-            <Button icon=" pi pi-trash" className="p-button-danger" onClick={deleteCategory}/>
+          
+            <Button icon=" pi pi-pencil" className="p-button-info" />         
+            <Button icon=" pi pi-trash" className="p-button-danger" onClick={deleteCategory(selectedProduct.id)}/>
             <div className="form-check form-switch button-column ">
             <input className="form-check-input p-button-info" type="checkbox" id="flexSwitchCheckDefault"/>
             </div>

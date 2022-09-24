@@ -31,7 +31,6 @@ import Client from "./pages/Client/Client";
 import CreateClient from "./pages/Client/CreateClient";
 import Sales from "./pages/Sales/Sales";
 import CreateSales from "./pages/Sales/CreateSales";
-import HistorySales from "./pages/HistorySales/HistorySales";
 import Users from "./pages/Users/Users";
 import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
@@ -41,14 +40,14 @@ import CreateBrand from "./pages/Brand/CreateBrand";
 import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
-import HistorySalesDetails from "./pages/HistorySales/HistorySalesDetail";
 import EditProvider from "./pages/Providers/EditProvider";
 import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurschase";
 import Categories from "./pages/Categories/Categories";
-import CreateCategories from "./pages/Categories/CreateCategories";
+// import CreateCategories from "./pages/Categories/CreateCategories";
 import EditCategories from "./pages/Categories/EditCategories";
 import Vehicles from "./pages/Vehicle/Vehicle";
+import CreateVehicle from "./pages/Vehicle/CreateVehicle";
 
 
 const App = () => {
@@ -234,11 +233,7 @@ const App = () => {
                     icon: "pi pi-fw pi-credit-card",
                     to: "/Sales",
                 },
-                {
-                    label: "Historial de ventas",
-                    icon: "pi pi-fw pi-book",
-                    to: "/HistorySales",
-                },
+                
             ],
         },
 
@@ -290,8 +285,6 @@ const App = () => {
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
                     <Route path="/Sales" exact render={() => <Sales />} />
                     <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
-                    <Route path="/HistorySales" exact render={() => <HistorySales />} />
-                    <Route path="/HistorySalesDetails" exact render={() => <HistorySalesDetails />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/CreateRol/CreateRol" exact render={() => <CreateRol />} />
                     <Route path="/CreateBrand" exact render={() => <CreateBrand />} />
@@ -305,9 +298,10 @@ const App = () => {
                     <Route path="/Buys" exact render={() => <Buys />} />
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
                     <Route path="/Categories" exact render={() => <Categories />} />
-                    <Route path="/CreateCategories" exact render={() => <CreateCategories />} />
+                    {/* <Route path="/CreateCategories" exact render={() => <CreateCategories />} /> */}
                     <Route path="/EditCategories" exact render={() => <EditCategories />} />
                     <Route path="/Vehicles" exact render={() => <Vehicles />} />
+                    <Route path="/Vehicles/create" exact render={() => <CreateVehicle />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
