@@ -1,39 +1,32 @@
-import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
-import { Column } from "primereact/column";
 import "./dataTableProviders.css";
-import buttonBodyTemplate from "./columnTemplateProviders";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import axios from  'axios';
 
-export const TableProviders = () => {
+const url = 'http://localhost:5000/providers/'
+
+export const TableProviders = ({idProviders}) => {
     const [providers, setProviders] = useState([]);
-
+    function setProvidersId(params) {
+        
+        idProviders(params.id)       
+    }
     useEffect(() => {
-        setProviders([
-            {
-                id: 1,
-                nit: 32323434,
-                nombre: "U.S Cars",
-                nombre_contacto: "Juan Andres Gomez",
-                telefono: "+58 304 554 2123",
-                direccion: "Cra 24 F #40 sur 163 int 204",
-                email: "juan.andres.gomez@gmail.com",
-                pais: "Colombia",
-            },
-            {
-                id: 2,
-                nit: 32323434,
-                nombre: "U.S Cars",
-                nombre_contacto: "Juan Andres Gomez",
-                telefono: "+58 304 554 2123",
-                direccion: "Cra 24 F #40 sur 163 int 204",
-                email: "juan.andres.gomez@gmail.com",
-                pais: "Colombia",
-            },
-        ]);
+        axios.get(url).then((response) => {
+            setProviders(response.data);           
+        });
     }, []);
 
     return (
-        <DataTable header="Proveedores" value={providers} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <DataTable value={providers} 
+        paginator responsiveLayout="scroll" 
+        emptyMessage="No se encontraron datos" 
+        className="table-proveedores"
+        showGridlines
+        rows={10}  
+        onSelectionChange={e => setProvidersId(e.value) } 
+        dataKey="id" >
             <Column field="id" sortable header="Id proveedor"></Column>
             <Column field="nit" sortable header="Nit"></Column>
             <Column field="nombre" sortable header="Nombre"></Column>
@@ -42,7 +35,6 @@ export const TableProviders = () => {
             <Column field="direccion" sortable header="Direccion"></Column>
             <Column field="email" sortable header="Email"></Column>
             <Column field="pais" sortable header="Pais"></Column>
-            <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
         </DataTable>
     );
 };
