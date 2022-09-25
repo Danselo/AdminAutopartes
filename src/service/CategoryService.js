@@ -7,32 +7,33 @@ import axios from 'axios';
 const baseCategoryURL = 'http://localhost:5000/categories'
 export class CategoryService {
 
-    getCategory(id) {
-        return axios.get(`${baseCategoryURL}/${id}`).then(res => res.data.data);
+    getCategories() {
+        return axios.get(baseCategoryURL).then(res => res.data);
     }
 
-    // createCategory(name, description, idVehicle, idCategory,) {
+    createCategory(name) {
         
-    //     return axios
-    //       .post(baseCategoryURL + '/create', {
-    //         idVehicle,
-    //         idCategory,
-    //         name,  
-    //         description
-    //       })
-    //       .then((response) => {
-    //         return response.data;           
-    //       })  
+        return axios
+          .post(baseCategoryURL + '/create', {
+            name,  
+            
+          })
+          .then();  
           
-    //   }
+      }
+    
+    updateCategory(id, name){
+        return axios
+            .put(`${baseCategoryURL}/update/${id}`,{
+                name: name
+            }).then()
+    }
 
     deleteCategory(id){
         
         return axios
         .delete(`${baseCategoryURL}/delete/${id}`)
-        .then(() => {
-          console.log("Categoria eliminada")
-        });
+        .then();
 
     }
 
