@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./categories.css";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -6,49 +6,56 @@ import { TableCategories } from "../../components/TableCategories/TableCategorie
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
-import { Toolbar } from 'primereact/toolbar';
-import axios from "axios";
+import { Toolbar } from "primereact/toolbar";
 import { CategoryService } from "../../service/CategoryService";
-const url = "http://localhost:5000/categories/create";
 
+const _categoryService = new CategoryService();
 export default function Categories() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
+    const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
     const [categoryName, setCategoryName] = useState("");
-    const [categoryId, setCategoryId] = useState("");
+    const [newCategoryName, setNewCategoryName] = useState("");
+    const [categoryIdSelected, setCategoryIdSelected] = useState("");
+    const [categoryNameSelected, setCategoryNameSelected] = useState("");
+    const [categories, setCategories] = useState([]);
+
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteCategoryAlert()} />
+            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteCategoryAlert()} disabled={!categoryIdSelected}/>
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!categoryIdSelected}/>
         </React.Fragment>
     );
 
     const rightContents = (
         <React.Fragment>
             <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
-        
         </React.Fragment>
     );
-    const accept = () => {
-        toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
-        CreateCategory();
-    };
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const acceptDelete = () => {
-        toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
-        deleteCategory(categoryId)
-    };
-
-    const createCategory = () => {
+    const createCategoryAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta Categoria?",
+            message: "¿Esta seguro que desea agregar esta categoria?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept,
+            accept: () => CreateCategory(),
+            reject: () => setDisplayDialogCreate(true),
+        });
+    };
+
+    const editCategoryAlert = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea editar esta categoria?",
+            header: "Confirmacion",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Editar",
+            rejectLabel: "Cancelar",
+            accept: () => EditCategory(categoryIdSelected, newCategoryName),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -59,7 +66,7 @@ export default function Categories() {
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
-            accept: () => acceptDelete(),
+            accept: () => deleteCategory(categoryIdSelected),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -79,8 +86,18 @@ export default function Categories() {
         setDisplayDialogCreate(true);
     }
 
+    function onClickDialogEdit() {
+        setDisplayDialogEdit(true);
+    }
+
+    const onHideDialogEdit = () =>{
+        editCategoryAlert()
+        setDisplayDialogEdit(false);
+
+    }
+
     const onHideDialogCreate = () => {
-        createCategory();
+        createCategoryAlert();
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
@@ -99,39 +116,75 @@ export default function Categories() {
         );
     };
 
+    const renderFooterDialogEdit = () => {
+        return (
+            <div>
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                <Button label="Editar categoria" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+            </div>
+        );
+    };
+    function EditCategory(id, newName) {
+        _categoryService.updateCategory(id, newName)
+        .then(() => {
+            setCategoryName(newName);
+            loadCategories();
+            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
+        })
+        .catch((e) => {
+            toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+            console.log(e);
+        });
+    }
     function CreateCategory() {
-        axios
-            .post(url, {
-                name: categoryName,
+        _categoryService
+            .createCategory(categoryName)
+            .then(() => {
+                setCategoryName("");
+                loadCategories();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
             })
-            .then((response) => {
-                setCategoryName(response.data);
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
             });
     }
-    function getCategoryIdHandler(id){
-        setCategoryId(id)
+
+    function deleteCategory(id) {
+        _categoryService
+            .deleteCategory(id)
+            .then(() => {
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
+                loadCategories();
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
+            });
     }
 
-    const _categoryService = new CategoryService();
-    
-    function deleteCategory(id) {
-         _categoryService.deleteCategory(id)
-         .then((data) => {
-            
-             console.log('Categoria eliminada exitosamente', data);
-         })      
-     }
+    const loadCategories = () => {
+        _categoryService.getCategories().then((response) => {
+            setCategories(response);
+            setCategoryIdSelected("");
+        });
+    };
+    useEffect(() => {
+        _categoryService.getCategories().then((response) => {
+            setCategories(response);
+        });
+    }, []);
+   
     return (
         <div>
             <Toast ref={toast} />
-            <div>
-        </div>
+            <div></div>
             <div className="text-center">
                 <h4>Categorias registradas</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />
-            
+
             <Dialog header="Crear nueva categoria" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialog()}>
                 <div className="create-category-form">
                     <h5>Ingrese el nombre de la nueva categoria</h5>
@@ -139,12 +192,15 @@ export default function Categories() {
                 </div>
             </Dialog>
 
-                <div className="p-inputgroup create-category__table">
-                    <InputText placeholder="Buscar categoria" />
-                    <Button icon="pi pi-search" className="p-button-primary" />
+            <Dialog header="Editar categoria" visible={displayDialogEdit} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
+                <div className="create-category-form">
+                    <h5>Ingrese el nuevo nombre</h5>
+                    <InputText value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} placeholder={categoryNameSelected} />
                 </div>
-            
-            <TableCategories className="table-products" idCategory = {(id) => getCategoryIdHandler(id)}/>
+            </Dialog>
+
+
+            <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected ={setCategoryNameSelected}/>
         </div>
     );
 }

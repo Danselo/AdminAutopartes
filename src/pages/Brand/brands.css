@@ -1,10 +1,10 @@
-.create-category-form{
+.create-brand-form{
     display: flex;
     flex-direction: column;
     
 }
 
-.create-category__table{
+.create-brand__table{
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -12,6 +12,6 @@
     width: 20rem;
 }
 
-.dc-space-between{
+.dc-brand-between{
     margin: 0 1rem 0 0;
 }
