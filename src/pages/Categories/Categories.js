@@ -9,8 +9,8 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { Toolbar } from "primereact/toolbar";
 import { CategoryService } from "../../service/CategoryService";
 
+const _categoryService = new CategoryService();
 export default function Categories() {
-    const _categoryService = new CategoryService();
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
@@ -173,7 +173,7 @@ export default function Categories() {
         _categoryService.getCategories().then((response) => {
             setCategories(response);
         });
-    }, [_categoryService]);
+    }, []);
    
     return (
         <div>
