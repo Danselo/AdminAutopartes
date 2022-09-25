@@ -5,7 +5,7 @@ import { InputText } from "primereact/inputtext";
 import "./client.css";
 import { Link } from "react-router-dom";
 
-export default function Providers() {
+export default function Client() {
     return (
         <div>
             <div className="tittle-product">

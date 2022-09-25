@@ -1,26 +1,47 @@
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
-import { buttonBodyTemplate } from "./columnTemplates";
+// import { buttonBodyTemplate } from "./columnTemplates";
+import axios from 'axios'
+const url = 'http://localhost:5000/users/'
+
+
 
 export const TableUser = () => {
     const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState([]);
 
-    useEffect(() => {
-        setUsers([{ id: 1, nombre: "Armando", apellido: "Puertas", telefono: "300215548", direccion: "Calle 39 D# 40 sur 145 int 294 barrio cruz", email: "armando@gmail.com", fechaRegistro: "12/05/2022", nroCompras: 5 }]);
-    }, []);
+
+   useEffect(() => {
+    axios.get(url).then((response) => {
+        console.log(response)
+        setUsers(response.data);           
+    });
+}, []);
+
+console.log(selectedUser);
 
     return (
-        <DataTable value={users} paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <div className="">
+                <DataTable value={users} paginator responsiveLayout="scroll" 
+        dataKey="id" 
+        emptyMessage="No se encontraron datos"
+         className="table-product" 
+         showGridlines
+         selection={selectedUser}
+         onSelectionChange={e => setSelectedUser(e.value)}
+        rows={10}>
+            <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
-            <Column field="nombre" sortable header="Nombre"></Column>
-            <Column header="apellido" sortable body="Apellido"></Column>
-            <Column field="telefono" sortable header="Telefono"></Column>
-            <Column field="direccion" sortable header="Direccion"></Column>
+            <Column field="name" sortable header="Nombre"></Column>
+            <Column field="lastname" sortable header="Apellido"></Column>
             <Column field="email" sortable header="Email"></Column>
-            <Column field="fechaRegistro" sortable header="Fecha Registro"></Column>
-            <Column field="nroCompras" sortable header="Nro Compras"></Column>
-            <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
+            <Column field="idRol" sortable header="Rol"></Column>
+            
         </DataTable>
+
+        </div>
+    
+        
     );
 };

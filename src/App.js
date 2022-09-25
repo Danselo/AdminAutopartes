@@ -34,7 +34,7 @@ import CreateSales from "./pages/Sales/CreateSales";
 import Users from "./pages/Users/Users";
 import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
-import CreateUser from "./pages/CreateUser/CreateUser";
+import CreateUser from "./pages/Users/CreateUser";
 import CreateRol from "./pages/CreateRol/CreateRol";
 import CreateBrand from "./pages/Brand/CreateBrand";
 import EditUsers from "./pages/EditUsers/EditUsers";

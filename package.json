@@ -23,6 +23,7 @@
         "primeicons": "^5.0.0",
         "primereact": "7.2.0",
         "prismjs": "1.9.0",
+        "radium": "^0.26.2",
         "react": "^17.0.1",
         "react-app-polyfill": "^1.0.6",
         "react-bootstrap": "^2.4.0",
@@ -33,7 +34,7 @@
         "sass": "^1.32.8"
     },
     "scripts": {
-        "start": "react-scripts start",
+        "start": "react-scripts --openssl-legacy-provider start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"

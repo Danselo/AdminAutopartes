@@ -3,39 +3,37 @@ import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
 import "./dataTableClient.css";
 import { buttonBodyTemplate } from "./columnTemplateClient";
-
+import axios from 'axios'
+const url = 'http://localhost:5000/clients/'
 export const TableClient = () => {
-    const [Client, setClient] = useState([]);
+    const [clients, setClients] = useState([]);
+  
 
-    useEffect(() => {
-        setClient([
-            {
-                id_cliente: 1,
-                nombre: "Juan Andres",
-                apellido: "Gomez",
-                numero_documento:"100639674",
-                direccion: "Cra 24 F #40 sur 163 int 204",
-                telefono: "+57 304 554 2123",
-            },
-            {
-                id_cliente: 2,
-                nombre: "Julian Andres",
-                apellido: "Gomez",
-                numero_documento:"1020656790",
-                direccion: "Cra 24 F #40 sur 163 int 204",
-                telefono: "+57 304 554 2123",
-            },
-        ]);
-    }, []);
+   useEffect(() => {
+    axios.get(url).then((response) => {
+        console.log(response)
+        setClients(response.data);           
+    });
+}, []);
+
 
     return (
-        <DataTable header="Clientes" value={Client} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
-            <Column field="id_cliente" sortable header="Id cliente"></Column>
-            <Column field="nombre" sortable header="Nombre"></Column>
-            <Column field="apellido" sortable header="Apellido"></Column>
-            <Column field="numero_documento" sortable header="Número Documento"></Column>
-            <Column field="direccion" sortable header="Direccion"></Column>
-            <Column field="telefono" sortable header="Telefono"></Column>
+        <DataTable header="Clientes" value={clients} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+            <Column field="id" sortable header="Id"></Column>
+            <Column field="idUser" sortable header="Id Usuario"></Column>
+            <Column field="name" sortable header="Nombre"></Column>
+            <Column field="lastname" sortable header="Apellido"></Column>
+            <Column field="documentType" sortable header="Tipo Documento"></Column>
+            <Column field="document" sortable header="Documento"></Column>
+            <Column field="telephone" sortable header="Telefono"></Column>
+            <Column field="email" sortable header="Email"></Column>
+            <Column field="country" sortable header="Pais"></Column>
+            <Column field="department" sortable header="Departamento"></Column>
+            <Column field="city" sortable header="Departamento"></Column>
+            <Column field="neightboorhood" sortable header="Departamento"></Column>
+            <Column field="address" sortable header="Departamento"></Column>
+
+            
             <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
         </DataTable>
     );
