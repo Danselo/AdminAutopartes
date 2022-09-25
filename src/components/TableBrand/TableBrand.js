@@ -1,48 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { DataTable } from "primereact/datatable";
+import React, { useState } from "react";
+import "./dataTableBrands.css";
 import { Column } from "primereact/column";
-import { buttonBodyTemplate } from "./columnTemplates";
-import axios from 'axios'
+import { DataTable } from "primereact/datatable";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 
-const url = 'http://localhost:5000/brands/'
-
-export const TableBrand = () => {
-    const [brands, setBrands] = useState([]);
-  
-
-   useEffect(() => {
-    axios.get(url).then((response) => {
-        console.log(response)
-        setBrands(response.data);           
-    });
-}, []);
-
-
-
-
-
-// useEffect(() => {
-//     // setBrands([{ idMarca: 1467, nombre: "Ford", NroProductosRegistrados: 13}]);
-//     setBrands(data)
-// }, []);
-
-
-    
+export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected }) => {
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [selectedBrand, setSelectedBrand] = useState([]);
+    function setBrandId(params) {
+        setSelectedBrand(params);
+        if (params != null) {
+            setBrandIdSelected(params.id);
+            setBrandNameSelected(params.name);
+        }
+    }
 
     return (
-        <DataTable value={brands}
-        stripedRows
-        paginator
-        responsiveLayout="scroll" 
-        dataKey="id" 
-        emptyMessage="No se encontraron datos" 
-        className="table-product" 
-        rows={10}
-        size="small">
-            <Column field="id" sortable header="Id"></Column>
-            <Column field="name" sortable header="Nombre"></Column>
-            {/* <Column field="NroProductosRegistrados" sortable header="Nro Productos Registrados"></Column> */}
-            <Column body={buttonBodyTemplate}  header="Acciones"></Column>
-        </DataTable>
+        <>
+            <div className="p-inputgroup create-brand__table">
+                <InputText placeholder="Buscar marca" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <Button icon="pi pi-search" className="p-button-primary" />
+            </div>
+            <DataTable value={brands} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-brands" showGridlines rows={10} selection={selectedBrand} onSelectionChange={(e) => setBrandId(e.value)} dataKey="id" globalFilter={globalFilter}>
+                <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
+                <Column field="id" sortable header="Id marca"></Column>
+                <Column field="name" sortable header="Nombre"></Column>
+            </DataTable>
+        </>
     );
 };

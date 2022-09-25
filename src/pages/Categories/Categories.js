@@ -23,8 +23,8 @@ export default function Categories() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteCategoryAlert()} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} />
+            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteCategoryAlert()} disabled={!categoryIdSelected}/>
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!categoryIdSelected}/>
         </React.Fragment>
     );
 
@@ -166,6 +166,7 @@ export default function Categories() {
     const loadCategories = () => {
         _categoryService.getCategories().then((response) => {
             setCategories(response);
+            setCategoryIdSelected("");
         });
     };
     useEffect(() => {
@@ -198,10 +199,6 @@ export default function Categories() {
                 </div>
             </Dialog>
 
-            <div className="p-inputgroup create-category__table">
-                <InputText placeholder="Buscar categoria" />
-                <Button icon="pi pi-search" className="p-button-primary" />
-            </div>
 
             <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected ={setCategoryNameSelected}/>
         </div>

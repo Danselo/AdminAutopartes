@@ -1,10 +1,8 @@
 import axios from 'axios';
-// import config from './../config/config';
+import config from './../config/config';
 
-// const baseCategoryURL = process.env.REACT_APP_BASE_URL +'/categories'
-// console.log(baseCategoryURL)
+const baseCategoryURL = config.baseURL +'/categories'
 
-const baseCategoryURL = 'http://localhost:5000/categories'
 export class CategoryService {
 
     getCategories() {
@@ -17,8 +15,7 @@ export class CategoryService {
           .post(baseCategoryURL + '/create', {
             name,  
             
-          })
-          .then();  
+          });  
           
       }
     
@@ -26,15 +23,12 @@ export class CategoryService {
         return axios
             .put(`${baseCategoryURL}/update/${id}`,{
                 name: name
-            }).then()
+            })
     }
 
     deleteCategory(id){
-        
         return axios
-        .delete(`${baseCategoryURL}/delete/${id}`)
-        .then();
-
+        .delete(`${baseCategoryURL}/delete/${id}`);
     }
 
 }
