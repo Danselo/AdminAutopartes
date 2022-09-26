@@ -14,9 +14,9 @@ const urlUsers = 'http://localhost:5000/users/'
 
 export default function CreateClient() {
     const _clientService = new ClientService();
-    
+
     const acceptModalConfirmation = (lifeTime) => {
-       
+
     };
 
     const reject = () => {
@@ -42,9 +42,9 @@ export default function CreateClient() {
             reject,
         });
     };
-    
+
     const toast = useRef(null);
-    const [ setUserId] = useState("");
+    const [setUserId] = useState("");
 
     const [selectedUser, setSelectedUser] = useState([null]);
     const [clientName, setClientName] = useState("");
@@ -60,34 +60,34 @@ export default function CreateClient() {
     const [clientAddress, setClientAddress] = useState("");
     const [clientIndications, setClientIndications] = useState("");
     const [clientUsers, setClientUsers] = useState([]);
-    
+
 
     useEffect(() => {
         axios.get(urlUsers).then((response) => {
-            setClientUsers(response.data);    
-        });    
+            setClientUsers(response.data);
+        });
 
     }, []);
     const onUserChange = (e) => {
         setSelectedUser(e.value);
     };
     function createClient() {
-        _clientService.createClient(selectedUser.id,clientName,clientLastName,clientDocumentType,clientDocument,clientTelephone,clientEmail,clientCountry,clientDepartment,clientCity,clientNeightBoordHood,clientAddress,clientIndications)
-        .then((data)=>{
-            const lifeTime = 3000;
-            toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario Creado exitosamente", life: lifeTime });
-            setTimeout(() => {
-               console.log('Redirigiendo a otra pagina') 
-            }, lifeTime);
-            console.log('client created successfully', data);
-        })
-        .catch(console.error);
-      }
-      function getUserIdHandler(id){
+        _clientService.createClient(selectedUser.id, clientName, clientLastName, clientDocumentType, clientDocument, clientTelephone, clientEmail, clientCountry, clientDepartment, clientCity, clientNeightBoordHood, clientAddress, clientIndications)
+            .then((data) => {
+                const lifeTime = 3000;
+                toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario Creado exitosamente", life: lifeTime });
+                setTimeout(() => {
+                    console.log('Redirigiendo a otra pagina')
+                }, lifeTime);
+                console.log('client created successfully', data);
+            })
+            .catch(console.error);
+    }
+    function getUserIdHandler(id) {
         setUserId(id)
     }
 
-    
+
     return (
         <div>
             <Toast ref={toast} />
@@ -99,15 +99,15 @@ export default function CreateClient() {
                 <h3>Crear un nuevo cliente</h3>
             </div>
             <div className="create-product-form">
-            <span className="p-float-label">
-                     {/* <Dropdown value={selectedUser} options={clientUsers} onChange={onUserChange} optionLabel="name" placeholder="Seleccione Rol"  /> */}
-                     <ListBox value={selectedUser} options={clientUsers} idUser={(id) => getUserIdHandler(id)} onChange={onUserChange}  filter optionLabel="name"
-                 style={{ width: '15rem' }} listStyle={{ maxHeight: '250px' }} />
+                <span className="p-float-label">
+                    {/* <Dropdown value={selectedUser} options={clientUsers} onChange={onUserChange} optionLabel="name" placeholder="Seleccione Rol"  /> */}
+                    <ListBox value={selectedUser} options={clientUsers} idUser={(id) => getUserIdHandler(id)} onChange={onUserChange} filter optionLabel="name"
+                        style={{ width: '15rem' }} listStyle={{ maxHeight: '250px' }} />
                     {/* <label htmlFor="type_document">Usuario</label> */}
                 </span>
             </div>
-            <div className="create-product-form">
-          
+            <div className="create-client-form">
+
                 <span className="p-float-label">
                     <InputText className="jjj" id="nit" value={clientDocumentType} onChange={(e) => setClientDocumentType(e.target.value)} />
                     <label htmlFor="type_document">Tipo documento</label>
@@ -152,19 +152,18 @@ export default function CreateClient() {
                     <InputText className="jjj" id="addres" value={clientNeightBoordHood} onChange={(e) => setClientNeightBoordHood(e.target.value)} />
                     <label htmlFor="addres">Vecindario</label>
                 </span>
-            </div>
-            <div className="create-product-form">
-            <span className="p-float-label">
-                <InputTextarea  value={clientIndications} onChange={(e) => setClientIndications(e.target.value)} />
 
+            </div>
+            <div className="create-client-form__inputTextarea">
+                <span className="p-float-label">
+                    <InputTextarea value={clientIndications} className="create-client-form__inputTextarea-input" onChange={(e) => setClientIndications(e.target.value)} autoResize />
                     <label htmlFor="addres">Indicaciones</label>
                 </span>
+
             </div>
+
             <div className="create-product-buttons">
-                {/* <Button label="Crear" className="p-button-success" />
-                <Link to={"/pages/Products/Products"}>
-                    <Button label="Cancelar" className="p-button-danger" />
-                </Link> */}
+
                 <Button onClick={createClientConfirmation} icon="pi pi-check" label="Crear" className="mr-2"></Button>
                 <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
             </div>
