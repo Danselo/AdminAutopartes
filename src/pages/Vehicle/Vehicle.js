@@ -25,7 +25,7 @@ export default function Vehicles() {
     const [newVehicleBrandSelected, setNewVehicleBrandSelected] = useState("");
     const [vehicles, setVehicles] = useState([]);
     const [brands, setBrands] = useState([]);
-
+    console.log(brands)
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -118,6 +118,11 @@ export default function Vehicles() {
         setDisplayDialogCreate(false);
     };
 
+    const onHideDialogCancelEdit = () => {
+        cancelCreate();
+        setDisplayDialogEdit(false);
+    };
+
     const onVehicleBrandChange = (e) => {
         setSelectedVehicleBrand(e.value);
     };
@@ -133,7 +138,7 @@ export default function Vehicles() {
     const renderFooterDialogEdit = () => {
         return (
             <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
                 <Button label="Editar vehiculo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
             </div>
         );
@@ -191,6 +196,7 @@ export default function Vehicles() {
     };
 
     const onEditVehicleSelected =  (e)=>{
+        console.log(e)
          const vehicleUpdated = {
             ...vehicleSelected,
             [e.target.name]:e.target.value

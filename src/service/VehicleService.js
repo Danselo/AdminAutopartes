@@ -22,9 +22,9 @@ export class VehicleService {
       }
     
     updateVehicle(vehicle){
-        // console.log(vehicle.brands_vehicles)
-        // delete vehicle.brands_vehicles
-        // console.log(vehicle.brands_vehicles)
+      
+        delete vehicle.brands_vehicles
+       
        const url = `${baseVehicleURL}/update/${vehicle.id}`
         delete vehicle.id
         return axios
