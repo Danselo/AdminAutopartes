@@ -2,46 +2,38 @@ import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
 // import { buttonBodyTemplate } from "./columnTemplates";
-import axios from 'axios'
-const url = 'http://localhost:5000/users/'
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
 
-
-export const TableUser = () => {
-    const [users, setUsers] = useState([]);
-    const [selectedUser, setSelectedUser] = useState([]);
-
-
-   useEffect(() => {
-    axios.get(url).then((response) => {
-        console.log(response)
-        setUsers(response.data);           
-    });
-}, []);
-
-console.log(selectedUser);
+export const TableUser = ({setUserSelected,users}) => {
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [usersSelected, setUsersSelected] = useState([]);
+// console.log(usersSelected)
+    useEffect(() => {
+        if (usersSelected) {
+            setUsersSelected(usersSelected)
+        }
+    }, [usersSelected, setUserSelected])
+    
+    console.log(users)
 
     return (
-        <div className="">
-                <DataTable value={users} paginator responsiveLayout="scroll" 
-        dataKey="id" 
-        emptyMessage="No se encontraron datos"
-         className="table-product" 
-         showGridlines
-         selection={selectedUser}
-         onSelectionChange={e => setSelectedUser(e.value)}
-        rows={10}>
+        <>
+        <div className="p-inputgroup create-brand__table">
+                <InputText placeholder="Buscar marca" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <Button icon="pi pi-search" className="p-button-primary" />
+            </div>
+            <DataTable value={users} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={usersSelected} onSelectionChange={(e) => setUsersSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
             <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
             <Column field="lastname" sortable header="Apellido"></Column>
             <Column field="email" sortable header="Email"></Column>
             <Column field="idRol" sortable header="Rol"></Column>
-            
-        </DataTable>
 
-        </div>
-    
+        </DataTable>
+        </>
         
     );
 };
