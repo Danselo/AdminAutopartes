@@ -1,17 +1,20 @@
 import axios from 'axios';
-const baseURL = 'http://localhost:5000'
-const baseProductsURL = baseURL +'/products'
+import config from '../config/config';
+
+const baseProductURL = config.baseURL +'/products'
 
 export class ProductService {
 
     getProductsSmall() {
         return axios.get('assets/demo/data/products-small.json').then(res => res.data.data);
     }
-
-    createProduct(name, description, idVehicle, idCategory,) {
+    getProducts() {
+      return axios.get(baseProductURL).then(res => res.data);
+  }
+    createProduct(name, description, idVehicle,idCategory) {
         
         return axios
-          .post(baseProductsURL + '/create', {
+          .post(baseProductURL + '/create', {
             idVehicle,
             idCategory,
             name,  
@@ -22,5 +25,20 @@ export class ProductService {
           })  
           
       }
+      updateProduct(id, name, description, idCategory, idVehicle){
+        return axios
+            .put(`${baseProductURL}/update/${id}`,{
+              name, 
+              description, 
+              idCategory, 
+              idVehicle
+            })
+    }
+
+    deleteProduct(id){
+        return axios
+        .delete(`${baseProductURL}/delete/${id}`);
+    }
 
 }
+

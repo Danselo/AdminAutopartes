@@ -1,0 +1,29 @@
+.create-vehicle-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.create-vehicle__table{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 1rem 0 1rem 0;
+    width: 20rem;
+}
+
+.dc-space-between{
+    margin: 0 1rem 0 0;
+}
+
+.create-vehicle-form__input{
+    margin: 1rem 0 1rem 0;
+    width: 20rem;
+}
+
+.create-vehicle-form__dropdown{
+    margin: 1rem 0 1rem 0;
+    width: 20rem;
+}

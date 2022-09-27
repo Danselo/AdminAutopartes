@@ -46,7 +46,7 @@ import CreatePurchase from "./pages/Buys/CreatePurschase";
 import Categories from "./pages/Categories/Categories";
 // import CreateCategories from "./pages/Categories/CreateCategories";
 import Vehicles from "./pages/Vehicle/Vehicle";
-import CreateVehicle from "./pages/Vehicle/CreateVehicle";
+
 
 
 const App = () => {
@@ -299,7 +299,7 @@ const App = () => {
                     <Route path="/Categories" exact render={() => <Categories />} />
                     {/* <Route path="/CreateCategories" exact render={() => <CreateCategories />} /> */}
                     <Route path="/Vehicles" exact render={() => <Vehicles />} />
-                    <Route path="/Vehicles/create" exact render={() => <CreateVehicle />} />
+              
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
