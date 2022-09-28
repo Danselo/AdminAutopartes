@@ -11,11 +11,10 @@ export class ProductService {
     getProducts() {
       return axios.get(baseProductURL).then(res => res.data);
   }
-    createProduct(name, description, idVehicle,idCategory) {
-        
+    createProduct(id, name, description,idCategory) {
         return axios
           .post(baseProductURL + '/create', {
-            idVehicle,
+            id,
             idCategory,
             name,  
             description
@@ -25,19 +24,30 @@ export class ProductService {
           })  
           
       }
-      updateProduct(id, name, description, idCategory, idVehicle){
+      updateProduct(id, name, description, idCategory){
         return axios
             .put(`${baseProductURL}/update/${id}`,{
               name, 
               description, 
               idCategory, 
-              idVehicle
             })
     }
 
     deleteProduct(id){
         return axios
         .delete(`${baseProductURL}/delete/${id}`);
+    }
+
+    addVehicleToProduct(idProduct,idVehicle){
+      return axios
+          .post(baseProductURL + '/add-vehicle-to-product', {            
+            idProduct,
+            idVehicle             
+          })
+          .then((response) => {
+            return response.data;           
+          })
+
     }
 
 }

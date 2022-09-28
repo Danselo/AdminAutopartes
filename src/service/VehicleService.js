@@ -24,6 +24,7 @@ export class VehicleService {
     updateVehicle(vehicle){
       
         delete vehicle.brands_vehicles
+        delete vehicle.id_brand
        
        const url = `${baseVehicleURL}/update/${vehicle.id}`
         delete vehicle.id

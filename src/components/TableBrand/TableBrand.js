@@ -22,7 +22,7 @@ export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected })
                 <InputText placeholder="Buscar marca" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
-            <DataTable value={brands} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-brands" showGridlines rows={10} selection={selectedBrand} onSelectionChange={(e) => setBrandId(e.value)} dataKey="id" globalFilter={globalFilter}>
+            <DataTable value={brands} header="Marcas" paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-brands" showGridlines rows={10} selection={selectedBrand} onSelectionChange={(e) => setBrandId(e.value)} dataKey="id" globalFilter={globalFilter}>
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" sortable header="Id marca"></Column>
                 <Column field="name" sortable header="Nombre"></Column>

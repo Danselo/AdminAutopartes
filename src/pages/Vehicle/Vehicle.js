@@ -22,10 +22,9 @@ export default function Vehicles() {
     const [vehicleName, setVehicleName] = useState("");
     const [vehicleModel, setVehicleModel] = useState("");
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState("");
-    const [newVehicleBrandSelected, setNewVehicleBrandSelected] = useState("");
     const [vehicles, setVehicles] = useState([]);
     const [brands, setBrands] = useState([]);
-    console.log(brands)
+
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -33,7 +32,7 @@ export default function Vehicles() {
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!vehicleSelected.name} />
         </React.Fragment>
     );
-
+    console.log(vehicleSelected.length)
     const rightContents = (
         <React.Fragment>
             <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
@@ -182,6 +181,8 @@ export default function Vehicles() {
             .then(() => {
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
                 loadVehicles();
+                setVehicleSelected({});
+
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -195,11 +196,11 @@ export default function Vehicles() {
         });
     };
 
-    const onEditVehicleSelected =  (e)=>{
-        console.log(e)
+    const onChangeVehicleSelectedEditForm =  (eventOnChange)=>{
+        console.log(eventOnChange.target)
          const vehicleUpdated = {
             ...vehicleSelected,
-            [e.target.name]:e.target.value
+            [eventOnChange.target.name]:eventOnChange.target.value
         }
         console.log(vehicleUpdated);
         setVehicleSelected(vehicleUpdated)
@@ -215,7 +216,7 @@ export default function Vehicles() {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h4>Vehiculos registradss</h4>
+                <h4>Vehículos registrados</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />
@@ -231,18 +232,18 @@ export default function Vehicles() {
             <Dialog header="Editar vehiculo" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-vehicle-form">
                     <h5>Ingrese los datos del nuevo vehiculo</h5>
-                    <InputText value={vehicleSelected.name} onChange={onEditVehicleSelected} 
+                    <InputText value={vehicleSelected.name} onChange={onChangeVehicleSelectedEditForm} 
                     name="name" placeholder="Nombre del vehiculo" className="create-vehicle-form__input" />
                     <InputText value={vehicleSelected.model} 
                     name="model"
-                    onChange={onEditVehicleSelected} placeholder="Modelo del vehiculo" className="create-vehicle-form__input" />
+                    onChange={onChangeVehicleSelectedEditForm} placeholder="Modelo del vehiculo" className="create-vehicle-form__input" />
                     <Dropdown value={vehicleSelected.idBrand} 
                     name="idBrand" optionValue="id"
-                    options={brands} onChange={onEditVehicleSelected} optionLabel="name" placeholder="Marca del vehiculo" className="create-vehicle-form__dropdown" />
+                    options={brands} onChange={onChangeVehicleSelectedEditForm} optionLabel="name" placeholder="Marca del vehiculo" className="create-vehicle-form__dropdown" />
                 </div>
             </Dialog>
 
-            <TableVehicles className="table-products" vehicles={vehicles} vehicleSelected={vehicleSelected} setVehicleSelected={setVehicleSelected} />
+            <TableVehicles className="table-products" vehicles={vehicles} setVehicleSelected={setVehicleSelected} />
         </div>
     );
 }

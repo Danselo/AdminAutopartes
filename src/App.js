@@ -3,28 +3,22 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import classNames from "classnames";
 import { Route, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
 import { AppMenu } from "./AppMenu";
 import { AppConfig } from "./AppConfig";
-
 import Dashboard from "./components/Dashboard";
-
 import PrimeReact from "primereact/api";
 import { Tooltip } from "primereact/tooltip";
-
 import "primereact/resources/primereact.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "prismjs/themes/prism-coy.css";
-// import "primereact/resources/themes/md-light-indigo/theme.css";
 import "./assets/demo/flags/flags.css";
 import "./assets/demo/Demos.scss";
 import "./assets/layout/layout.scss";
 import "./App.scss";
 import Products from "./pages/Products/Products";
-import CreateProduct from "./pages/Products/CreateProduct";
 import Providers from "./pages/Providers/Providers";
 import CreateProvider from "./pages/Providers/CreateProvider";
 import Client from "./pages/Client/Client";
@@ -36,7 +30,6 @@ import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
 import CreateUser from "./pages/CreateUser/CreateUser";
 import CreateRol from "./pages/CreateRol/CreateRol";
-
 import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
@@ -44,7 +37,6 @@ import EditProvider from "./pages/Providers/EditProvider";
 import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurschase";
 import Categories from "./pages/Categories/Categories";
-// import CreateCategories from "./pages/Categories/CreateCategories";
 import Vehicles from "./pages/Vehicle/Vehicle";
 
 
@@ -210,7 +202,7 @@ const App = () => {
                 {
                     label: "Productos",
                     icon: "pi pi-fw pi-box",
-                    to: "/pages/Products/Products",
+                    to: "/Products",
                 },
                 {
                     label: "Vehiculos",
@@ -276,8 +268,7 @@ const App = () => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
-                    <Route path="/pages/Products/Products" exact render={() => <Products />} />
-                    <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
+                    <Route path="/products" exact render={() => <Products />} />
                     <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
                     <Route path="/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
@@ -285,8 +276,7 @@ const App = () => {
                     <Route path="/Sales" exact render={() => <Sales />} />
                     <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
-                    <Route path="/pages/CreateRol/CreateRol" exact render={() => <CreateRol />} />
-                   
+                    <Route path="/pages/CreateRol/CreateRol" exact render={() => <CreateRol />} />             
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
                     <Route path="/pages/EditUsers/EditUsers" exact render={() => <EditUsers />} />
                     <Route path="/pages/Roles/Roles" exact render={() => <Roles />} />
@@ -297,7 +287,7 @@ const App = () => {
                     <Route path="/Buys" exact render={() => <Buys />} />
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
                     <Route path="/Categories" exact render={() => <Categories />} />
-                    {/* <Route path="/CreateCategories" exact render={() => <CreateCategories />} /> */}
+                  
                     <Route path="/Vehicles" exact render={() => <Vehicles />} />
               
                 </div>
