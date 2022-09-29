@@ -1,7 +1,6 @@
 import React, {useEffect,useState,useRef} from "react";
 import { TableUser } from "../../components/TableUsers/TableUser";
 import { Button } from "primereact/button";
-import { Link } from "react-router-dom";
 import { Toolbar } from "primereact/toolbar";
 import "./users.css";
 import { UserService } from "../../service/UserService";
@@ -11,6 +10,7 @@ import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { Password } from 'primereact/password';
+import { Toast } from "primereact/toast";
 
 const _userService = new UserService();
 const _roleService = new RoleService();
@@ -29,21 +29,19 @@ export default function Users() {
     const [userStatus] = useState(true);
 
     const [selectedUserRole, setSelectedUserRole] = useState("");
-    const [newUserRoleSelected, setNewUserRoleSelected] = useState("");
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
-    console.log(roles);
-    const leftContents = (
-            <Link to={"/pages/CreateUser/CreateUser"}>
-            <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
-            </Link>
+    // const leftContents = (
+    //         // <Link to={"/pages/CreateUser/CreateUser"}>
+    //         // <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
+    //         // </Link>
 
 
-    );
+    // );
     const rightContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!userSelected.name} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!userSelected.name}  />
         </React.Fragment>
     );
     const reject = () => {
@@ -51,7 +49,7 @@ export default function Users() {
     };
     const createUserAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta vehiculo?",
+            message: "¿Esta seguro que desea agregar esta Usuario?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
@@ -63,7 +61,7 @@ export default function Users() {
 
     const editUserAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta vehiculo?",
+            message: "¿Esta seguro que desea editar esta Usuario?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
@@ -126,7 +124,7 @@ export default function Users() {
         return (
             <div>
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear vehiculo" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+                <Button label="Crear Usuario" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
             </div>
         );
     };
@@ -135,11 +133,12 @@ export default function Users() {
         return (
             <div>
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar vehiculo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+                <Button label="Editar Usuario" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus  />
             </div>
         );
     };
     function EditUser() {
+        console.log(userSelected);
         _userService.updateUser(userSelected)
             .then(() => {
                 setUserSelected({});
@@ -152,11 +151,10 @@ export default function Users() {
             });
     }
     function getRoles() {
-        _roleService.getRol().then((response) => {
+        _roleService.getRoles().then((response) => {
             setRoles(response);
         });
     }
-    console.log(roles);
     function CreateUser() {
         _userService
             .createUser(userEmail,userPassword, userName,userLastname,userStatus,selectedUserRole.id)
@@ -171,7 +169,7 @@ export default function Users() {
             });
     }
     const loadUsers = () => {
-        _userService.getUser().then((response) => {
+        _userService.getUsers().then((response) => {
             setUsers(response);
         });
     };
@@ -186,7 +184,7 @@ export default function Users() {
         setUserSelected(userUpdated)
     }
     useEffect(() => {
-        _userService.getUser().then((response) => {
+        _userService.getUsers().then((response) => {
             setUsers(response);
         });
     }, []);
@@ -197,35 +195,40 @@ export default function Users() {
     // );
     return (
         <div>
+            <Toast ref={toast} />
             <div></div>
             <div className="text-center">
                 <h3>Gestión de Usuarios</h3>
             </div>
-            <Toolbar left={leftContents} right={rightContents} />
+            <Toolbar right={rightContents} />
             <Dialog header="Crear un nuevo Usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }} footer={renderFooterDialog()}>
-                <div className="create-vehicle-form">
-                    <h5>Ingrese los datos del vehiculo</h5>
-                    <InputText value={userEmail} onChange={(e) => setUserEmail(e.target.value)} placeholder="Correo Electronico" className="create-vehicle-form__input" />
-                    <InputText value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
-                    <InputText value={userLastname} onChange={(e) => setUserLastname(e.target.value)} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
-                    <Password value={userPassword } onChange={(e) => setUserPassword(e.target.value)} placeholder="Digite su contraseña" toggleMask />
-                    
-                    <Dropdown value={selectedUserRole} options={roles} onChange={onUserRolChange} optionLabel="name" placeholder="Rol" className="create-vehicle-form__dropdown" />
+                <div className="create-user-form">
+                    <h5>Ingrese los datos del Usuario</h5>
+
+                    <div className="create_user_form_complete_name">
+                    <InputText name="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} placeholder="Correo Electronico" className="create-vehicle-form__input" />
+                    <Password  name="password" value={userPassword } onChange={(e) => setUserPassword(e.target.value)} placeholder="Digite su contraseña" toggleMask />
+                    </div>
+                    <div className="create_user_form_complete_name">
+                    <InputText name="name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
+                    <InputText name="lastname" value={userLastname} onChange={(e) => setUserLastname(e.target.value)} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
+                    </div>
+                    <Dropdown  value={selectedUserRole} options={roles} onChange={onUserRolChange} optionLabel="name" placeholder="Rol" className="create-vehicle-form__dropdown" />
                 </div>
             </Dialog>
-            <Dialog header="Editar vehiculo" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
-            <div className="create-vehicle-form">
-                    <h5>Ingrese los datos del vehiculo</h5>
-                    <InputText value={userSelected.email} onChange={(e) => setUserEmail(e.target.value)} placeholder="Correo Electronico" className="create-vehicle-form__input" />
-                    <InputText value={userSelected.name} onChange={(e) => setUserName(e.target.value)} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
-                    <InputText value={userSelected.lastname} onChange={(e) => setUserLastname(e.target.value)} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
-                    <Password value={userSelected.password} onChange={(e) => setUserPassword(e.target.value)} placeholder="Digite su contraseña" toggleMask />
+            <Dialog header="Editar usuario" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
+            <div className="create-user-form">
+                    <h5>Ingrese los datos del Usuario</h5>
+                    <InputText  name="email" value={userSelected.email} onChange={onEditUserSelected} placeholder="Correo Electronico" className="create-vehicle-form__input" />
+                    <InputText name="name" value={userSelected.name} onChange={onEditUserSelected} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
+                    <InputText name="lastname" value={userSelected.lastname} onChange={onEditUserSelected} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
+                    <Password name="password" value={userSelected.password} onChange={onEditUserSelected} placeholder="Digite su contraseña" toggleMask />
                     <Dropdown value={userSelected.idRol} 
                     name="idRol" optionValue="id"
                     options={roles} onChange={onEditUserSelected} optionLabel="name" placeholder="Rol del usuario" className="create-vehicle-form__dropdown" />
                 </div>
             </Dialog>
-            <TableUser className="table-users" users = {users} userSelected={userSelected} />
+            <TableUser className="table-users" users = {users} setUserSelected={setUserSelected} />
 
         </div>
     );

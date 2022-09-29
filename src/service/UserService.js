@@ -3,7 +3,10 @@ const baseURL = "http://localhost:5000";
 const baseUserURL = baseURL + "/users";
 export class UserService {
     getUser(id) {
-        return axios.get(`${baseUserURL}/${id}`).then((res) => res.data.data);
+        return axios.get(`${baseUserURL}/${id}`).then((res) => res.data);
+    }
+    getUsers() {
+        return axios.get(baseUserURL).then((res) => res.data);
     }
     createUser(email, password, name, lastname, status, idRol) {
         return axios
@@ -14,13 +17,15 @@ export class UserService {
                 lastname,
                 status,
                 idRol,
+            
             })
     }
 
     updateUser(user) {
        
         const url = `${baseUserURL}/update/${user.id}`
-         delete user.id
+        delete user.id
+        delete user.createdAt
          return axios
              .put(url,user)
     }

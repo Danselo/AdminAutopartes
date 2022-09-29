@@ -12,16 +12,15 @@ export const TableUser = ({setUserSelected,users}) => {
 // console.log(usersSelected)
     useEffect(() => {
         if (usersSelected) {
-            setUsersSelected(usersSelected)
+            setUserSelected(usersSelected)
         }
     }, [usersSelected, setUserSelected])
     
-    console.log(users)
 
     return (
         <>
         <div className="p-inputgroup create-brand__table">
-                <InputText placeholder="Buscar marca" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <InputText placeholder="Buscar usuario" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
             <DataTable value={users} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={usersSelected} onSelectionChange={(e) => setUsersSelected(e.value)} dataKey="id" globalFilter={globalFilter}>

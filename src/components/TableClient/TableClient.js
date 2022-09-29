@@ -2,23 +2,30 @@ import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
 import "./dataTableClient.css";
-import { buttonBodyTemplate } from "./columnTemplateClient";
-import axios from 'axios'
-const url = 'http://localhost:5000/clients/'
-export const TableClient = () => {
-    const [clients, setClients] = useState([]);
-  
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
-   useEffect(() => {
-    axios.get(url).then((response) => {
-        console.log(response)
-        setClients(response.data);           
-    });
-}, []);
+export const TableClient = ({setClientSelected,clients}) => {
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [clientsTableSelected, setClientsSelected] = useState([]);
+  
+    useEffect(() => {   
+        if (clientsTableSelected) {
+            setClientSelected(clientsTableSelected)
+        }
+    }, [clientsTableSelected, setClientSelected])
+    
+
 
 
     return (
-        <DataTable header="Clientes" value={clients} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <>        
+                <div className="p-inputgroup create-brand__table">
+                <InputText placeholder="Buscar Cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <Button icon="pi pi-search" className="p-button-primary" />
+            </div>
+        <DataTable value={clients} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={clientsTableSelected} onSelectionChange={(e) => setClientsSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
+             <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
             <Column field="idUser" sortable header="Id Usuario"></Column>
             <Column field="name" sortable header="Nombre"></Column>
@@ -29,12 +36,12 @@ export const TableClient = () => {
             <Column field="email" sortable header="Email"></Column>
             <Column field="country" sortable header="Pais"></Column>
             <Column field="department" sortable header="Departamento"></Column>
-            <Column field="city" sortable header="Departamento"></Column>
-            <Column field="neightboorhood" sortable header="Departamento"></Column>
-            <Column field="address" sortable header="Departamento"></Column>
-
-            
-            <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
+            <Column field="city" sortable header="Ciudad"></Column>
+            <Column field="neightboorhood" sortable header="Vecindario "></Column>
+            <Column field="address" sortable header="Direccion"></Column>
+            <Column field="indications" sortable header="Indicaciones"></Column>
         </DataTable>
+        </>
+
     );
 };
