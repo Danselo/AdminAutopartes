@@ -15,7 +15,6 @@ const _vehicleService = new VehicleService();
 const _brandService = new BrandService();
 export default function Vehicles() {
     const [vehicleSelected, setVehicleSelected] = useState({});
-
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
@@ -72,7 +71,7 @@ export default function Vehicles() {
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
             accept: () => deleteVehicle(vehicleSelected),
-            reject: () => setDisplayDialogCreate(true),
+            reject,
         });
     };
     const cancelCreate = () => {
@@ -85,6 +84,19 @@ export default function Vehicles() {
             rejectLabel: "Cancelar",
             accept: () => reject(),
             reject: () => setDisplayDialogCreate(true),
+        });
+    };
+
+    const cancelEdit = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea perder el progreso?",
+            header: "Confirmacion",
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: "No crear",
+            rejectLabel: "Cancelar",
+            accept: () => reject(),
+            reject: () => setDisplayDialogEdit(true),
         });
     };
     function onClickDialogCreate() {
@@ -118,7 +130,7 @@ export default function Vehicles() {
     };
 
     const onHideDialogCancelEdit = () => {
-        cancelCreate();
+        cancelEdit();
         setDisplayDialogEdit(false);
     };
 

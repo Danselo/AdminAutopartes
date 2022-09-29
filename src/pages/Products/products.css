@@ -27,3 +27,18 @@
     margin: 1rem 0 1rem 0;
     width: 20rem;
 }
+
+.picklist-vehicles{
+    width: 58vw;
+}
+
+.picklist-vehicles .vehicle-item {
+    display: flex;
+    align-items: center;
+    padding: .5rem;
+    width: 100%;
+}
+
+.table-product--column-gray{
+    background-color: rgba(201, 206, 206, 0.495);
+}

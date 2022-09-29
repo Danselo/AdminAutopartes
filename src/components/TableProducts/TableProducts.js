@@ -3,9 +3,24 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { ProductService } from "../../service/ProductService";
 
+const _productService = new ProductService();
 export const TableProducts = ({ setProductSelected, products }) => {
+    // const DataTableCrudDemo = () => {
+
+    //     let emptyProduct = {
+    //         id: null,
+    //         name: '',
+    //         idCategory: null,
+    //         amount: 0,
+    //         iva: 0,
+    //         price: 0,
+        
+    //     };
+    // const [product, setProduct] = useState(emptyProduct);
     const [globalFilter, setGlobalFilter] = useState(null);
+    const [vehiclesOfProducts,setVehiclesOfProducts] = useState({});
     const [TableProductsSelected, setTableProductsSelected] = useState([]);
     
     useEffect(() => {
@@ -13,6 +28,17 @@ export const TableProducts = ({ setProductSelected, products }) => {
             setProductSelected(TableProductsSelected);
         }
     }, [TableProductsSelected, setProductSelected]);
+    
+    useEffect(() => {
+        _productService.getVehiclesOfProducts().then((response) =>{
+            setVehiclesOfProducts(response)
+        })
+    }, []); 
+    
+    console.log(vehiclesOfProducts);
+    const getVehiclesOfProductTemplate = (RowProductData) =>{
+        
+    }
     return (
         <>
         <div className="p-inputgroup create-brand__table">
@@ -36,13 +62,14 @@ export const TableProducts = ({ setProductSelected, products }) => {
         onSelectionChange={(e) => setTableProductsSelected(e.value)}
         >
             <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
-            <Column field="id" sortable header="Id"></Column>
+            <Column field="id" frozen sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
             {/* <Column field="photo" header="Imagen" body={imageBodyTemplate}></Column> */}
-            <Column field="idCategory" sortable header="Categoria"></Column>
-            <Column field="amount" sortable header="Cantidad en stock"></Column>
-            <Column field="iva" header="Iva"></Column>
-            <Column field="price" sortable header="Precio"></Column>
+            <Column field="category.name" sortable header="Categoria"></Column>
+            <Column field="amount" className="table-product--column-gray" sortable header="Cantidad en stock"></Column>
+            <Column field="iva" className="table-product--column-gray" header="Iva"></Column>
+            <Column field="price" className="table-product--column-gray" sortable header="Precio"></Column>
+            <Column body={getVehiclesOfProductTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
         </DataTable>
         </>
     )

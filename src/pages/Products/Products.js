@@ -8,15 +8,14 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Toolbar } from "primereact/toolbar";
 import { Dropdown } from "primereact/dropdown";
-import { CategoryService } from "./../../service/CategoryService"
+import { CategoryService } from "./../../service/CategoryService";
 import { ProductService } from "../../service/ProductService";
 import { VehicleService } from "../../service/VehicleService";
-import { PickList } from 'primereact/picklist';
+import { PickList } from "primereact/picklist";
 
 const _categoryService = new CategoryService();
 const _productService = new ProductService();
 const _vehicleService = new VehicleService();
-
 
 export default function Products() {
     const [productSelected, setProductSelected] = useState({});
@@ -24,11 +23,14 @@ export default function Products() {
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
     const [productName, setProductName] = useState("");
-    const [productModel, setProductModel] = useState("");
+    const [productDescription, setProductDescription] = useState("");
     const [productReferenceId, setProductReferenceId] = useState("");
     const [selectedProductCategory, setSelectedProductCategory] = useState("");
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [vehicles, setVehicles] = useState([]);
+    const [selectedVehicles, setSelectedVehicles] = useState([]);
+    const [selectedVehiclesOfProduct, setSelectedVehiclesOfProduct] = useState([]);
 
     const leftContents = (
         <React.Fragment>
@@ -97,6 +99,7 @@ export default function Products() {
     }
 
     function onClickDialogEdit() {
+        getSelectedVehicles();
         getCategories();
         setDisplayDialogEdit(true);
     }
@@ -164,23 +167,29 @@ export default function Products() {
             setCategories(response);
         });
     }
+    function getSelectedVehicles(idProduct) {
+        _productService.getVehiclesOfProductById(idProduct).then((response) => {
+            setSelectedVehiclesOfProduct(response);
+        });
+    }
 
     function CreateProduct() {
         _productService
-            .createProduct(productReferenceId,productName, productModel, selectedProductCategory.id)
+            .createProduct(productReferenceId, productName, productDescription, selectedProductCategory.id)
             .then(() => {
-                console.log("entre al then")
-                selectedVehicles.forEach(vehiculo => {
-                    console.log(productReferenceId)
-                    console.log(vehiculo.id)
+                console.log("entre al then");
+                selectedVehicles.forEach((vehiculo) => {
+                    console.log(productReferenceId);
+                    console.log(vehiculo.id);
                     _productService
-                    .addVehicleToProduct(productReferenceId,vehiculo.id).then(()=>{
-                        console.log(1111)
-                    }).catch((e) => {
-                        console.log("hola")
-                    });
-                    
-                });               
+                        .addVehicleToProduct(productReferenceId, vehiculo.id)
+                        .then(() => {
+                            console.log(1111);
+                        })
+                        .catch((e) => {
+                            console.log("hola");
+                        });
+                });
                 setProductName("");
                 loadProducts();
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
@@ -198,7 +207,6 @@ export default function Products() {
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
                 loadProducts();
                 setProductSelected({});
-
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -206,57 +214,45 @@ export default function Products() {
             });
     }
 
+
     const loadProducts = () => {
         _productService.getProducts().then((response) => {
             setProducts(response);
         });
     };
 
-    const onChangeProductSelectedEditForm =  (eventOnChange)=>{
-        console.log(eventOnChange.target)
-         const productUpdated = {
+    const onChangeProductSelectedEditForm = (eventOnChange) => {
+        console.log(eventOnChange.target);
+        const productUpdated = {
             ...productSelected,
-            [eventOnChange.target.name]:eventOnChange.target.value
-        }
+            [eventOnChange.target.name]: eventOnChange.target.value,
+        };
         console.log(productUpdated);
-        setProductSelected(productUpdated)
-    }
+        setProductSelected(productUpdated);
+    };
     useEffect(() => {
         _productService.getProducts().then((response) => {
             setProducts(response);
         });
     }, []);
 
-    const [vehicles, setVehicles] = useState([]);
-    const [selectedVehicles, setSelectedVehicles] = useState([]);
-    console.log(selectedVehicles)
-    selectedVehicles.forEach(element => {
-        console.log(element.id)
-    });
+ 
     useEffect(() => {
-        _vehicleService.getVehicles().then(data => setVehicles(data));
-    }, []); 
+        _vehicleService.getVehicles().then((data) => setVehicles(data));
+    }, []);
 
     const onChange = (event) => {
         setVehicles(event.source);
         setSelectedVehicles(event.target);
-    }
+    };
 
     const vehicleTemplate = (item) => {
         return (
-            <div className="product-item">
-                <div className="image-container">
-                    {item.name}
-                </div>
-                <div className="product-list-detail">
-                    {item.model}
-                </div>
-                <div className="product-list-action">
-                    {item.brands_vehicles.name}
-                </div>
+            <div className="vehicle-item">
+                <p>{item.name} {item.model} <strong>{item.brands_vehicles.name}</strong></p>
             </div>
         );
-    }
+    };
 
     return (
         <div>
@@ -268,43 +264,61 @@ export default function Products() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }} footer={renderFooterDialog()}>
+            <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
                 <div className="create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
-                    <InputText value={productReferenceId} onChange={(e) => setProductReferenceId(e.target.value)} placeholder="Referencia del producto" className="create-product-form__input" /><InputText value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Nombre del producto" className="create-product-form__input" />
-                    <InputText value={productModel} onChange={(e) => setProductModel(e.target.value)} placeholder="Descripcion del producto" className="create-product-form__input" />
+                    <InputText value={productReferenceId} onChange={(e) => setProductReferenceId(e.target.value)} placeholder="Referencia del producto" className="create-product-form__input" />
+                    <InputText value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Nombre del producto" className="create-product-form__input" />
+                    <InputText value={productDescription} onChange={(e) => setProductDescription(e.target.value)} placeholder="Descripcion del producto" className="create-product-form__input" />
                     <Dropdown value={selectedProductCategory} options={categories} onChange={onProductCategoryChange} optionLabel="name" placeholder="Categoria del producto" className="create-product-form__dropdown" />
                     <h5>Seleccione los vehiculos compatibles con el producto</h5>
-                    <div className="picklist-demo">
-            <div className="card">
-                <PickList 
-                source={vehicles} 
-                target={selectedVehicles} 
-                itemTemplate={vehicleTemplate} 
-                sourceHeader="Vehiculos" 
-                targetHeader="Seleccionados"
-                sourceStyle={{ height: '342px' }} 
-                targetStyle={{ height: '342px' }} 
-                onChange={onChange}
-                filterBy="name" 
-                sourceFilterPlaceholder="Buscar" 
-                targetFilterPlaceholder="Buscar" />
-            </div>
-        </div>
+                    <div className="picklist-vehicles">
+                        <div className="card">
+                            <PickList
+                                source={vehicles}
+                                target={selectedVehicles}
+                                itemTemplate={vehicleTemplate}
+                                sourceHeader="Vehiculos"
+                                targetHeader="Seleccionados"
+                                sourceStyle={{ height: "342px" }}
+                                targetStyle={{ height: "342px" }}
+                                onChange={onChange}
+                                filterBy="name"
+                                sourceFilterPlaceholder="Buscar"
+                                targetFilterPlaceholder="Buscar"
+                            />
+                        </div>
+                    </div>
                 </div>
             </Dialog>
 
-            <Dialog header="Editar vehiculo" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
+            <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-product-form">
-                    <h5>Ingrese los datos del nuevo vehiculo</h5>
-                    <InputText value={productSelected.name} onChange={onChangeProductSelectedEditForm} 
-                    name="name" placeholder="Nombre del vehiculo" className="create-product-form__input" />
-                    <InputText value={productSelected.model} 
-                    name="model"
-                    onChange={onChangeProductSelectedEditForm} placeholder="Modelo del vehiculo" className="create-product-form__input" />
-                    <Dropdown value={productSelected.idBrand} 
-                    name="idBrand" optionValue="id"
-                    options={categories} onChange={onChangeProductSelectedEditForm} optionLabel="name" placeholder="Marca del vehiculo" className="create-product-form__dropdown" />
+                    <h5>Ingrese los datos del nuevo producto</h5>
+                
+                    <InputText value={productSelected.id} onChange={onChangeProductSelectedEditForm} name="id" placeholder="Nueva referencia del producto" className="create-product-form__input" />
+                    <InputText value={productSelected.name} onChange={onChangeProductSelectedEditForm} name="name" placeholder="Nuevo nombre del producto" className="create-product-form__input" />
+                    <InputText value={productSelected.description} onChange={onChangeProductSelectedEditForm} name="description" placeholder="Nueva descripcion del producto" className="create-product-form__input" />
+                    
+                    <Dropdown value={productSelected.idCategory} options={categories} onChange={onChangeProductSelectedEditForm} optionLabel="name" placeholder="Categoria del producto" className="create-product-form__dropdown" />
+                    <h5>Edicion de vehiculos compatibles con el producto</h5>
+                    <div className="picklist-vehicles">
+                        <div className="card">
+                            <PickList
+                                source={vehicles}
+                                target={selectedVehicles}
+                                itemTemplate={vehicleTemplate}
+                                sourceHeader="Vehiculos"
+                                targetHeader="Seleccionados"
+                                sourceStyle={{ height: "342px" }}
+                                targetStyle={{ height: "342px" }}
+                                onChange={onChange}
+                                filterBy="name"
+                                sourceFilterPlaceholder="Buscar"
+                                targetFilterPlaceholder="Buscar"
+                            />
+                        </div>
+                    </div>
                 </div>
             </Dialog>
 
