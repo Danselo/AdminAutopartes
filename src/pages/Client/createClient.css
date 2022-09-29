@@ -34,7 +34,6 @@
     justify-content: center;
     column-gap: 2rem;
     margin-bottom: 1rem;
-<<<<<<< HEAD
 } */
 
 .create-client-form{
@@ -43,15 +42,4 @@
     align-items: center;
     gap: 1.2em;
     padding: 2px;
-=======
-}
-
-.create-client-form__inputTextarea{
-    display: flex;
-    justify-content: center;
-}
-.create-client-form__inputTextarea-input{
-    
-    width: 41rem
->>>>>>> df0ef9344374b21c873f539556e1b6209aea39be
 }
