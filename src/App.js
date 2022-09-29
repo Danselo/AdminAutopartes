@@ -26,7 +26,7 @@ import "./App.scss";
 import Products from "./pages/Products/Products";
 import CreateProduct from "./pages/Products/CreateProduct";
 import Providers from "./pages/Providers/Providers";
-import CreateProvider from "./pages/Providers/CreateProvider";
+
 import Client from "./pages/Client/Client";
 import CreateClient from "./pages/Client/CreateClient";
 import Sales from "./pages/Sales/Sales";
@@ -40,7 +40,7 @@ import CreateRol from "./pages/CreateRol/CreateRol";
 import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
-import EditProvider from "./pages/Providers/EditProvider";
+
 import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurschase";
 import Categories from "./pages/Categories/Categories";
@@ -278,7 +278,7 @@ const App = () => {
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
                     <Route path="/pages/Products/Products" exact render={() => <Products />} />
                     <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
-                    <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
+       
                     <Route path="/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
@@ -293,7 +293,7 @@ const App = () => {
                     <Route path="/Brand" exact render={() => <Brand />} />
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
-                    <Route path="/EditProvider" exact render={() => <EditProvider />} />
+    
                     <Route path="/Buys" exact render={() => <Buys />} />
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
                     <Route path="/Categories" exact render={() => <Categories />} />
