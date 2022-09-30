@@ -7,18 +7,6 @@ import { ProductService } from "../../service/ProductService";
 
 const _productService = new ProductService();
 export const TableProducts = ({ setProductSelected, products }) => {
-    // const DataTableCrudDemo = () => {
-
-    //     let emptyProduct = {
-    //         id: null,
-    //         name: '',
-    //         idCategory: null,
-    //         amount: 0,
-    //         iva: 0,
-    //         price: 0,
-        
-    //     };
-    // const [product, setProduct] = useState(emptyProduct);
     const [globalFilter, setGlobalFilter] = useState(null);
     const [vehiclesOfProducts,setVehiclesOfProducts] = useState({});
     const [TableProductsSelected, setTableProductsSelected] = useState([]);

@@ -35,7 +35,7 @@ import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
 import EditProvider from "./pages/Providers/EditProvider";
 import Buys from "./pages/Buys/Buys";
-import CreatePurchase from "./pages/Buys/CreatePurschase";
+import CreatePurchase from "./pages/Buys/CreatePurchase";
 import Categories from "./pages/Categories/Categories";
 import Vehicles from "./pages/Vehicle/Vehicle";
 

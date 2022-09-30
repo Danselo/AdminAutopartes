@@ -5,12 +5,25 @@ import { InputText } from "primereact/inputtext";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import "./createPurchase.css";
-//import { TableCreatePurchase } from "../../components/TableBuys/TableCreatePurchase";
 import { TableCreatePurchase } from "../../components/TableBuys/TableCreatePurchase";
 import { FileUpload } from "primereact/fileupload";
 import { Tooltip } from "primereact/tooltip";
 
 export default function CreatePurchase() {
+    const toast = useRef(null);
+    const [buyProviderId, setBuyProviderId] = useState("");
+    const [buyDatePurchase, setBuyDatePurchase] = useState("");
+    const [buyInvoiceNumber, setBuyInvoiceNumber] = useState("");
+    const [buyTotalPurchase, setBuyTotalPurchase] = useState("");
+    const [buyShippingPrice, setBuyShippingPrice] = useState("");
+    const [buyIvaPercentage, setBuyIvaPercentage] = useState("");
+    const [buyTotalIva, setBuyTotalIva] = useState("");
+    const [buyOtherTaxesPercentage, setBuyOtherTaxesPercentage] = useState("");
+    const [buyTotalOtherTaxes, setBuyTotalOtherTaxes] = useState("");
+    const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState("");
+    const [buyTotalDiscounts, setBuyTotalDiscounts] = useState("");
+    const [buyInvoiceUrl, setBuyinvoiceUrl] = useState("");
+
     const onUpload = () => {
         toast.current.show({ severity: "info", summary: "Success", detail: "File Uploaded" });
     };
@@ -42,15 +55,6 @@ export default function CreatePurchase() {
         });
     };
 
-    const toast = useRef(null);
-    const [proveedor, setProveedor] = useState("");
-    const [nro_factura, SetNro_factura] = useState("");
-    const [fecha_compra, setValue2] = useState("");
-    const [total_compra, setTotal_compra] = useState("");
-    const [total_iva, setValue4] = useState("");
-    const [total_otros_impuestos, setValue5] = useState("");
-    const [monto_total, setMonto_total] = useState("");
-
     const chooseOptions = { icon: "pi pi-fw pi-images", iconOnly: true, className: "custom-choose-btn p-button-rounded p-button-outlined" };
     const uploadOptions = { icon: "pi pi-fw pi-cloud-upload", iconOnly: true, className: "custom-upload-btn p-button-success p-button-rounded p-button-outlined" };
     const cancelOptions = { icon: "pi pi-fw pi-times", iconOnly: true, className: "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined" };
@@ -70,34 +74,33 @@ export default function CreatePurchase() {
             </div>
 
             <div className="create-product-form">
-                <span className="p-float-label">
-                    <InputText className="jjj" id="nit" value={proveedor} onChange={(e) => setProveedor(e.target.value)} />
-                    <label htmlFor="id_client">Proveedor</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText className="jjj" id="contact_name" value={nro_factura} onChange={(e) => SetNro_factura(e.target.value)} />
-                    <label htmlFor="first_name">Nro factura</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText className="jjj" id="telephone" value={fecha_compra} onChange={(e) => setValue4(e.target.value)} />
-                    <label htmlFor="last_name">Fecha de compra</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText className="jjj" id="email" value={total_compra} onChange={(e) => setTotal_compra(e.target.value)} />
-                    <label htmlFor="total_purchase">Total compra</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText className="jjj" id="addres" value={total_iva} onChange={(e) => setValue5(e.target.value)} />
-                    <label htmlFor="total_vat">Total iva</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText className="jjj" id="company_name" value={total_otros_impuestos} onChange={(e) => setValue2(e.target.value)} />
-                    <label htmlFor="total_other_taxes">Total otros impuestos</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText className="jjj" id="company_name" value={monto_total} onChange={(e) => setMonto_total(e.target.value)} />
-                    <label htmlFor="total_amount">Monto total</label>
-                </span>
+                
+                    <InputText value={buyProviderId} onChange={(e) => setBuyProviderId(e.target.value)} placeholder="Proveedor" className="create-product-form__input" />
+                    
+                    <InputText value={buyDatePurchase} onChange={(e) => setBuyDatePurchase(e.target.value)} placeholder="Fecha de compra" className="jjj" id="" />             
+                    
+                    <InputText value={buyInvoiceNumber} onChange={(e) => setBuyInvoiceNumber(e.target.value)} placeholder="Numero de factura" className="jjj" id="" />
+                    
+                    <InputText  value={buyTotalPurchase} onChange={(e) => setBuyTotalPurchase(e.target.value)} placeholder="Total compra" className="jjj" id=""/>
+         
+                    <InputText  value={buyShippingPrice} onChange={(e) => setBuyShippingPrice(e.target.value)} placeholder="Valor de envio" className="jjj" id=""/>
+                                  
+                    <InputText  value={buyIvaPercentage} onChange={(e) => setBuyIvaPercentage(e.target.value)} placeholder="Porcentaje de IVA" className="jjj" id=""/>
+                      
+                    <InputText value={buyTotalIva} onChange={(e) => setBuyTotalIva(e.target.value)}
+                    placeholder="Total IVA compra" className="jjj" id="" />
+                        
+                    <InputText  value={buyOtherTaxesPercentage} onChange={(e) => setBuyOtherTaxesPercentage(e.target.value)} placeholder="Porcentaje otros impuestos" className="jjj" id=""/>
+
+                    <InputText  value={buyTotalOtherTaxes} onChange={(e) => setBuyTotalOtherTaxes(e.target.value)} placeholder="Total otros impuestos" className="jjj" id=""/>
+                    
+                    <InputText  value={buyDiscountsPercentage} onChange={(e) => setBuyDiscountsPercentage(e.target.value)} placeholder="Porcentaje descuento compra" className="jjj" id=""/>
+
+                    <InputText  value={buyTotalDiscounts} onChange={(e) => setBuyTotalDiscounts(e.target.value)} placeholder="Total descuento" className="jjj" id=""/>
+
+                    <InputText  value={buyInvoiceUrl} onChange={(e) => setBuyinvoiceUrl(e.target.value)} placeholder="URL factura" className="jjj" id=""/>
+                    
+                
             </div>
             <div className="form-venta">
                 <FileUpload

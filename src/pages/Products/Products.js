@@ -99,7 +99,7 @@ export default function Products() {
     }
 
     function onClickDialogEdit() {
-        getSelectedVehicles();
+        getVehiclesOfProductSelected(productSelected.id);
         getCategories();
         setDisplayDialogEdit(true);
     }
@@ -132,23 +132,7 @@ export default function Products() {
     const onProductCategoryChange = (e) => {
         setSelectedProductCategory(e.value);
     };
-    const renderFooterDialog = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear vehiculo" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-            </div>
-        );
-    };
-
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar vehiculo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
-    };
+    
     function EditProduct() {
         _productService
             .updateProduct(productSelected)
@@ -167,11 +151,14 @@ export default function Products() {
             setCategories(response);
         });
     }
-    function getSelectedVehicles(idProduct) {
-        _productService.getVehiclesOfProductById(idProduct).then((response) => {
+
+    function getVehiclesOfProductSelected(idProductSelected) {
+        _productService.getVehiclesOfProductById(idProductSelected).then((response) => {
             setSelectedVehiclesOfProduct(response);
         });
     }
+
+   
 
     function CreateProduct() {
         _productService
@@ -253,7 +240,31 @@ export default function Products() {
             </div>
         );
     };
+    const vehicleTemplateEditForm = (item) => {
+        return (
+            <div className="vehicle-item">
+                <p>{item.vehicles.name} {item.vehicles.model} <strong>{item.vehicles.brands_vehicles.name}</strong></p>
+            </div>
+        );
+    };
+const renderFooterDialog = () => {
+    return (
+        <div>
+            <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+            <Button label="Crear vehiculo" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+        </div>
+    );
+};
 
+const renderFooterDialogEdit = () => {
+    return (
+        <div>
+            <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+            <Button label="Editar vehiculo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+        </div>
+    );
+};
+console.log(selectedVehiclesOfProduct)
     return (
         <div>
             <Toast ref={toast} />
@@ -306,8 +317,8 @@ export default function Products() {
                         <div className="card">
                             <PickList
                                 source={vehicles}
-                                target={selectedVehicles}
-                                itemTemplate={vehicleTemplate}
+                                target={selectedVehiclesOfProduct}
+                                itemTemplate={vehicleTemplateEditForm}
                                 sourceHeader="Vehiculos"
                                 targetHeader="Seleccionados"
                                 sourceStyle={{ height: "342px" }}
