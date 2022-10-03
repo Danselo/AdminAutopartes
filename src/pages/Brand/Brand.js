@@ -104,6 +104,9 @@ export default function Brand() {
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
     };
+    const onHideDialogEditX = () => {
+        setDisplayDialogEdit(false);
+    };
     const onHideDialogCancel = () => {
         cancelCreate();
         setDisplayDialogCreate(false);
@@ -196,7 +199,7 @@ export default function Brand() {
                 </div>
             </Dialog>
 
-            <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
+            <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-brand-form">
                     <h5>Ingrese el nuevo nombre</h5>
                     <InputText value={newBrandName} onChange={(e) => setNewBrandName(e.target.value)} placeholder={brandNameSelected} />

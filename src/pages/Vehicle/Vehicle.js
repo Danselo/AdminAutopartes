@@ -122,7 +122,7 @@ export default function Vehicles() {
         setDisplayDialogCreate(false);
     };
     const onHideDialogEditX = () => {
-        setDisplayDialogCreate(false);
+        setDisplayDialogEdit(false);
     };
     const onHideDialogCancel = () => {
         cancelCreate();
@@ -178,6 +178,8 @@ export default function Vehicles() {
             .createVehicle(vehicleName, vehicleModel, selectedVehicleBrand.id)
             .then(() => {
                 setVehicleName("");
+                setVehicleModel("");
+                setSelectedVehicleBrand("");
                 loadVehicles();
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
             })

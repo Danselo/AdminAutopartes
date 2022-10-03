@@ -117,7 +117,7 @@ export default function Products() {
         setDisplayDialogCreate(false);
     };
     const onHideDialogEditX = () => {
-        setDisplayDialogCreate(false);
+        setDisplayDialogEdit(false);
     };
     const onHideDialogCancel = () => {
         cancelCreate();
@@ -275,7 +275,7 @@ const renderFooterDialogEdit = () => {
     return (
         <div>
             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-            <Button label="Editar vehiculo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+            <Button label="Editar producto" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
         </div>
     );
 };

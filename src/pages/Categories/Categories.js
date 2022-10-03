@@ -103,6 +103,9 @@ export default function Categories() {
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
     };
+    const onHideDialogEditX = () => {
+        setDisplayDialogEdit(false);
+    };
     const onHideDialogCancel = () => {
         cancelCreate();
         setDisplayDialogCreate(false);
@@ -192,7 +195,7 @@ export default function Categories() {
                 </div>
             </Dialog>
 
-            <Dialog header="Editar categoria" visible={displayDialogEdit} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
+            <Dialog header="Editar categoria" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-category-form">
                     <h5>Ingrese el nuevo nombre</h5>
                     <InputText value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} placeholder={categoryNameSelected} />
