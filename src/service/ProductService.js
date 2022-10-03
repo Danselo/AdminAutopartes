@@ -28,12 +28,18 @@ export class ProductService {
                 return response.data;
             });
     }
-    updateProduct(id, name, description, idCategory) {
-        return axios.put(`${baseProductURL}/update/${id}`, {
-            name,
-            description,
-            idCategory,
-        });
+    updateProduct(product) {
+        delete product.category
+        let url = `${baseProductURL}/update/${product.id}`
+        delete product.id
+        return axios
+        .put(url,product);
+    }
+
+    updateVehiclesOfProduct(idProduct,arrayOfVehiclesOfProduct) {
+                
+        return axios
+        .put(`${baseProductURL}/update-vehicles-of-products/${idProduct}`, arrayOfVehiclesOfProduct);
     }
 
     deleteProduct(id) {

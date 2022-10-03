@@ -30,8 +30,21 @@ export default function Products() {
     const [categories, setCategories] = useState([]);
     const [vehicles, setVehicles] = useState([]);
     const [selectedVehicles, setSelectedVehicles] = useState([]);
-    const [selectedVehiclesOfProduct, setSelectedVehiclesOfProduct] = useState([]);
+    const [selectedVehiclesOfProductEdit, setSelectedVehiclesOfProductEdit] = useState([]);
 
+    let arraySelectedVehiclesOfProductEdit = selectedVehiclesOfProductEdit.map((objeto) => {
+        if(objeto.idVehicle){
+            let idVehicle = objeto.idVehicle 
+
+            return {idProduct: productSelected.id, idVehicle: idVehicle}
+        }
+
+        return {idProduct: productSelected.id, idVehicle: objeto.id}
+
+        
+    })
+
+ 
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -133,19 +146,7 @@ export default function Products() {
         setSelectedProductCategory(e.value);
     };
     
-    function EditProduct() {
-        _productService
-            .updateProduct(productSelected)
-            .then(() => {
-                setProductSelected({});
-                loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-    }
+   
     function getCategories() {
         _categoryService.getCategories().then((response) => {
             setCategories(response);
@@ -155,28 +156,49 @@ export default function Products() {
     function getVehiclesOfProductSelected(idProductSelected) {
         console.log(idProductSelected);
         _productService.getVehiclesOfProductById(idProductSelected).then((response) => {
+            
             let unSelectedVehicles =  vehicles.filter(
                 (v) => !response.some(
-                    v2 => v2.id === v.id 
+                    v2 => v2.idVehicle === v.id 
                     )
                 )
             setVehicles(unSelectedVehicles)
-            setSelectedVehiclesOfProduct(response);
+            setSelectedVehiclesOfProductEdit(response);
         });
     }
    
+    function EditProduct() {
+        let id = productSelected.id
+        _productService
+            .updateProduct(productSelected)
+            .then(() => {
+        console.log(productSelected.id)
+                console.log(arraySelectedVehiclesOfProductEdit)
+                _productService
+                .updateVehiclesOfProduct(id,arraySelectedVehiclesOfProductEdit).then(()=>{
+
+                    setProductSelected({});
+                    loadProducts();
+                    loadVehicles();
+                    toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Producto editado exitosamente", life: 3000 });
+
+                })
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
+            });
+    }
 
     function CreateProduct() {
         _productService
             .createProduct(productReferenceId, productName, productDescription, selectedProductCategory.id)
             .then(() => {
-                selectedVehicles.forEach((vehiculo) => {
-                    console.log(productReferenceId);
-                    console.log(vehiculo.id);
+                selectedVehicles.forEach((vehicle) => {
                     _productService
-                        .addVehicleToProduct(productReferenceId, vehiculo.id)
+                        .addVehicleToProduct(productReferenceId, vehicle.id)
                         .then(() => {
-                            console.log(1111);
+                            console.log("Se agrego el vehiculo");
                         })
                         .catch((e) => {
                             console.log("Algo salio mal al agregar un vehiculo");
@@ -212,6 +234,9 @@ export default function Products() {
             setProducts(response);
         });
     };
+    const loadVehicles = () => {
+        _vehicleService.getVehicles().then((data) => setVehicles(data));;
+    };
 
     const onChangeProductSelectedEditForm = (eventOnChange) => {
         console.log(eventOnChange.target);
@@ -240,7 +265,7 @@ export default function Products() {
 
     const onChangeEdit = (event) => {
         setVehicles(event.source);
-        setSelectedVehiclesOfProduct(event.target);
+        setSelectedVehiclesOfProductEdit(event.target);
     };
 
     const vehicleTemplate = (item) => {
@@ -332,7 +357,7 @@ const renderFooterDialogEdit = () => {
                             
                             <PickList
                                 source={vehicles}
-                                target={selectedVehiclesOfProduct}
+                                target={selectedVehiclesOfProductEdit}
                                 itemTemplate={vehicleTemplateEditForm}
                                 targetItemTemplate={vehicleTemplateEditForm}
                                 sourceHeader="Vehiculos"

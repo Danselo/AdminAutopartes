@@ -3,30 +3,19 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { ProductService } from "../../service/ProductService";
 
-const _productService = new ProductService();
 export const TableProducts = ({ setProductSelected, products }) => {
     const [globalFilter, setGlobalFilter] = useState(null);
-    const [vehiclesOfProducts,setVehiclesOfProducts] = useState({});
-    const [TableProductsSelected, setTableProductsSelected] = useState([]);
+    
+    const [TableProductSelected, setTableProductSelected] = useState([]);
+   
     
     useEffect(() => {
-        if (TableProductsSelected) {
-            setProductSelected(TableProductsSelected);
+        if (TableProductSelected) {
+            setProductSelected(TableProductSelected);
         }
-    }, [TableProductsSelected, setProductSelected]);
-    
-    useEffect(() => {
-        _productService.getVehiclesOfProducts().then((response) =>{
-            setVehiclesOfProducts(response)
-        })
-    }, []); 
-    
-    console.log(vehiclesOfProducts);
-    const getVehiclesOfProductTemplate = (RowProductData) =>{
-        
-    }
+    }, [TableProductSelected, setProductSelected]);
+
     return (
         <>
         <div className="p-inputgroup create-brand__table">
@@ -45,19 +34,17 @@ export const TableProducts = ({ setProductSelected, products }) => {
         emptyMessage="No se encontraron datos" className="table-product" 
         rows={10}
         globalFilter={globalFilter}
-        selection={TableProductsSelected}
-        
-        onSelectionChange={(e) => setTableProductsSelected(e.value)}
+        selection={TableProductSelected}        
+        onSelectionChange={(e) => setTableProductSelected(e.value)}
         >
             <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
             <Column field="id" frozen sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
-            {/* <Column field="photo" header="Imagen" body={imageBodyTemplate}></Column> */}
+            <Column field="photo" header="Imagen" hidden></Column>
             <Column field="category.name" sortable header="Categoria"></Column>
             <Column field="amount" className="table-product--column-gray" sortable header="Cantidad en stock"></Column>
             <Column field="iva" className="table-product--column-gray" header="Iva"></Column>
             <Column field="price" className="table-product--column-gray" sortable header="Precio"></Column>
-            <Column body={getVehiclesOfProductTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
         </DataTable>
         </>
     )
