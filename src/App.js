@@ -268,14 +268,7 @@ const App = () => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
-<<<<<<< HEAD
                     <Route path="/products" exact render={() => <Products />} />
-                    <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
-=======
-                    <Route path="/pages/Products/Products" exact render={() => <Products />} />
-                    <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
-       
->>>>>>> main
                     <Route path="/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />

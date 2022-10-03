@@ -9,11 +9,11 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 import { BuyService } from "../../service/BuyService";
-import { ProvidersService } from "../../service/ProvidersService";
+import { ProviderService } from "../../service/ProvidersService";
 import TableBuyDetail from "../../components/TableBuys/TableBuyDetail";
 
 const _buyService = new BuyService();
-const _providersService = new ProvidersService();
+const _providersService = new ProviderService();
 
 export default function CreatePurchase() {
     const toast = useRef(null);
