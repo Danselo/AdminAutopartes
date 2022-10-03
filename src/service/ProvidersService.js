@@ -1,39 +1,40 @@
 import axios from 'axios';
-// import config from './../config/config';
+import config from './../config/config';
 
-// const baseCategoryURL = process.env.REACT_APP_BASE_URL +'/categories'
-// console.log(baseCategoryURL)
+const baseProvidersURL = config.baseURL+'/providers'
 
-const baseProvidersURL = 'http://localhost:5000/providers'
-export class ProvidersService {
+export class ProviderService {
 
     getProviders() {
         return axios.get(baseProvidersURL).then(res => res.data);
     }
 
-    // createCategory(name, description, idVehicle, idCategory,) {
-        
-    //     return axios
-    //       .post(baseCategoryURL + '/create', {
-    //         idVehicle,
-    //         idCategory,
-    //         name,  
-    //         description
-    //       })
-    //       .then((response) => {
-    //         return response.data;           
-    //       })  
-          
-    //   }
-
-    deleteProviders(id){
-        
+    createProvider(nit, companyName, contactName, telephone, adress, email, country) {
         return axios
-        .delete(`${baseProvidersURL}/delete/${id}`)
-        .then(() => {
-          console.log("Proveedor eliminado")
-        });
+        .post(baseProvidersURL + '/create', {
+            nit,
+            companyName,
+            contactName, 
+            telephone, 
+            adress,
+            email,
+            country
+            
+          }).then((respuesta)=>{return respuesta.data});
+      
+           }
 
+    updateProvider(provider){
+       
+       const url = `${baseProvidersURL}/update/${provider.id}`
+        delete provider.id
+        return axios
+            .put(url,provider)  
+
+    }
+    deleteProvider(id){
+        return axios
+        .delete(`${baseProvidersURL}/delete/${id}`);
     }
 
 }

@@ -1,26 +1,38 @@
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
-import { buttonBodyTemplate } from "./columnTemplates";
+// import { buttonBodyTemplate } from "./columnTemplates";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
-export const TableUser = () => {
-    const [users, setUsers] = useState([]);
 
+export const TableUser = ({setUserSelected,users}) => {
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [usersSelected, setUsersSelected] = useState([]);
+// console.log(usersSelected)
     useEffect(() => {
-        setUsers([{ id: 1, nombre: "Armando", apellido: "Puertas", telefono: "300215548", direccion: "Calle 39 D# 40 sur 145 int 294 barrio cruz", email: "armando@gmail.com", fechaRegistro: "12/05/2022", nroCompras: 5 }]);
-    }, []);
+        if (usersSelected) {
+            setUserSelected(usersSelected)
+        }
+    }, [usersSelected, setUserSelected])
+    
 
     return (
-        <DataTable value={users} paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <>
+        <div className="p-inputgroup create-brand__table">
+                <InputText placeholder="Buscar usuario" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <Button icon="pi pi-search" className="p-button-primary" />
+            </div>
+            <DataTable value={users} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={usersSelected} onSelectionChange={(e) => setUsersSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
+            <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
-            <Column field="nombre" sortable header="Nombre"></Column>
-            <Column header="apellido" sortable body="Apellido"></Column>
-            <Column field="telefono" sortable header="Telefono"></Column>
-            <Column field="direccion" sortable header="Direccion"></Column>
+            <Column field="name" sortable header="Nombre"></Column>
+            <Column field="lastname" sortable header="Apellido"></Column>
             <Column field="email" sortable header="Email"></Column>
-            <Column field="fechaRegistro" sortable header="Fecha Registro"></Column>
-            <Column field="nroCompras" sortable header="Nro Compras"></Column>
-            <Column body={buttonBodyTemplate} sortable header="Acciones"></Column>
+            <Column field="idRol" sortable header="Rol"></Column>
+
         </DataTable>
+        </>
+        
     );
 };

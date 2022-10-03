@@ -20,7 +20,7 @@ import "./assets/layout/layout.scss";
 import "./App.scss";
 import Products from "./pages/Products/Products";
 import Providers from "./pages/Providers/Providers";
-import CreateProvider from "./pages/Providers/CreateProvider";
+
 import Client from "./pages/Client/Client";
 import CreateClient from "./pages/Client/CreateClient";
 import Sales from "./pages/Sales/Sales";
@@ -28,12 +28,12 @@ import CreateSales from "./pages/Sales/CreateSales";
 import Users from "./pages/Users/Users";
 import Roles from "./pages/Roles/Roles";
 import Brand from "./pages/Brand/Brand";
-import CreateUser from "./pages/CreateUser/CreateUser";
+import CreateUser from "./pages/Users/CreateUser";
 import CreateRol from "./pages/CreateRol/CreateRol";
 import EditUsers from "./pages/EditUsers/EditUsers";
 import EditBrand from "./pages/EditBrand/EditBrand";
 import SalesDetails from "./pages/Sales/SalesDetails";
-import EditProvider from "./pages/Providers/EditProvider";
+
 import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurchase";
 import Categories from "./pages/Categories/Categories";
@@ -268,8 +268,14 @@ const App = () => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
+<<<<<<< HEAD
                     <Route path="/products" exact render={() => <Products />} />
                     <Route path="/pages/Providers/CreateProvider" exact render={() => <CreateProvider />} />
+=======
+                    <Route path="/pages/Products/Products" exact render={() => <Products />} />
+                    <Route path="/pages/Products/CreateProduct" exact render={() => <CreateProduct />} />
+       
+>>>>>>> main
                     <Route path="/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
@@ -283,7 +289,7 @@ const App = () => {
                     <Route path="/Brand" exact render={() => <Brand />} />
                     <Route path="/pages/EditBrand/EditBrand" exact render={() => <EditBrand />} />
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
-                    <Route path="/EditProvider" exact render={() => <EditProvider />} />
+    
                     <Route path="/Buys" exact render={() => <Buys />} />
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
                     <Route path="/Categories" exact render={() => <Categories />} />

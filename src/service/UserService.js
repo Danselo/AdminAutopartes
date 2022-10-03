@@ -1,16 +1,32 @@
-import axios from 'axios';
-
+import axios from "axios";
+const baseURL = "http://localhost:5000";
+const baseUserURL = baseURL + "/users";
 export class UserService {
-
-    getUsersSmall() {
-        return axios.get('assets/demo/data/products-small.json').then(res => res.data.data);
+    getUser(id) {
+        return axios.get(`${baseUserURL}/${id}`).then((res) => res.data);
     }
-
     getUsers() {
-        return axios.get('assets/demo/data/products.json').then(res => res.data.data);
+        return axios.get(baseUserURL).then((res) => res.data);
+    }
+    createUser(email, password, name, lastname, status, idRol) {
+        return axios
+            .post(baseUserURL + "/create", {
+                email,
+                password,
+                name,
+                lastname,
+                status,
+                idRol,
+            
+            })
     }
 
-    getUsersWithOrdersSmall() {
-        return axios.get('assets/demo/data/products-orders-small.json').then(res => res.data.data);
+    updateUser(user) {
+       
+        const url = `${baseUserURL}/update/${user.id}`
+        delete user.id
+        delete user.createdAt
+         return axios
+             .put(url,user)
     }
 }

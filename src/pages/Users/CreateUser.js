@@ -1,60 +1,79 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
+import axios from 'axios'
+import { Password } from 'primereact/password';
+import { UserService } from "../../service/UserService";
+ 
+const urlRoles = 'http://localhost:5000/roles/'
+
 
 export default function CreateUser() {
-    const accept = () => {
-        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario creado exitosamente", life: 3000 });
+    const _userService = new UserService();
+    
+    const acceptModalConfirmation = (lifeTime) => {
+       
     };
 
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
 
-    const confirm1 = () => {
+    const createUserConfirmation = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar este Usuario?",
+            message: "¿Esta seguro que desea crear este producto?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            accept,
+            accept: createUser,
             reject,
         });
     };
-
     const confirm2 = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
-            accept,
+            accept: acceptModalConfirmation,
             reject,
         });
     };
-
+    
     const toast = useRef(null);
-    const [value2, setValue2] = useState("");
-    const [value3, setValue3] = useState("");
-    const [value4, setValue4] = useState("");
-    const [value5, setValue5] = useState("");
+    const [selectedRol, setSelectedRol] = useState([null]);
 
-    const [selectedRoles, setSelectedRoles] = useState(null);
+    const [userAdress, setUserAdress] = useState("");
+    const [userName, setUserName] = useState("");
+    const [userLastName, setUserLastName] = useState("");
+    const [userStatus] = useState(true);
+    const [userRoles, setUserRoles] = useState([]);
+    const [userPassword, setUserPassword] = useState("");
+    useEffect(() => {
+        axios.get(urlRoles).then((response) => {
+            setUserRoles(response.data);    
+        });    
 
-    const roles = [
-        { name: "Administrador1", code: "AD1" },
-        { name: "Administrador de Productos", code: "ADP" },
-        { name: "Administrador Marcas", code: "ADM" },
-        { name: "Administrador Secundario", code: "ADS" },
-        { name: "Admin tres", code: "ADT" },
-    ];
-
-    const onRolesChange = (e) => {
-        setSelectedRoles(e.value);
+    }, []);
+    const onRolChange = (e) => {
+        setSelectedRol(e.value);
     };
+    function createUser() {
+        _userService.createUser(userAdress,userPassword,userName,userLastName,userStatus,selectedRol.id)
+        .then((data)=>{
+            const lifeTime = 3000;
+            toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario Creado exitosamente", life: lifeTime });
+            setTimeout(() => {
+               console.log('Redirigiendo a otra pagina') 
+            }, lifeTime);
+            console.log('user created successfully', data);
+        })
+        .catch(console.error);
+      }
+    
 
     return (
         <div>
@@ -71,30 +90,31 @@ export default function CreateUser() {
                 <div className="row">
                     <div className="col-sm-12 pt-5">
                         <span className="p-float-label">
-                            <InputText className="jjj" id="email" value={value2} onChange={(e) => setValue2(e.target.value)} />
+                            <InputText className="jjj" id="email" value={userAdress} onChange={(e) => setUserAdress(e.target.value)} />
                             <label htmlFor="email">Correo Electronico</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5 ">
                         <span className="p-float-label">
-                            <InputText className="jjj" id="username" value={value3} onChange={(e) => setValue3(e.target.value)} />
+                            <InputText className="jjj" id="username" value={userName} onChange={(e) => setUserName(e.target.value)} />
                             <label htmlFor="username">Nombre</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5">
                         <span className="p-float-label">
-                            <InputText className="jjj" id="lastname" value={value4} onChange={(e) => setValue4(e.target.value)} />
+                            <InputText className="jjj" id="lastname" value={userLastName} onChange={(e) => setUserLastName(e.target.value)} />
                             <label htmlFor="lastname">Apellido</label>
                         </span>
                     </div>
+                   
                     <div className="col-sm-12 pt-5">
                         <span className="p-float-label">
-                            <InputText className="jjj" id="telefono" value={value5} onChange={(e) => setValue5(e.target.value)} />
-                            <label htmlFor="telefono">Telefono</label>
+                             <Password value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
+                            <label htmlFor="telefono">Contraseña</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5">
-                        <Dropdown value={selectedRoles} options={roles} onChange={onRolesChange} optionLabel="name" placeholder="Seleccione Rol" />
+                        <Dropdown value={selectedRol} options={userRoles} onChange={onRolChange} optionLabel="name" placeholder="Seleccione Rol"  />
                     </div>
                 </div>
             </div>
@@ -103,7 +123,7 @@ export default function CreateUser() {
                 <Link to={"/pages/Products/Products"}>
                     <Button label="Cancelar" className="p-button-danger" />
                 </Link> */}
-                <Button onClick={confirm1} icon="pi pi-check" label="Crear" className="mr-2"></Button>
+                <Button onClick={createUserConfirmation} icon="pi pi-check" label="Crear" className="mr-2"></Button>
                 <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
             </div>
         </div>

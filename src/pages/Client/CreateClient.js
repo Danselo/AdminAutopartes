@@ -1,48 +1,93 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
+import { InputTextarea } from 'primereact/inputtextarea';
+// import { Dropdown } from "primereact/dropdown";
+import { ListBox } from 'primereact/listbox';
 import "./createClient.css";
+import axios from 'axios'
+import { ClientService } from "../../service/ClientService";
+const urlUsers = 'http://localhost:5000/users/'
 
 export default function CreateClient() {
-    const accept = () => {
-        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Cliente creado exitosamente", life: 3000 });
+    const _clientService = new ClientService();
+
+    const acceptModalConfirmation = (lifeTime) => {
+
     };
 
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const confirm1 = () => {
+
+    const createClientConfirmation = () => {
         confirmDialog({
             message: "¿Esta seguro que desea crear este cliente?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            accept,
+            accept: createClient,
             reject,
         });
     };
-
     const confirm2 = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
-            accept,
+            accept: acceptModalConfirmation,
             reject,
         });
     };
 
     const toast = useRef(null);
-    const [value1, setValue1] = useState("");
-    const [value2, setValue2] = useState("");
-    const [value3, setValue3] = useState("");
-    const [value4, setValue4] = useState("");
-    const [value5, setValue5] = useState("");
-    const [value6, setValue6] = useState("");
-    
+    const [setUserId] = useState("");
+
+    const [selectedUser, setSelectedUser] = useState([null]);
+    const [clientName, setClientName] = useState("");
+    const [clientLastName, setClientLastName] = useState("");
+    const [clientDocumentType, setClientDocumentType] = useState("");
+    const [clientDocument, setClientDocument] = useState("");
+    const [clientTelephone, setClientTelephone] = useState("");
+    const [clientEmail, setClientEmail] = useState("");
+    const [clientCountry, setClientCountry] = useState("");
+    const [clientDepartment, setClientDepartment] = useState("");
+    const [clientCity, setClientCity] = useState("");
+    const [clientNeightBoordHood, setClientNeightBoordHood] = useState("");
+    const [clientAddress, setClientAddress] = useState("");
+    const [clientIndications, setClientIndications] = useState("");
+    const [clientUsers, setClientUsers] = useState([]);
+
+
+    useEffect(() => {
+        axios.get(urlUsers).then((response) => {
+            setClientUsers(response.data);
+        });
+
+    }, []);
+    const onUserChange = (e) => {
+        setSelectedUser(e.value);
+    };
+    function createClient() {
+        _clientService.createClient(selectedUser.id, clientName, clientLastName, clientDocumentType, clientDocument, clientTelephone, clientEmail, clientCountry, clientDepartment, clientCity, clientNeightBoordHood, clientAddress, clientIndications)
+            .then((data) => {
+                const lifeTime = 3000;
+                toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario Creado exitosamente", life: lifeTime });
+                setTimeout(() => {
+                    console.log('Redirigiendo a otra pagina')
+                }, lifeTime);
+                console.log('client created successfully', data);
+            })
+            .catch(console.error);
+    }
+    function getUserIdHandler(id) {
+        setUserId(id)
+    }
+
+
     return (
         <div>
             <Toast ref={toast} />
@@ -53,40 +98,73 @@ export default function CreateClient() {
             <div className="create-product-tittle">
                 <h3>Crear un nuevo cliente</h3>
             </div>
-
             <div className="create-product-form">
                 <span className="p-float-label">
-                    <InputText className="jjj" id="nit" value={value1} onChange={(e) => setValue1(e.target.value)} />
+                    {/* <Dropdown value={selectedUser} options={clientUsers} onChange={onUserChange} optionLabel="name" placeholder="Seleccione Rol"  /> */}
+                    <ListBox value={selectedUser} options={clientUsers} idUser={(id) => getUserIdHandler(id)} onChange={onUserChange} filter optionLabel="name"
+                        style={{ width: '15rem' }} listStyle={{ maxHeight: '250px' }} />
+                    {/* <label htmlFor="type_document">Usuario</label> */}
+                </span>
+            </div>
+            <div className="create-client-form">
+
+                <span className="p-float-label">
+                    <InputText className="jjj" id="nit" value={clientDocumentType} onChange={(e) => setClientDocumentType(e.target.value)} />
                     <label htmlFor="type_document">Tipo documento</label>
                 </span>
                 <span className="p-float-label">
-                    <InputText className="jjj" id="company_name" value={value2} onChange={(e) => setValue2(e.target.value)} />
+                    <InputText className="jjj" id="company_name" value={clientDocument} onChange={(e) => setClientDocument(e.target.value)} />
                     <label htmlFor="number_document">Numero documento</label>
                 </span>
                 <span className="p-float-label">
-                    <InputText className="jjj" id="contact_name" value={value3} onChange={(e) => setValue3(e.target.value)} />
+                    <InputText className="jjj" id="contact_name" value={clientName} onChange={(e) => setClientName(e.target.value)} />
                     <label htmlFor="first_name">Nombre</label>
                 </span>
                 <span className="p-float-label">
-                    <InputText className="jjj" id="telephone" value={value4} onChange={(e) => setValue4(e.target.value)} />
+                    <InputText className="jjj" id="telephone" value={clientLastName} onChange={(e) => setClientLastName(e.target.value)} />
                     <label htmlFor="last_name">Apellido</label>
                 </span>
                 <span className="p-float-label">
-                    <InputText className="jjj" id="email" value={value6} onChange={(e) => setValue6(e.target.value)} />
+                    <InputText className="jjj" id="email" value={clientTelephone} onChange={(e) => setClientTelephone(e.target.value)} />
                     <label htmlFor="telephone">Telefono</label>
                 </span>
                 <span className="p-float-label">
-                    <InputText className="jjj" id="addres" value={value5} onChange={(e) => setValue5(e.target.value)} />
+                    <InputText className="jjj" id="addres" value={clientAddress} onChange={(e) => setClientAddress(e.target.value)} />
                     <label htmlFor="addres">Direccion</label>
+                </span>
+                <span className="p-float-label">
+                    <InputText className="jjj" id="addres" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} />
+                    <label htmlFor="addres">Email</label>
+                </span>
+                <span className="p-float-label">
+                    <InputText className="jjj" id="addres" value={clientCountry} onChange={(e) => setClientCountry(e.target.value)} />
+                    <label htmlFor="addres">Pais</label>
+                </span>
+                <span className="p-float-label">
+                    <InputText className="jjj" id="addres" value={clientDepartment} onChange={(e) => setClientDepartment(e.target.value)} />
+                    <label htmlFor="addres">Departmento</label>
+                </span>
+                <span className="p-float-label">
+                    <InputText className="jjj" id="addres" value={clientCity} onChange={(e) => setClientCity(e.target.value)} />
+                    <label htmlFor="addres">Ciudad</label>
+                </span>
+                <span className="p-float-label">
+                    <InputText className="jjj" id="addres" value={clientNeightBoordHood} onChange={(e) => setClientNeightBoordHood(e.target.value)} />
+                    <label htmlFor="addres">Vecindario</label>
                 </span>
 
             </div>
+            <div className="create-client-form__inputTextarea">
+                <span className="p-float-label">
+                    <InputTextarea value={clientIndications} className="create-client-form__inputTextarea-input" onChange={(e) => setClientIndications(e.target.value)} autoResize />
+                    <label htmlFor="addres">Indicaciones</label>
+                </span>
+
+            </div>
+
             <div className="create-product-buttons">
-                {/* <Button label="Crear" className="p-button-success" />
-                <Link to={"/pages/Products/Products"}>
-                    <Button label="Cancelar" className="p-button-danger" />
-                </Link> */}
-                <Button onClick={confirm1} icon="pi pi-check" label="Crear" className="mr-2"></Button>
+
+                <Button onClick={createClientConfirmation} icon="pi pi-check" label="Crear" className="mr-2"></Button>
                 <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
             </div>
         </div>
