@@ -46,8 +46,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
             <Column field="shippingPrice" className="table-product--column-gray" header="Precio de envio"></Column>
             <Column field="ivaPercentage" className="table-product--column-gray" hidden header="IVA"></Column>
             <Column field="totalIva" className="table-product--column-gray"  header="Total IVA"></Column>
-            <Column field="otherTaxesPercentage" className="table-product--column-gray" hidden header="Otros impuestos"></Column>
-            <Column field="totalOtherTaxes" className="table-product--column-gray"  header="Total otros impuestos"></Column>
+    
             <Column field="discountsPercentage" className="table-product--column-gray" hidden  header="Descuento"></Column>
             <Column field="totalDiscounts" className="table-product--column-gray" header="Total descuentos"></Column>
             <Column field="invoiceUrl" className="table-product--column-gray"  header="Factura"></Column>

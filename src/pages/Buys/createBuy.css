@@ -1,0 +1,14 @@
+.create-buy-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 40vw;
+    margin: 1rem auto 0 auto;
+    
+   
+}
+
+.create-buy-form__input{
+    width: 20rem;
+    margin: .5rem 0 .5rem 0;
+    justify-self: center;
+}

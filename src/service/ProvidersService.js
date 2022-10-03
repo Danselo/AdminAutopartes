@@ -7,8 +7,8 @@ import axios from 'axios';
 const baseProvidersURL = 'http://localhost:5000/providers'
 export class ProvidersService {
 
-    getProviders(id) {
-        return axios.get(`${baseProvidersURL}/${id}`).then(res => res.data.data);
+    getProviders() {
+        return axios.get(baseProvidersURL).then(res => res.data);
     }
 
     // createCategory(name, description, idVehicle, idCategory,) {

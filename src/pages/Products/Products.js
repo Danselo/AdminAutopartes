@@ -153,18 +153,23 @@ export default function Products() {
     }
 
     function getVehiclesOfProductSelected(idProductSelected) {
+        console.log(idProductSelected);
         _productService.getVehiclesOfProductById(idProductSelected).then((response) => {
+            let unSelectedVehicles =  vehicles.filter(
+                (v) => !response.some(
+                    v2 => v2.id === v.id 
+                    )
+                )
+            setVehicles(unSelectedVehicles)
             setSelectedVehiclesOfProduct(response);
         });
     }
-
    
 
     function CreateProduct() {
         _productService
             .createProduct(productReferenceId, productName, productDescription, selectedProductCategory.id)
             .then(() => {
-                console.log("entre al then");
                 selectedVehicles.forEach((vehiculo) => {
                     console.log(productReferenceId);
                     console.log(vehiculo.id);
@@ -174,7 +179,7 @@ export default function Products() {
                             console.log(1111);
                         })
                         .catch((e) => {
-                            console.log("hola");
+                            console.log("Algo salio mal al agregar un vehiculo");
                         });
                 });
                 setProductName("");
@@ -233,6 +238,11 @@ export default function Products() {
         setSelectedVehicles(event.target);
     };
 
+    const onChangeEdit = (event) => {
+        setVehicles(event.source);
+        setSelectedVehiclesOfProduct(event.target);
+    };
+
     const vehicleTemplate = (item) => {
         return (
             <div className="vehicle-item">
@@ -243,7 +253,12 @@ export default function Products() {
     const vehicleTemplateEditForm = (item) => {
         return (
             <div className="vehicle-item">
-                <p>{item.vehicles.name} {item.vehicles.model} <strong>{item.vehicles.brands_vehicles.name}</strong></p>
+                {
+                item.vehicles ? 
+                    <p>{item.vehicles.name} {item.vehicles.model} <strong>{item.vehicles.brands_vehicles.name}</strong></p>:
+                    <p>{item.name} {item.model} <strong>{item.brands_vehicles.name}</strong></p>
+                }
+                
             </div>
         );
     };
@@ -264,7 +279,6 @@ const renderFooterDialogEdit = () => {
         </div>
     );
 };
-console.log(selectedVehiclesOfProduct)
     return (
         <div>
             <Toast ref={toast} />
@@ -315,15 +329,17 @@ console.log(selectedVehiclesOfProduct)
                     <h5>Edicion de vehiculos compatibles con el producto</h5>
                     <div className="picklist-vehicles">
                         <div className="card">
+                            
                             <PickList
                                 source={vehicles}
                                 target={selectedVehiclesOfProduct}
                                 itemTemplate={vehicleTemplateEditForm}
+                                targetItemTemplate={vehicleTemplateEditForm}
                                 sourceHeader="Vehiculos"
                                 targetHeader="Seleccionados"
                                 sourceStyle={{ height: "342px" }}
                                 targetStyle={{ height: "342px" }}
-                                onChange={onChange}
+                                onChange={onChangeEdit}
                                 filterBy="name"
                                 sourceFilterPlaceholder="Buscar"
                                 targetFilterPlaceholder="Buscar"
