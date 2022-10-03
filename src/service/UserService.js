@@ -1,36 +1,32 @@
-import axios from 'axios';
-const baseURL = 'http://localhost:5000'
-const baseProductsURL = baseURL +'/users'
+import axios from "axios";
+const baseURL = "http://localhost:5000";
+const baseUserURL = baseURL + "/users";
 export class UserService {
-
-  getUser(id) {
-    return axios.get(`${baseProductsURL}/${id}`).then(res => res.data.data);
-}
-    createUser(email,password, name, lastname,status,idRol) {
-        
+    getUser(id) {
+        return axios.get(`${baseUserURL}/${id}`).then((res) => res.data);
+    }
+    getUsers() {
+        return axios.get(baseUserURL).then((res) => res.data);
+    }
+    createUser(email, password, name, lastname, status, idRol) {
         return axios
-          .post(baseProductsURL + '/create', {
-            email,
-            password,
-            name,  
-            lastname,
-            status,
-            idRol,
-          })
-          .then((response) => {
-            return response.data;           
-          })  
-          
-      }
+            .post(baseUserURL + "/create", {
+                email,
+                password,
+                name,
+                lastname,
+                status,
+                idRol,
+            
+            })
+    }
 
-      
-    updateUser(id){
-        
-      return axios
-      .delete(`${baseProductsURL}/update/${id}`)
-      .then(() => {
-        console.log("Categoria Actualizada")
-      });
-
-  }
+    updateUser(user) {
+       
+        const url = `${baseUserURL}/update/${user.id}`
+        delete user.id
+        delete user.createdAt
+         return axios
+             .put(url,user)
+    }
 }

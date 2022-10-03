@@ -1,20 +1,24 @@
 import axios from 'axios';
 // import config from './../config/config';
 
-// const baseCategoryURL = process.env.REACT_APP_BASE_URL +'/categories'
-// console.log(baseCategoryURL)
+// const baseRolURL = process.env.REACT_APP_BASE_URL +'/categories'
+// console.log(baseRolURL)
 
-const baseCategoryURL = 'http://localhost:5000/roles'
+const baseRolURL = 'http://localhost:5000/roles'
 export class RoleService {
 
     getRol(id) {
-        return axios.get(`${baseCategoryURL}/${id}`).then(res => res.data.data);
+        return axios.get(`${baseRolURL}/${id}`).then(res => res.datas);
     }
 
+    getRoles(){
+        return axios.get(baseRolURL).then(res => res.data);
+        
+    }
     // createCategory(name, description, idVehicle, idCategory,) {
         
     //     return axios
-    //       .post(baseCategoryURL + '/create', {
+    //       .post(baseRolURL + '/create', {
     //         idVehicle,
     //         idCategory,
     //         name,  
@@ -29,7 +33,7 @@ export class RoleService {
     deleteRol(id){
         
         return axios
-        .delete(`${baseCategoryURL}/delete/${id}`)
+        .delete(`${baseRolURL}/delete/${id}`)
         .then(() => {
           console.log("Categoria eliminada")
         });

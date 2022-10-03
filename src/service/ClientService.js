@@ -4,7 +4,10 @@ const baseClientsURL = baseURL +'/clients'
 export class ClientService {
 
   getClient(id) {
-    return axios.get(`${baseClientsURL}/${id}`).then(res => res.data.data);
+    return axios.get(`${baseClientsURL}/${id}`).then(res => res.data);
+}
+getClients() {
+  return axios.get(baseClientsURL).then((res) => res.data);
 }
 
     createClient(idUser,name,lastname,documentType,document,telephone,email,country,department,city,neightboorhood,address,indications) {
@@ -24,6 +27,7 @@ export class ClientService {
             neightboorhood,
             address,
             indications
+            
 
           })
           .then((response) => {
@@ -31,4 +35,10 @@ export class ClientService {
           })  
           
       }
+      updateClient(client) {
+        const url = `${baseClientsURL}/update/${client.id}`
+         delete client.id
+         return axios
+             .put(url,client)
+    }
 }
