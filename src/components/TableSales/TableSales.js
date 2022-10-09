@@ -1,36 +1,52 @@
-import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
 import { Column } from "primereact/column";
-import "./dataTableSales.css";
-import { buttonBodyTemplate } from "./columnTemplatesSales";
+import { DataTable } from "primereact/datatable";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 
-export const TableSales = () => {
-    const [Sales, setSales] = useState([]);
+export const TableSales = ({ setSaleSelected, sales }) => {
+    const [globalFilter, setGlobalFilter] = useState(null);
 
+    const [TableSalesSelected, setTableSalesSelected] = useState([]);
+    
     useEffect(() => {
-        setSales([
-            {
-                id: 1,
-                id_cliente: 1,
-                fecha_venta: "12/04/22",
-                estado_venta: "Terminado",
-            },
-            {
-                id: 2,
-                id_cliente: 2,
-                fecha_venta: "16/04/22",
-                estado_venta: "Terminado",
-            },
-        ]);
-    }, []);
-
+        if (TableSalesSelected) {
+            setSaleSelected(TableSalesSelected);
+        }
+    }, [TableSalesSelected, setSaleSelected]);
+    
     return (
-        <DataTable header="ventas" value={Sales} resizableColumns columnResizeMode="expand" stripedRows paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
-            <Column field="id" sortable header="Id venta"></Column>
-            <Column field="id_cliente" sortable header="Id cliente"></Column>
-            <Column field="fecha_venta" sortable header="Fecha venta"></Column>
-            <Column field="estado_venta" sortable header="Estado venta"></Column>
-            <Column body={buttonBodyTemplate} sortable header="Detalle"></Column>
+        <>
+        <div className="p-inputgroup create-brand__table">
+                <InputText placeholder="Buscar venta" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <Button icon="pi pi-search" className="p-button-primary" />
+            </div>
+
+        <DataTable 
+        header="Ventas" 
+        stripedRows 
+        showGridlines
+        value={sales} 
+        paginator 
+        responsiveLayout="scroll" 
+        dataKey="id" 
+        emptyMessage="No se encontraron ventas" className="table-product" 
+        rows={10}
+        globalFilter={globalFilter}
+        selection={TableSalesSelected}
+        
+        onSelectionChange={(e) => setTableSalesSelected(e.value)}
+        >
+            <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
+            <Column field="id" frozen={true} sortable header="Id"></Column>
+            <Column field="idClient"  header="Id cliente"></Column>
+            <Column field="saleDate" sortable header="Fecha de venta"></Column>
+            <Column field="statusSale" className="table-product--column-gray" sortable header="Estado"></Column>
+            <Column field="statusPayment" className="table-product--column-gray" header="Esatdo del pago"></Column>
+            <Column field="totalPurchase" className="table-product--column-gray" header="Total compra"></Column>
+            
         </DataTable>
-    );
-};
+        </>
+    )
+    
+}

@@ -1,31 +1,32 @@
-import React from "react";
-import { TableSales } from "../../components/TableSales/TableSales";
+import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import "./sales.css";
 import { Link } from "react-router-dom";
+import { TableSales } from "../../components/TableSales/TableSales";
+import { SaleService } from "../../service/SaleService";
+
+const _saleService = new SaleService();
 
 export default function Sales() {
+    const [sales, setSales] = useState([]);
+    const [saleSelected, setSaleSelected] = useState({});
+
+
+    useEffect(() => {
+        _saleService.getSales().then((response) => {
+            setSales(response);
+        });
+    }, []);
+    
     return (
         <div>
-            <div className="tittle-product">
-                <h3>Mis de ventas</h3>
+            <div className="text-center">
+                <h3>Gestión de ventas</h3>
             </div>
-            <Link to={"/pages/Sales/CreateSales"}>
-                <Button label="Agregar Venta" icon="pi pi-plus-circle" className="p-button-raised p-button-info button-add-product" />
-            </Link>
-            {/* <div className="container-search-product">
-                <input label="buscarProducto" name="buscarProducto" placeholder="Buscar producto" className="search-product"></input>
-            </div> */}
-            <div className="container-search-product">
-                <div className="col-12 md:col-3">
-                    <div className="p-inputgroup">
-                        <InputText placeholder="Buscar venta" />
-                        <Button icon="pi pi-search" className="p-button-info" />
-                    </div>
-                </div>
-            </div>
-            <TableSales className="table-products" />
+            <Link to={"/CreateSales"}>
+                <Button label="Crear venta" icon="pi pi-plus-circle" className="p-button-raised p-button-info button-add-product" />
+            </Link>           
+            <TableSales sales={sales} setSaleSelected={setSaleSelected} className="table-products" />
         </div>
     );
 }
