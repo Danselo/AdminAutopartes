@@ -10,10 +10,13 @@ import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 import { BuyService } from "../../service/BuyService";
 import { ProviderService } from "../../service/ProvidersService";
+import { ProductService } from "../../service/ProductService";
 import TableBuyDetail from "../../components/TableBuys/TableBuyDetail";
+import { useHistory } from "react-router-dom";
 
 const _buyService = new BuyService();
 const _providersService = new ProviderService();
+const _productService = new ProductService();
 
 export default function CreatePurchase() {
     const toast = useRef(null);
@@ -34,17 +37,14 @@ export default function CreatePurchase() {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        let cosamappeada= addedProductsAtBuy.map((p)=>{
-            let {TemporalId, ...loDemas} = p
-        return loDemas
-        }
-
-        )
-        setProducts(cosamappeada)
+        let cosamappeada = addedProductsAtBuy.map((p) => {
+            let { TemporalId, ...loDemas } = p;
+            return loDemas;
+        });
+        setProducts(cosamappeada);
     }, [addedProductsAtBuy]);
 
-
-    console.log(products)
+    console.log(products);
 
     useEffect(() => {
         _providersService
@@ -63,58 +63,49 @@ export default function CreatePurchase() {
     useEffect(() => {
         const totalDiscount = buyTotalPurchase * (buyDiscountsPercentage / 100);
         setBuyTotalDiscounts(totalDiscount);
-       
-    },[buyTotalPurchase,buyDiscountsPercentage]);
-    
+    }, [buyTotalPurchase, buyDiscountsPercentage]);
+
     //Verifica si hay applicados descuentos previos y luuego aplica el iva, actualiza automaticamente el campo del formulario
     useEffect(() => {
         if (buyTotalDiscounts !== 0) {
             const buyWithDiscount = buyTotalPurchase - buyTotalDiscounts;
-            const buyAfterIvaAndDiscounts = buyWithDiscount*(buyIvaPercentage/100)
-            setBuyTotalIva(buyAfterIvaAndDiscounts)
-        }else{
-            const totalIva = buyTotalPurchase * (buyIvaPercentage/100)
-            setBuyTotalIva(totalIva)
-        }      
-    },[buyTotalPurchase,buyIvaPercentage,buyTotalDiscounts]);
-    
-    const createBuy = () =>{
-        _buyService.createBuy(
-            buyId,
-            buyProviderSelected.id, 
-            buyDatePurchase, 
-            buyTotalPurchase, 
-            buyShippingPrice, 
-            buyIvaPercentage, 
-            buyTotalIva, 
-            buyDiscountsPercentage,
-            buyTotalDiscounts, 
-            buyInvoiceUrl ).then(()=>{
-                products.forEach(element => {
-                    
-                    _buyService.addProductsToPurchase(element.idBuy,
-                        element.idProduct,
-                        element.amount,
-                        element.amount,
-                        element.shippingPrice,
-                        element.discountsPercentage,
-                        element.ivaPercentage,
-                        element.profitPercentage,
-                        element.salePrice
-                        ).then((response) =>{
-                        console.log(response, "producto agregado a la tabla")
-                    }).catch((e)=>{
-                        console.log("no se agrego el producto")
-                    })
-                    
+            const buyAfterIvaAndDiscounts = buyWithDiscount * (buyIvaPercentage / 100);
+            setBuyTotalIva(buyAfterIvaAndDiscounts);
+        } else {
+            const totalIva = buyTotalPurchase * (buyIvaPercentage / 100);
+            setBuyTotalIva(totalIva);
+        }
+    }, [buyTotalPurchase, buyIvaPercentage, buyTotalDiscounts]);
+    let history = useHistory();
+
+    function handleClickRedirect() {
+        toast.current.show({ severity: "success", summary: "Todo ha salido bien!", detail: "Compra creada exitosamente, seras redireccionado a la pantalla principal", life: 4000 });
+        setTimeout(() => {
+            history.push("/buys");
+        }, 4000);
+    }
+    const createBuy = () => {
+        _buyService
+            .createBuy(buyId, buyProviderSelected.id, buyDatePurchase, buyTotalPurchase, buyShippingPrice, buyIvaPercentage, buyTotalIva, buyDiscountsPercentage, buyTotalDiscounts, buyInvoiceUrl)
+            .then(() => {
+                products.forEach((element) => {
+                    _buyService
+                        .addProductsToPurchase(element.idBuy, element.idProduct, element.amount, element.netPrice, element.shippingPrice, element.discountsPercentage, element.ivaPercentage, element.profitPercentage, element.salePrice)
+                        .then((response) => {
+                            console.log("Response de agregar producto", response)
+                            _productService.updateProductFromBuy(element.idProduct, element.amount, element.ivaPercentage, element.salePrice)                           
+                        })
+                        .catch((e) => {
+                            toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
+                        });
                 });
 
-                toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Compra añadida exitosamente", life: 3000 });
-
-        }).catch(() => {
-            toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
-        })
-    }
+                handleClickRedirect();
+            })
+            .catch(() => {
+                toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
+            });
+    };
 
     const accept = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
@@ -128,17 +119,21 @@ export default function CreatePurchase() {
             message: "¿Esta seguro que desea crear esta compra?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            accept: createBuy(),
+            acceptLabel: "Crear",
+            rejectLabel: "Cancelar",
+            accept: () => createBuy(),
             reject,
         });
     };
 
-    const confirm2 = () => {
+    const cancelBuy = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
+            acceptLabel: "Cancelar compra",
+            rejectLabel: "Volver",
             accept,
             reject,
         });
@@ -164,15 +159,14 @@ export default function CreatePurchase() {
                 <div>
                     <label htmlFor="buyId">Numero de factura</label>
                     <InputText id="buyId" value={buyId} onChange={(e) => setBuyId(e.target.value)} placeholder="Numero o referencia de factura" className="create-buy-form__input" />
-                </div> 
+                </div>
                 <div>
                     <label htmlFor="buyDatePurchase">Fecha de compra</label>
 
                     {/* <Calendar id="buyDatePurchase" dateFormat="yy/mm/dd"  value={buyDatePurchase} onChange={(e) => console.log(e)} placeholder="Fecha de compra" className="create-buy-form__input" /> */}
-                    <InputText id="buyDatePurchase" value={buyDatePurchase} onChange={(e) => setBuyDatePurchase(e.target.value)} placeholder="Fecha de compra" className="create-buy-form__input" />
+                    <InputText id="buyDatePurchase" value={buyDatePurchase} onChange={(e) => setBuyDatePurchase(e.target.value)} placeholder="AAAA-MM-DD" className="create-buy-form__input" />
                 </div>
 
-             
                 <div>
                     <label htmlFor="buyTotalPurchase">Total neto compra</label>
 
@@ -210,19 +204,12 @@ export default function CreatePurchase() {
                     <InputText id="buyInvoiceUrl" value={buyInvoiceUrl} onChange={(e) => setBuyinvoiceUrl(e.target.value)} placeholder="URL factura" className="create-buy-form__input" />
                 </div>
             </div>
-            
-            <TableBuyDetail 
-            idBuy ={buyId} 
-            shippingPrice={buyShippingPrice} 
-            quantityProducts={quantityProducts} 
-            discountsPercentage={buyDiscountsPercentage} 
-            ivaPercentage={buyIvaPercentage}
-            setAddedProductsAtBuy={setAddedProductsAtBuy}
-            />
+
+            <TableBuyDetail idBuy={buyId} shippingPrice={buyShippingPrice} quantityProducts={quantityProducts} discountsPercentage={buyDiscountsPercentage} ivaPercentage={buyIvaPercentage} setAddedProductsAtBuy={setAddedProductsAtBuy} />
 
             <div className="create-product-buttons">
-                <Button onClick={create} icon="pi pi-check" label="Crear" className="mr-2"></Button>
-                <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
+                <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2"></Button>
+                <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
             </div>
         </div>
     );

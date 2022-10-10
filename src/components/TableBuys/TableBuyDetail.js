@@ -103,7 +103,6 @@ export default function TableBuyDetail({idBuy, shippingPrice, quantityProducts, 
         return id;
     }
     const editProduct = (product) => {
-        console.log(product);
         setProduct({ ...product });
         setProductDialog(true);
     };

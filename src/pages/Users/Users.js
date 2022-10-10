@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import "./users.css";
 import { UserService } from "../../service/UserService";
-import {RoleService} from "../../service/RolesService";
+import {RolesService} from "../../service/RolesService";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
@@ -13,7 +13,7 @@ import { Password } from 'primereact/password';
 import { Toast } from "primereact/toast";
 
 const _userService = new UserService();
-const _roleService = new RoleService();
+const _roleService = new RolesService();
 
 
 export default function Users() {

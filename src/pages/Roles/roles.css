@@ -1,0 +1,25 @@
+.text-center{
+    margin: 1rem auto 1rem auto;
+}
+
+.create-rol-form--header{
+    margin: 1rem 0 1rem 0;
+}
+
+.create-rol-form--input{
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0 1rem 0;
+}
+
+.create-rol-form--body{
+    margin: 3rem 0 1rem 0;
+}
+
+.create-rol-form--body-text{
+    margin: 1rem 0 2rem 0;
+}
+
+.create-rol-form--body-panel{
+    margin: 1rem 0 1rem 0;
+}
