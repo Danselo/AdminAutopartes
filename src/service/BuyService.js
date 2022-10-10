@@ -10,6 +10,13 @@ export class BuyService {
     getVehiclesOfBuys() {
         return axios.get(`${baseBuyURL}/find-vehicles-of-a-product`).then((res) => res.data);
     }
+
+    getBuyDetailById(idBuy) {
+        return axios.get(`${baseBuyURL}/get-buy-details/${idBuy}`).then((res) => res.data).catch((e) =>{
+            console.error("Aqui falle", e)
+        });
+    }
+   
     createBuy(id, idProvider, datePurchase, totalPurchase, shippingPrice, ivaPercentage, totalIva, discountsPercentage, totalDiscounts, invoiceUrl) {
         return axios
             .post(baseBuyURL + "/create", {

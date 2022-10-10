@@ -1,0 +1,24 @@
+.dialog-buy-panel-detail{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1rem;
+}
+
+.dialog-buy-panel{
+    margin: .5rem 0 .5rem 0;
+}
+
+.dialog-buy-panel-products{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.dialog-buy-panel-products__detail{
+    display: flex;
+    flex-direction: row;
+}
+
+.dialog-buy-panel-products__detail-item{
+    margin: 0 1.5rem 0 1.5rem;
+}

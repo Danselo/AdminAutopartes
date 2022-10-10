@@ -218,7 +218,7 @@ export default function Products() {
         _productService
             .deleteProduct(product.id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
+                toast.current.show({ severity: "c", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
                 loadProducts();
                 setProductSelected({});
             })
