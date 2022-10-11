@@ -7,13 +7,9 @@ export class SaleService {
     getSales() {
         return axios.get(baseSaleURL).then((res) => res.data);
     }
-   // getVehiclesOfBuys() {
-      //return axios.get(`${baseSaleURL}/find-vehicles-of-a-product`).then((res) => res.data);
-   // }
-    createBuy(id, idClient, saleDate, statusSale, statusPayment, totalPurchase) {
+    createSale(idClient, saleDate, statusSale, statusPayment, totalPurchase) {
         return axios
-            .post(baseSaleURL + "/create", {
-                id,
+            .post(baseSaleURL + "/create", {              
                 idClient,
                 saleDate,
                 statusSale,
@@ -36,18 +32,13 @@ export class SaleService {
         return axios.delete(`${baseSaleURL}/delete/${id}`);
     }
 
-    addProductsToPurchase(idBuy, idProduct, amount, netPrice, shippingPrice, discountsPercentage, ivaPercentage, profitPercentage, salePrice) {
+    addProductsToSale(idSale, idProduct, amount, price) {
         return axios
-            .post(baseSaleURL + "/assoiate-products-to-purchasse", {
-                idBuy,
+            .post(baseSaleURL + "/associate-products-to-sale", {
+                idSale,
                 idProduct,
                 amount,
-                netPrice,
-                shippingPrice,
-                discountsPercentage,
-                ivaPercentage,
-                profitPercentage,
-                salePrice,
+                price,
             })
             .then((response) => {
                 return response.data;

@@ -268,7 +268,7 @@ const App = () => {
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
                     <Route path="/Sales" exact render={() => <Sales />} />
-                    <Route path="/pages/Sales/CreateSales" exact render={() => <CreateSales />} />
+                    <Route path="/CreateSales" exact render={() => <CreateSales />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />                             
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
                     <Route path="/pages/Roles/Roles" exact render={() => <Roles />} />

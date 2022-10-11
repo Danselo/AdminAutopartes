@@ -6,115 +6,101 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import "./createSales.css";
 import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
+import { ProductService } from "../../service/ProductService";
+import TableSalesProductsDetail from "../../components/TableSales/TableSalesProductsDetails";
+import { useHistory } from "react-router-dom";
 import { SaleService } from "../../service/SaleService";
 import { ClientService } from "../../service/ClientService";
-import TableBuyDetail from "../../components/TableBuys/TableBuyDetail";
 
 const _saleService = new SaleService();
 const _clientService = new ClientService();
+const _productService = new ProductService();
 
 export default function CreateSales() {
     const toast = useRef(null);
 
-    const [providers, setProviders] = useState([]);
-    const [buyProviderSelected, setSelectedProvider] = useState([]);
-    const [buyId, setBuyId] = useState("");
-    const [buyDatePurchase, setBuyDatePurchase] = useState("");
-    const [buyTotalPurchase, setBuyTotalPurchase] = useState(0);
-    const [buyShippingPrice, setBuyShippingPrice] = useState(0);
-    const [buyIvaPercentage, setBuyIvaPercentage] = useState(0);
-    const [buyTotalIva, setBuyTotalIva] = useState(0);
-    const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState(0);
-    const [buyTotalDiscounts, setBuyTotalDiscounts] = useState(0);
-    const [buyInvoiceUrl, setBuyinvoiceUrl] = useState("");
-    const [quantityProducts, setQuantityProducts] = useState("");
-    const [addedProductsAtBuy, setAddedProductsAtBuy] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [saleClientSelected, setClientSelected] = useState([]);
+    const [statusSaleSelected, setStatusSaleSelected] = useState([]);
+    const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
+    const [saleDate, setSaleDate] = useState("");
+    const [totalPurchase, setTotalPurchase] = useState(0);
+    const [addedProductsAtSale, setAddedProductsAtSale] = useState([]);
     const [products, setProducts] = useState([]);
-
+console.log(saleClientSelected)
     useEffect(() => {
-        let cosamappeada= addedProductsAtBuy.map((p)=>{
-            let {TemporalId, ...loDemas} = p
-        return loDemas
-        }
+        let cosamappeada = addedProductsAtSale.map((p) => {
+            let { TemporalId, ...loDemas } = p;
+            return loDemas;
+        });
+        setProducts(cosamappeada);
+    }, [addedProductsAtSale]);
 
-        )
-        setProducts(cosamappeada)
-    }, [addedProductsAtBuy]);
-
-
-    console.log(products)
+    console.log(products);
 
     useEffect(() => {
         _clientService
-            .getProviders()
+            .getClients()
             .then((response) => {
-                setProviders(response);
+                setClients(response);
             })
             .catch((e) => {
-                console.log(e, "Error al traer los provedores");
+                console.log(e, "Error al traer los clientes");
             });
     }, []);
-
-    const onBuyProviderChange = (e) => {
-        setSelectedProvider(e.value);
+console.log(clients)
+    
+const onSaleClientChange = (e) => {
+        setClientSelected(e.value);
     };
-    useEffect(() => {
-        const totalDiscount = buyTotalPurchase * (buyDiscountsPercentage / 100);
-        setBuyTotalDiscounts(totalDiscount);
-       
-    },[buyTotalPurchase,buyDiscountsPercentage]);
-    
-    //Verifica si hay applicados descuentos previos y luuego aplica el iva, actualiza automaticamente el campo del formulario
-    useEffect(() => {
-        if (buyTotalDiscounts !== 0) {
-            const buyWithDiscount = buyTotalPurchase - buyTotalDiscounts;
-            const buyAfterIvaAndDiscounts = buyWithDiscount*(buyIvaPercentage/100)
-            setBuyTotalIva(buyAfterIvaAndDiscounts)
-        }else{
-            const totalIva = buyTotalPurchase * (buyIvaPercentage/100)
-            setBuyTotalIva(totalIva)
-        }      
-    },[buyTotalPurchase,buyIvaPercentage,buyTotalDiscounts]);
-    
-    const createBuy = () =>{
-        _saleService.createBuy(
-            buyId,
-            buyProviderSelected.id, 
-            buyDatePurchase, 
-            buyTotalPurchase, 
-            buyShippingPrice, 
-            buyIvaPercentage, 
-            buyTotalIva, 
-            buyDiscountsPercentage,
-            buyTotalDiscounts, 
-            buyInvoiceUrl ).then(()=>{
-                products.forEach(element => {
-                    
-                    _saleService.addProductsToPurchase(element.idBuy,
-                        element.idProduct,
-                        element.amount,
-                        element.amount,
-                        element.shippingPrice,
-                        element.discountsPercentage,
-                        element.ivaPercentage,
-                        element.profitPercentage,
-                        element.salePrice
-                        ).then((response) =>{
-                        console.log(response, "producto agregado a la tabla")
-                    }).catch((e)=>{
-                        console.log("no se agrego el producto")
-                    })
-                    
+
+    const onSaleStatusChange = (e) => {
+        setStatusSaleSelected(e.value);
+    };
+
+    const onSaleStatusPaymentChange = (e) => {
+        setStatusPaymentSelected(e.value);
+    };
+
+    const statusSale = [
+        { name: 'Activo', id: '1' },
+        { name: 'Terminado', id: '0' },
+    ];
+    const statusPayment = [
+        { name: 'Pagado', id: '1' },
+        { name: 'Pendiente', id: '0' },
+    ];
+    let history = useHistory();
+
+    function handleClickRedirect() {
+        toast.current.show({ severity: "success", summary: "Todo ha salido bien!", detail: "Compra creada exitosamente, seras redireccionado a la pantalla principal", life: 4000 });
+        setTimeout(() => {
+            history.push("/sales");
+        }, 4000);
+    }
+    const createSale = () => {
+        _saleService
+            .createSale( saleClientSelected.id, saleDate, statusSaleSelected.name, statusPaymentSelected.name, totalPurchase)
+            .then((responseCreateSale) => {
+                products.forEach((element) => {
+                    _saleService
+                        .addProductsToSale(responseCreateSale.id, element.idProduct, element.amount, element.price)
+                        .then((response) => {
+                            console.log("Response de agregar producto", response);
+                            // _productService.updateProductFromBuy(element.idProduct, element.amount, element.ivaPercentage, element.salePrice);
+                        })
+                        .catch((e) => {
+                            toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
+                        });
                 });
 
-                toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Compra añadida exitosamente", life: 3000 });
-
-        }).catch(() => {
-            toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
-        })
-    }
+                handleClickRedirect();
+            })
+            .catch(() => {
+                toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
+            });
+    };
 
     const accept = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
@@ -128,17 +114,21 @@ export default function CreateSales() {
             message: "¿Esta seguro que desea crear esta compra?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            accept: createBuy(),
+            acceptLabel: "Crear",
+            rejectLabel: "Cancelar",
+            accept: () => createSale(),
             reject,
         });
     };
 
-    const confirm2 = () => {
+    const cancelBuy = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
+            acceptLabel: "Cancelar compra",
+            rejectLabel: "Volver",
             accept,
             reject,
         });
@@ -152,77 +142,42 @@ export default function CreateSales() {
                 <Button label="Regresar" icon="pi pi-angle-left" className="p-button-sm p-button-danger" />
             </Link>
             <div className="create-product-tittle">
-                <h3>Crear una compra</h3>
+                <h3>Crear una venta</h3>
             </div>
 
             <div className="create-buy-form">
                 <div>
-                    <label htmlFor="buyProviderId">Proveedor</label>
+                    <label htmlFor="saleClientId">Id cliente</label>
 
-                    <Dropdown id="buyProviderId" value={buyProviderSelected} options={providers} optionLabel="companyName" onChange={onBuyProviderChange} placeholder="Proveedor" className="create-buy-form__input" />
-                </div>
-                <div>
-                    <label htmlFor="buyId">Numero de factura</label>
-                    <InputText id="buyId" value={buyId} onChange={(e) => setBuyId(e.target.value)} placeholder="Numero o referencia de factura" className="create-buy-form__input" />
-                </div> 
-                <div>
-                    <label htmlFor="buyDatePurchase">Fecha de compra</label>
-
-                    {/* <Calendar id="buyDatePurchase" dateFormat="yy/mm/dd"  value={buyDatePurchase} onChange={(e) => console.log(e)} placeholder="Fecha de compra" className="create-buy-form__input" /> */}
-                    <InputText id="buyDatePurchase" value={buyDatePurchase} onChange={(e) => setBuyDatePurchase(e.target.value)} placeholder="Fecha de compra" className="create-buy-form__input" />
-                </div>
-
-             
-                <div>
-                    <label htmlFor="buyTotalPurchase">Total neto compra</label>
-
-                    <InputNumber id="buyTotalPurchase" value={buyTotalPurchase} onChange={(e) => setBuyTotalPurchase(e.value)} mode="currency" currency="COP" locale="es" placeholder="Total compra" className="create-buy-form__input" />
-                </div>
-                <div>
-                    <label htmlFor="quantityProducts">Cantidad de productos</label>
-
-                    <InputNumber id="quantityProducts" value={quantityProducts} onChange={(e) => setQuantityProducts(e.value)} placeholder="Cantidad productos" className="create-buy-form__input" />
-                </div>
-                <div>
-                    <label htmlFor="buyShippingPrice">Valor de envio</label>
-                    <InputNumber id="buyShippingPrice" value={buyShippingPrice} onChange={(e) => setBuyShippingPrice(e.value)} placeholder="Valor de envio" mode="currency" currency="COP" locale="es" className="create-buy-form__input" />
+                    <Dropdown id="saleClientId" value={saleClientSelected} options={clients} optionLabel="id" onChange={onSaleClientChange} placeholder="Cliente" className="create-buy-form__input" />
                 </div>
 
                 <div>
-                    <label htmlFor="buyDiscountsPercentage">Porcentaje descuento en compra</label>
-                    <InputNumber id="buyDiscountsPercentage" value={buyDiscountsPercentage} onChange={(e) => setBuyDiscountsPercentage(e.value)} placeholder="Porcentaje descuento compra" className="create-buy-form__input" suffix="%" />
-                </div>
-                <div>
-                    <label htmlFor="buyTotalDiscounts">Total descuento</label>
-                    <InputNumber id="buyTotalDiscounts" value={buyTotalDiscounts} placeholder="Total descuento" className="create-buy-form__input" mode="currency" currency="COP" locale="es" disabled />
-                </div>
-                <div>
-                    <label htmlFor="buyIvaPercentage">Porcentaje de IVA</label>
-                    <InputNumber id="buyIvaPercentage" value={buyIvaPercentage} onChange={(e) => setBuyIvaPercentage(e.value)} placeholder="Porcentaje de IVA" className="create-buy-form__input" suffix="%" />
+                    <label htmlFor="saleDate">Fecha de venta</label>
+                    <InputText id="saleDate" value={saleDate} onChange={(e) => setSaleDate(e.target.value)} placeholder="aaaa-mm-dd" className="create-buy-form__input" />
                 </div>
 
                 <div>
-                    <label htmlFor="buyTotalIva">Total IVA</label>
-                    <InputNumber id="buyTotalIva" value={buyTotalIva} placeholder="Total IVA compra" className="create-buy-form__input" mode="currency" currency="COP" locale="es" disabled />
+                    <label htmlFor="statusSale">Estado de la venta</label>
+                    <Dropdown id="statusSale" value={statusSaleSelected} options={statusSale} optionLabel="name" onChange={onSaleStatusChange} placeholder="Seleccione el estado" className="create-buy-form__input" />
+                </div>
+
+                <div>
+                    <label htmlFor="buyProviderId">Estado de pago</label>
+
+                    <Dropdown id="buyProviderId" value={statusPaymentSelected} options={statusPayment} optionLabel="name" onChange={onSaleStatusPaymentChange} placeholder="Seleccione el estado de pago" className="create-buy-form__input" />
                 </div>
                 <div>
-                    <label htmlFor="buyInvoiceUrl">URL factura</label>
-                    <InputText id="buyInvoiceUrl" value={buyInvoiceUrl} onChange={(e) => setBuyinvoiceUrl(e.target.value)} placeholder="URL factura" className="create-buy-form__input" />
+                    <label htmlFor="totalSale">Total venta</label>
+                    <InputNumber id="totalSale" value={totalPurchase} placeholder="Total venta" onChange={(e) => setTotalPurchase(e.value)}className="create-buy-form__input" mode="currency" currency="COP" locale="es" />
                 </div>
             </div>
-            
-            <TableBuyDetail 
-            idBuy ={buyId} 
-            shippingPrice={buyShippingPrice} 
-            quantityProducts={quantityProducts} 
-            discountsPercentage={buyDiscountsPercentage} 
-            ivaPercentage={buyIvaPercentage}
-            setAddedProductsAtBuy={setAddedProductsAtBuy}
-            />
+
+            <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
             <div className="create-product-buttons">
-                <Button onClick={create} icon="pi pi-check" label="Crear" className="mr-2"></Button>
-                <Button onClick={confirm2} icon="pi pi-times" label="Cancelar"></Button>
+                <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2"></Button>
+                <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
             </div>
         </div>
     );
