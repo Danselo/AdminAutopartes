@@ -33,7 +33,7 @@ import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurchase";
 import Categories from "./pages/Categories/Categories";
 import Vehicles from "./pages/Vehicle/Vehicle";
-
+import ProductsBrands from "./pages/ProductsBrands/ProductsBrands";
 
 
 const App = () => {
@@ -190,20 +190,26 @@ const App = () => {
                     to: "/Categories",
                 },
                 {
-                    label: "Marcas",
+                    label: "Marcas vehiculos",
                     icon: "pi pi-fw pi-car",
                     to: "/Brand",
-                },
-                {
-                    label: "Productos",
-                    icon: "pi pi-fw pi-box",
-                    to: "/Products",
                 },
                 {
                     label: "Vehiculos",
                     icon: "pi pi-fw pi-car",
                     to: "/Vehicles",
                 },
+                {
+                    label: "Marcas productos",
+                    icon: "pi pi-fw pi-car",
+                    to: "/ProductsBrands",
+                },
+                {
+                    label: "Productos",
+                    icon: "pi pi-fw pi-box",
+                    to: "/Products",
+                },
+                
             ],
         },
         {
@@ -278,6 +284,7 @@ const App = () => {
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
                     <Route path="/Categories" exact render={() => <Categories />} />                  
                     <Route path="/Vehicles" exact render={() => <Vehicles />} />
+                    <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} /> 
               
                 </div>
 

@@ -1,0 +1,17 @@
+.create-brand-form{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.create-brand__table{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 1rem 0 1rem 0;
+    width: 20rem;
+}
+
+.dc-brand-between{
+    margin: 0 1rem 0 0;
+}
