@@ -17,11 +17,7 @@
 
 }
 
-<<<<<<< HEAD
 /* .create-product-form{
-=======
-.create-client-form{
->>>>>>> main
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: center;
@@ -31,7 +27,9 @@
     column-gap: 1rem;
     
 } */
-
+.tittle-client{
+    margin: auto;
+}
 
 .create-product-buttons{
     display: flex;

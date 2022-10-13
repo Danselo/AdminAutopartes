@@ -62,10 +62,13 @@ export const TableBuys = ({ setBuySelected, buys }) => {
     };
 
     useEffect(() => {
-        getBuyDetail(buyInfo.id);
+        if (buyInfo.id != null) {
+            getBuyDetail(buyInfo.id);
+        }
     }, [buyInfo]);
 
     console.log(productsDetailOfBuy);
+    
     const infoBuyDialogFooter = (
         <React.Fragment>
             <Button label="Cerrar" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
@@ -85,7 +88,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
             <Dialog visible={buyInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoBuyDialogFooter} onHide={hideDialog}>
                 <Panel header="Informacion general de la compra" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
-                        <div className = "dialog-buy-panel-products__detail-item">
+                        <div className = "">
                             <strong>
                                 <p>Numero de factura</p>
                             </strong>

@@ -7,6 +7,11 @@ export class SaleService {
     getSales() {
         return axios.get(baseSaleURL).then((res) => res.data);
     }
+    getSaleDetailById(idSale) {
+        return axios.get(`${baseSaleURL}/get-sale-details/${idSale}`).then((res) => res.data).catch((e) =>{
+            console.error("Falle al traer los productos de la bd", e)
+        });
+    }
     createSale(idClient, saleDate, statusSale, statusPayment, totalPurchase) {
         return axios
             .post(baseSaleURL + "/create", {              

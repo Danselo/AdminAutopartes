@@ -80,8 +80,6 @@ export default function Roles() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteRolAlert()} disabled={!rolSelected.name} />
-
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!rolSelected.name} />
         </React.Fragment>
     );

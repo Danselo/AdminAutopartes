@@ -41,7 +41,7 @@ export default function Client() {
 
 
     // );
-    const rightContents = (
+    const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()}   />
@@ -194,7 +194,7 @@ export default function Client() {
             setClients(response);
         });
     }, []);
-    // const rightContents = (
+    // const leftContents = (
     //     <React.Fragment>
     //         <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
     //     </React.Fragment>
@@ -202,10 +202,10 @@ export default function Client() {
     return (
         <div>
             <Toast ref={toast} />
-            <div className="tittle-product">y
+            <div className="tittle-client">
                 <h3>Gestión de Clientes</h3>
             </div>
-            <Toolbar  right={rightContents} />
+            <Toolbar  left={leftContents} />
             <Dialog header="Crear un nuevo Cliente" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }} footer={renderFooterDialog()}>
 
             <div className="create-client-form">

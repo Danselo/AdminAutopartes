@@ -25,7 +25,7 @@ export default function CreateSales() {
     const [statusSaleSelected, setStatusSaleSelected] = useState([]);
     const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
     const [saleDate, setSaleDate] = useState("");
-    const [totalPurchase, setTotalPurchase] = useState(0);
+    const [totalSale, setTotalSale] = useState(0);
     const [addedProductsAtSale, setAddedProductsAtSale] = useState([]);
     const [products, setProducts] = useState([]);
 console.log(saleClientSelected)
@@ -63,6 +63,18 @@ const onSaleClientChange = (e) => {
         setStatusPaymentSelected(e.value);
     };
 
+
+    useEffect(() => {
+        let total = 0;
+        addedProductsAtSale.forEach(element => {
+            total += element.price
+            setTotalSale(total)
+            
+        });
+
+       
+    }, [addedProductsAtSale]);
+
     const statusSale = [
         { name: 'Activo', id: '1' },
         { name: 'Terminado', id: '0' },
@@ -81,14 +93,14 @@ const onSaleClientChange = (e) => {
     }
     const createSale = () => {
         _saleService
-            .createSale( saleClientSelected.id, saleDate, statusSaleSelected.name, statusPaymentSelected.name, totalPurchase)
+            .createSale( saleClientSelected.id, saleDate, statusSaleSelected.name, statusPaymentSelected.name, totalSale)
             .then((responseCreateSale) => {
                 products.forEach((element) => {
                     _saleService
                         .addProductsToSale(responseCreateSale.id, element.idProduct, element.amount, element.price)
                         .then((response) => {
                             console.log("Response de agregar producto", response);
-                            // _productService.updateProductFromBuy(element.idProduct, element.amount, element.ivaPercentage, element.salePrice);
+                            _productService.discountProduct(element.idProduct, element.amount);
                         })
                         .catch((e) => {
                             toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
@@ -133,12 +145,12 @@ const onSaleClientChange = (e) => {
             reject,
         });
     };
-
+console.log(clients.name)
     return (
         <div>
             <Toast ref={toast} />
             <ConfirmDialog />
-            <Link to={"/Buys"}>
+            <Link to={"/Sales"}>
                 <Button label="Regresar" icon="pi pi-angle-left" className="p-button-sm p-button-danger" />
             </Link>
             <div className="create-product-tittle">
@@ -149,12 +161,12 @@ const onSaleClientChange = (e) => {
                 <div>
                     <label htmlFor="saleClientId">Id cliente</label>
 
-                    <Dropdown id="saleClientId" value={saleClientSelected} options={clients} optionLabel="id" onChange={onSaleClientChange} placeholder="Cliente" className="create-buy-form__input" />
+                    <Dropdown id="saleClientId" value={saleClientSelected} options={clients} optionLabel="document" onChange={onSaleClientChange} placeholder="Cliente" className="create-buy-form__input" />
                 </div>
 
                 <div>
                     <label htmlFor="saleDate">Fecha de venta</label>
-                    <InputText id="saleDate" value={saleDate} onChange={(e) => setSaleDate(e.target.value)} placeholder="aaaa-mm-dd" className="create-buy-form__input" />
+                    <InputText id="saleDate" value={saleDate} onChange={(e) => setSaleDate(e.target.value)} placeholder="aaaa-mm-dd" allowEmpty={false} required={true} className="create-buy-form__input" />
                 </div>
 
                 <div>
@@ -169,14 +181,14 @@ const onSaleClientChange = (e) => {
                 </div>
                 <div>
                     <label htmlFor="totalSale">Total venta</label>
-                    <InputNumber id="totalSale" value={totalPurchase} placeholder="Total venta" onChange={(e) => setTotalPurchase(e.value)}className="create-buy-form__input" mode="currency" currency="COP" locale="es" />
+                    <InputNumber id="totalSale" value={totalSale} placeholder="Total venta" disabled className="create-buy-form__input" mode="currency" currency="COP" locale="es" />
                 </div>
             </div>
 
             <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
             <div className="create-product-buttons">
-                <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2"></Button>
+                <Button onClick={create} icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
                 <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
             </div>
         </div>

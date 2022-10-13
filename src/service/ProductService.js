@@ -46,6 +46,15 @@ export class ProductService {
         });
     }
 
+    discountProduct(productId, amount) {
+        let url = `${baseProductURL}/discount-product/${productId}`
+        return axios
+        .put(url,{
+            amount: amount,
+           
+        });
+    }
+
     updateVehiclesOfProduct(idProduct,arrayOfVehiclesOfProduct) {
                 
         return axios
