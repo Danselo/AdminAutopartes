@@ -34,7 +34,7 @@ export default function CreateSales() {
         saleDate: "",
         statusSale: "",
         statusPayment: "",
-        totalSale:null ,
+        totalSale: null,
     };
     const {
         control,
@@ -172,8 +172,11 @@ export default function CreateSales() {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="create-buy-form">
                     <div>
-                        <label htmlFor="saleClientId">Id cliente</label>
-                        <Dropdown id="saleClientId" value={saleClientSelected} options={clients} optionLabel="document" onChange={onSaleClientChange} placeholder="Cliente" className="create-buy-form__input" />
+                        <span>
+                            <label htmlFor="saleClientId">Id cliente</label>
+                            <Dropdown id="saleClientId" value={saleClientSelected} options={clients} optionLabel="document" onChange={onSaleClientChange} placeholder="Cliente" className="create-buy-form__input" />
+                        </span>
+                        
                     </div>
 
                     <div>
@@ -186,8 +189,8 @@ export default function CreateSales() {
                             <Controller
                                 name="saleDate"
                                 control={control}
-                                rules={{ required: "Fecha de venta es requerido.", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Fecha de venta invalida. E.g. 2020-10-10' } }}
-                                render={({ field, fieldState }) => <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error })} placeholder="aaaa-mm-dd" />}
+                                rules={{ required: "Fecha de venta es requerido.", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Fecha de venta invalida. E.g. 2020-10-10" } }}
+                                render={({ field, fieldState }) => <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error, "create-buy-form__input": true })} placeholder="aaaa-mm-dd" />}
                             />
                         </span>
                         {getFormErrorMessage("saleDate")}
@@ -204,7 +207,7 @@ export default function CreateSales() {
                                 name="statusSale"
                                 control={control}
                                 rules={{ required: "Estado de la venta es requerido." }}
-                                render={({ field, fieldState }) => <Dropdown id={field.name} {...field} options={statusSale} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error })} />}
+                                render={({ field, fieldState }) => <Dropdown id={field.name} {...field} options={statusSale} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error , "create-buy-form__input": true})} />}
                             />
                         </span>
                         {getFormErrorMessage("statusSale")}
@@ -221,7 +224,7 @@ export default function CreateSales() {
                                 name="statusPayment"
                                 control={control}
                                 rules={{ required: "Estado del pago es requerido." }}
-                                render={({ field, fieldState }) => <Dropdown id={field.name} {...field} options={statusPayment} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error })} />}
+                                render={({ field, fieldState }) => <Dropdown id={field.name} {...field} options={statusPayment} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-buy-form__input": true })} />}
                             />
                         </span>
                         {getFormErrorMessage("statusPayment")}
@@ -238,7 +241,7 @@ export default function CreateSales() {
                                 name="totalSale"
                                 control={control}
                                 rules={{ required: "Debes asociar productos a la venta." }}
-                                render={({ field, fieldState }) => <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error })} mode="currency" currency="COP" locale="es" placeholder="Total venta" disabled />}
+                                render={({ field, fieldState }) => <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error, "create-buy-form__input": true })} mode="currency" currency="COP" locale="es" placeholder="Total venta" disabled />}
                             />
                         </span>
                         {getFormErrorMessage("totalSale")}
