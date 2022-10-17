@@ -17,8 +17,7 @@ import { Calendar } from "primereact/calendar";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputNumber } from 'primereact/inputnumber';
- 
+import { InputNumber } from "primereact/inputnumber";
 
 const _saleService = new SaleService();
 const _clientService = new ClientService();
@@ -38,8 +37,6 @@ export default function CreateSales() {
     const isMounted = useRef(false);
     const [globalFilter, setGlobalFilter] = useState(null);
 
-    console.log(op);
-    console.log(isMounted);
     useEffect(() => {
         if (isMounted.current && saleClientSelected) {
             op.current.hide();
@@ -68,7 +65,7 @@ export default function CreateSales() {
         saleDate: "",
         statusSale: "",
         statusPayment: "",
-        // totalSale: null,
+        totalSale: null,
     };
     const {
         control,
@@ -76,7 +73,7 @@ export default function CreateSales() {
         handleSubmit,
         reset,
     } = useForm({ defaultValues });
-
+console.log(control)
     useEffect(() => {
         let cosamappeada = addedProductsAtSale.map((p) => {
             let { TemporalId, ...loDemas } = p;
@@ -85,9 +82,9 @@ export default function CreateSales() {
         setProducts(cosamappeada);
     }, [addedProductsAtSale]);
 
-    const onSaleClientChange = (e) => {
-        setClientSelected(e.value);
-    };
+    // const onSaleClientChange = (e) => {
+    //     setClientSelected(e.value);
+    // };
     const statusSale = [
         { name: "Activo", id: "1" },
         { name: "Terminado", id: "0" },
@@ -165,14 +162,14 @@ export default function CreateSales() {
     const onSubmit = (data) => {
         console.log(data);
         console.log(data.saleDate);
-        console.log("Me ejecute cuando le di clic en agregar productos")
+        console.log("Me ejecute cuando le di clic en agregar productos");
         var dateSelected = new Date(data.saleDate);
         var formatDate = dateSelected.toISOString().split("T")[0];
         setSaleDate(formatDate);
         setStatusSaleSelected(data.statusSale.name);
         setStatusPaymentSelected(data.statusPayment.name);
-        // setTotalSale(totalSale);
-        reset();
+        setTotalSale(totalSale);
+        create();
     };
 
     useEffect(() => {
@@ -195,27 +192,42 @@ export default function CreateSales() {
             </Link>
             <div className="create-product-tittle">
                 <h3>Crear una venta</h3>
-
             </div>
             <div className="">
-                            <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Asociar un cliente a la venta es opcional"/>
+                <Button
+                    type="button"
+                    icon="pi pi-search"
+                    label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"}
+                    onClick={(e) => op.current.toggle(e)}
+                    aria-haspopup
+                    aria-controls="overlay_panel"
+                    className="select-product-button"
+                    tooltip="Asociar un cliente a la venta es opcional"
+                />
 
-                            <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
-                                <div className="p-inputgroup create-brand__table">
-                                    <InputText placeholder="Buscar cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
-                                    <Button icon="pi pi-search" className="p-button-primary" />
-                                </div>
-                                <DataTable value={clients} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={saleClientSelected} onSelectionChange={onClientSelect}>
-                                    <Column field="name" sortable header="Nombre"></Column>
-                                    <Column field="lastname" sortable header="Apellido"></Column>
-                                    <Column field="document" sortable header="Documento"></Column>
-                                    <Column field="telephone" sortable header="Telefono"></Column>
-                                </DataTable>
-                            </OverlayPanel>
-                        </div>
+                <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
+                    <div className="p-inputgroup create-brand__table">
+                        <InputText placeholder="Buscar cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
+                        <Button icon="pi pi-search" className="p-button-primary" />
+                    </div>
+                    <DataTable 
+                    value={clients} 
+                    globalFilter={globalFilter} 
+                    selectionMode="single" 
+                    paginator 
+                    rows={5} 
+                    selection={saleClientSelected} 
+                    onSelectionChange={onClientSelect}>
+                        
+                        <Column field="name" sortable header="Nombre"></Column>
+                        <Column field="lastname" sortable header="Apellido"></Column>
+                        <Column field="document" sortable header="Documento"></Column>
+                        <Column field="telephone" sortable header="Telefono"></Column>
+                    </DataTable>
+                </OverlayPanel>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="create-sale-form">
-                   
                     <div>
                         <span>
                             <label htmlFor="saleDate" className={classNames({ "p-error": !!errors.saleDate })}>
@@ -224,11 +236,11 @@ export default function CreateSales() {
                             <Controller
                                 name="saleDate"
                                 control={control}
-                                rules={{ required: "Fecha de venta es requerido.", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Fecha de venta invalida. E.g. 2020-10-10" } }}
-                                render={({ field, fieldState }) => 
-                                <Calendar value={saleDate} id={field.name} autoFocus {...field} readOnlyInput className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" />}
+                                rules={{ required: "Fecha de venta es requerido."}}
+                                render={({ field, fieldState, ref }) => 
+                                <Calendar  id={field.name}  { ...ref}{...field}  className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" />}
                             />
-                        </span>
+                        </span> 
                         {getFormErrorMessage("saleDate")}
                     </div>
 
@@ -241,7 +253,8 @@ export default function CreateSales() {
                                 name="statusSale"
                                 control={control}
                                 rules={{ required: "Estado de la venta es requerido." }}
-                                render={({ field, fieldState }) => <Dropdown value={statusSaleSelected} id={field.name} {...field} options={statusSale} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} />}
+                                render={({ field, fieldState, ref }) => 
+                                <Dropdown  id={field.name} { ...ref} {...field} options={statusSale} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} />}
                             />
                         </span>
                         {getFormErrorMessage("statusSale")}
@@ -256,15 +269,15 @@ export default function CreateSales() {
                                 name="statusPayment"
                                 control={control}
                                 rules={{ required: "Estado del pago es requerido." }}
-                                render={({ field, fieldState }) => (
-                                    <Dropdown value={statusPaymentSelected} id={field.name} {...field} options={statusPayment} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} />
+                                render={({ field, fieldState , ref}) => (
+                                    <Dropdown  id={field.name} { ...ref} {...field} options={statusPayment} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} />
                                 )}
                             />
                         </span>
                         {getFormErrorMessage("statusPayment")}
                     </div>
 
-                    {/* <div>
+                    <div>
                         <span>
                             <label htmlFor="totalSale" className={classNames({ "p-error": !!errors.totalSale })}>
                                 Total venta*
@@ -273,19 +286,17 @@ export default function CreateSales() {
                                 name="totalSale"
                                 control={control}
                                 rules={{ required: "Debes asociar productos a la venta." }}
-                                render={({ field, fieldState }) => (
-                                <InputNumber value={totalSale} id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} mode="currency" currency="COP" locale="es" placeholder="Total venta" disabled />
-                                )}
+                                render={({ field, fieldState, ref }) => 
+                                <InputNumber  id={field.name} { ...ref} {...field} className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} mode="currency" currency="COP" locale="es" placeholder="Total venta" disabled />}
                             />
                         </span>
                         {getFormErrorMessage("totalSale")}
-                    </div> */}
+                    </div>
                 </div>
-                {/* <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} /> */}
+                <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
                 <div className="create-product-buttons">
-                    <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
-
+                    <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"/>
                     <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
                 </div>
             </form>
