@@ -85,9 +85,6 @@ export default function CreateSales() {
         setProducts(cosamappeada);
     }, [addedProductsAtSale]);
 
-    const onSaleClientChange = (e) => {
-        setClientSelected(e.value);
-    };
     const statusSale = [
         { name: "Activo", id: "1" },
         { name: "Terminado", id: "0" },
@@ -172,7 +169,7 @@ export default function CreateSales() {
         setStatusSaleSelected(data.statusSale.name);
         setStatusPaymentSelected(data.statusPayment.name);
         // setTotalSale(totalSale);
-        reset();
+        create();
     };
 
     useEffect(() => {
@@ -224,10 +221,15 @@ export default function CreateSales() {
                             <Controller
                                 name="saleDate"
                                 control={control}
-                                rules={{ required: "Fecha de venta es requerido.", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Fecha de venta invalida. E.g. 2020-10-10" } }}
+                                rules={{ required: "Fecha de venta es requerido."}}
                                 render={({ field, fieldState }) => 
-                                <Calendar value={saleDate} id={field.name} autoFocus {...field} readOnlyInput className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" />}
+                                <Calendar value={saleDate} id={field.name} {...field}  readOnlyInput  className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" onFocus />
+                               
+                            //    <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error, "create-buy-form__input": true })} placeholder="aaaa-mm-dd" />
+                            }
                             />
+                            
+                            
                         </span>
                         {getFormErrorMessage("saleDate")}
                     </div>
@@ -264,7 +266,7 @@ export default function CreateSales() {
                         {getFormErrorMessage("statusPayment")}
                     </div>
 
-                    {/* <div>
+                     <div>
                         <span>
                             <label htmlFor="totalSale" className={classNames({ "p-error": !!errors.totalSale })}>
                                 Total venta*
@@ -279,9 +281,9 @@ export default function CreateSales() {
                             />
                         </span>
                         {getFormErrorMessage("totalSale")}
-                    </div> */}
+                    </div> 
                 </div>
-                {/* <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} /> */}
+                <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
                 <div className="create-product-buttons">
                     <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
