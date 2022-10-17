@@ -40,7 +40,6 @@ export const TableProducts = ({ setProductSelected, products }) => {
             <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
             <Column field="id" frozen sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
-            <Column field="photo" header="Imagen" hidden></Column>
             <Column field="category.name" sortable header="Categoria"></Column>
             <Column field="amount" className="table-product--column-gray" sortable header="Cantidad en stock"></Column>
             <Column field="iva" className="table-product--column-gray" header="Iva"></Column>

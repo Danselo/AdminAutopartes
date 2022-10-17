@@ -82,17 +82,7 @@ export default function Products() {
             reject: () => setDisplayDialogEdit(false),
         });
     };
-    const deleteProductAlert = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea eliminar esta Categoria?",
-            header: "Confirmacion",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Eliminar",
-            rejectLabel: "Cancelar",
-            accept: () => deleteProduct(productSelected),
-            reject: () => setDisplayDialogCreate(true),
-        });
-    };
+   
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -212,21 +202,6 @@ export default function Products() {
                 console.log(e);
             });
     }
-
-    function deleteProduct(product) {
-        _productService
-            .deleteProduct(product.id)
-            .then(() => {
-                toast.current.show({ severity: "c", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
-                loadProducts();
-                setProductSelected({});
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-    }
-
 
     const loadProducts = () => {
         _productService.getProducts().then((response) => {
