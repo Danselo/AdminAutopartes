@@ -11,14 +11,13 @@ import TableSalesProductsDetail from "../../components/TableSales/TableSalesProd
 import { useHistory } from "react-router-dom";
 import { SaleService } from "../../service/SaleService";
 import { ClientService } from "../../service/ClientService";
-import { useForm, Controller } from "react-hook-form";
+import { useFormik } from "formik";
 import { classNames } from "primereact/utils";
 import { Calendar } from "primereact/calendar";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputNumber } from 'primereact/inputnumber';
- 
+import { InputNumber } from "primereact/inputnumber";
 
 const _saleService = new SaleService();
 const _clientService = new ClientService();
@@ -38,8 +37,6 @@ export default function CreateSales() {
     const isMounted = useRef(false);
     const [globalFilter, setGlobalFilter] = useState(null);
 
-    console.log(op);
-    console.log(isMounted);
     useEffect(() => {
         if (isMounted.current && saleClientSelected) {
             op.current.hide();
@@ -63,20 +60,50 @@ export default function CreateSales() {
         setClientSelected(e.value);
     };
 
-    const defaultValues = {
-        saleClientId: null,
-        saleDate: "",
-        statusSale: "",
-        statusPayment: "",
-        // totalSale: null,
-    };
-    const {
-        control,
-        formState: { errors },
-        handleSubmit,
-        reset,
-    } = useForm({ defaultValues });
+    const formik = useFormik({
+        initialValues: {
+            saleClientId: null,
+            saleDate: "",
+            statusSale: "",
+            statusPayment: "",
+            totalSale: null,
+        },
+        validate: (data) => {
+            let errors = {};
 
+            if (!data.saleDate) {
+                errors.name = "Fecha de venta es requerido.";
+            }
+
+            if (!data.statusSale) {
+                errors.email = "Estado de la venta es requerido";
+            }
+
+            if (!data.statusPayment) {
+                errors.password = "El estado de pago es requerido";
+            }
+
+            if (!data.totalSale) {
+                errors.accept = "Debe asociar productos a la venta para poder continuar";
+            }
+
+            return errors;
+        },
+        onSubmit: (data) => {
+            var dateSelected = new Date(data.saleDate);
+            var formatDate = dateSelected.toISOString().split("T")[0];
+            setSaleDate(formatDate);
+            setStatusSaleSelected(data.statusSale.name);
+            setStatusPaymentSelected(data.statusPayment.name);
+            setTotalSale(totalSale);
+            create();
+        },
+    });
+
+    const isFormFieldValid = (name) => !!(formik.touched[name] && formik.errors[name]);
+    const getFormErrorMessage = (name) => {
+        return isFormFieldValid(name) && <small className="p-error">{formik.errors[name]}</small>;
+    };
     useEffect(() => {
         let cosamappeada = addedProductsAtSale.map((p) => {
             let { TemporalId, ...loDemas } = p;
@@ -120,7 +147,7 @@ export default function CreateSales() {
                 handleClickRedirect();
             })
             .then(() => {
-                reset();
+                formik.resetForm();
             })
             .catch(() => {
                 toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
@@ -158,20 +185,6 @@ export default function CreateSales() {
             reject,
         });
     };
-
-    const onSubmit = (data) => {
-        console.log(data);
-        console.log(data.saleDate);
-        console.log("Me ejecute cuando le di clic en agregar productos")
-        var dateSelected = new Date(data.saleDate);
-        var formatDate = dateSelected.toISOString().split("T")[0];
-        setSaleDate(formatDate);
-        setStatusSaleSelected(data.statusSale.name);
-        setStatusPaymentSelected(data.statusPayment.name);
-        // setTotalSale(totalSale);
-        create();
-    };
-
     useEffect(() => {
         let total = 0;
         addedProductsAtSale.forEach((element) => {
@@ -180,9 +193,6 @@ export default function CreateSales() {
         });
     }, [addedProductsAtSale]);
 
-    const getFormErrorMessage = (name) => {
-        return errors[name] && <small className="p-error">{errors[name].message}</small>;
-    };
     return (
         <div>
             <Toast ref={toast} />
@@ -192,58 +202,70 @@ export default function CreateSales() {
             </Link>
             <div className="create-product-tittle">
                 <h3>Crear una venta</h3>
-
             </div>
             <div className="">
-                            <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Asociar un cliente a la venta es opcional"/>
+                <Button
+                    type="button"
+                    icon="pi pi-search"
+                    label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"}
+                    onClick={(e) => op.current.toggle(e)}
+                    aria-haspopup
+                    aria-controls="overlay_panel"
+                    className="select-product-button"
+                    tooltip="Asociar un cliente a la venta es opcional"
+                />
 
-                            <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
-                                <div className="p-inputgroup create-brand__table">
-                                    <InputText placeholder="Buscar cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
-                                    <Button icon="pi pi-search" className="p-button-primary" />
-                                </div>
-                                <DataTable value={clients} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={saleClientSelected} onSelectionChange={onClientSelect}>
-                                    <Column field="name" sortable header="Nombre"></Column>
-                                    <Column field="lastname" sortable header="Apellido"></Column>
-                                    <Column field="document" sortable header="Documento"></Column>
-                                    <Column field="telephone" sortable header="Telefono"></Column>
-                                </DataTable>
-                            </OverlayPanel>
-                        </div>
-            <form onSubmit={handleSubmit(onSubmit)}>
+                <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
+                    <div className="p-inputgroup create-brand__table">
+                        <InputText placeholder="Buscar cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
+                        <Button icon="pi pi-search" className="p-button-primary" />
+                    </div>
+                    <DataTable value={clients} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={saleClientSelected} onSelectionChange={onClientSelect}>
+                        <Column field="name" sortable header="Nombre"></Column>
+                        <Column field="lastname" sortable header="Apellido"></Column>
+                        <Column field="document" sortable header="Documento"></Column>
+                        <Column field="telephone" sortable header="Telefono"></Column>
+                    </DataTable>
+                </OverlayPanel>
+            </div>
+            <form onSubmit={formik.handleSubmit}>
                 <div className="create-sale-form">
-                   
                     <div>
                         <span>
-                            <label htmlFor="saleDate" className={classNames({ "p-error": !!errors.saleDate })}>
+                            <label htmlFor="saleDate" className={classNames({ "p-error": isFormFieldValid("saleDate") })}>
                                 Fecha de venta*
                             </label>
-                            <Controller
+
+                            <Calendar
+                                id="saleDate"
                                 name="saleDate"
-                                control={control}
-                                rules={{ required: "Fecha de venta es requerido."}}
-                                render={({ field, fieldState }) => 
-                                <Calendar value={saleDate} id={field.name} {...field}  readOnlyInput  className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" onFocus />
-                               
-                            //    <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error, "create-buy-form__input": true })} placeholder="aaaa-mm-dd" />
-                            }
+                                value={formik.values.saleDate}
+                                onChange={formik.handleChange}
+                                readOnlyInput
+                                className={classNames({ "p-invalid": isFormFieldValid("saleDate"), "create-sale-form__input": true })}
+                                placeholder="aaaa-mm-dd"
+                                dateFormat="yy-mm-dd"
+                                
                             />
-                            
-                            
                         </span>
                         {getFormErrorMessage("saleDate")}
                     </div>
 
                     <div>
                         <span>
-                            <label htmlFor="statusSale" className={classNames({ "p-error": !!errors.statusSale })}>
+                            <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
                                 Estado de la venta*
                             </label>
-                            <Controller
+
+                            <Dropdown
+                                id="statusSale"
                                 name="statusSale"
-                                control={control}
-                                rules={{ required: "Estado de la venta es requerido." }}
-                                render={({ field, fieldState }) => <Dropdown value={statusSaleSelected} id={field.name} {...field} options={statusSale} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} />}
+                                value={formik.values.statusSale}
+                                onChange={formik.handleChange}
+                                options={statusSale}
+                                placeholder="Seleccione el estado"
+                                optionLabel="name"
+                                className={classNames({ "p-invalid": isFormFieldValid("name"), "create-sale-form__input": true })}
                             />
                         </span>
                         {getFormErrorMessage("statusSale")}
@@ -251,43 +273,49 @@ export default function CreateSales() {
 
                     <div>
                         <span>
-                            <label htmlFor="statusPayment" className={classNames({ "p-error": !!errors.statusPayment })}>
+                            <label htmlFor="statusPayment" className={classNames({ "p-error": isFormFieldValid("statusPayment") })}>
                                 Estado de pago*
                             </label>
-                            <Controller
+
+                            <Dropdown
+                                id="statusPayment"
                                 name="statusPayment"
-                                control={control}
-                                rules={{ required: "Estado del pago es requerido." }}
-                                render={({ field, fieldState }) => (
-                                    <Dropdown value={statusPaymentSelected} id={field.name} {...field} options={statusPayment} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} />
-                                )}
+                                value={formik.values.statusPayment}
+                                onChange={formik.handleChange}
+                                options={statusPayment}
+                                placeholder="Seleccione el estado"
+                                optionLabel="name"
+                                className={classNames({ "p-invalid": isFormFieldValid("name"), "create-sale-form__input": true })}
                             />
                         </span>
                         {getFormErrorMessage("statusPayment")}
                     </div>
 
-                     <div>
+                    <div>
                         <span>
-                            <label htmlFor="totalSale" className={classNames({ "p-error": !!errors.totalSale })}>
+                            <label htmlFor="totalSale" className={classNames({ "p-error": isFormFieldValid("totalSale") })}>
                                 Total venta*
                             </label>
-                            <Controller
+                            <InputNumber
+                                id="totalSale"
                                 name="totalSale"
-                                control={control}
-                                rules={{ required: "Debes asociar productos a la venta." }}
-                                render={({ field, fieldState }) => (
-                                <InputNumber value={totalSale} id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error, "create-sale-form__input": true })} mode="currency" currency="COP" locale="es" placeholder="Total venta" disabled />
-                                )}
+                                value={formik.values.totalSale}
+                                onChange={formik.handleChange}
+                                className={classNames({ "p-invalid": isFormFieldValid("name"), "create-sale-form__input": true })}
+                                mode="currency"
+                                currency="COP"
+                                locale="es"
+                                placeholder="Total venta"
+                                disabled
                             />
                         </span>
                         {getFormErrorMessage("totalSale")}
-                    </div> 
+                    </div>
                 </div>
-                <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
+                {/* <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} /> */}
 
-                <div className="create-product-buttons">
                     <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
-
+                <div className="create-product-buttons">
                     <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
                 </div>
             </form>
