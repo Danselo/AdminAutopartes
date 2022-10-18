@@ -11,7 +11,7 @@ import TableSalesProductsDetail from "../../components/TableSales/TableSalesProd
 import { useHistory } from "react-router-dom";
 import { SaleService } from "../../service/SaleService";
 import { ClientService } from "../../service/ClientService";
-import { useFormik } from "formik";
+import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
 import { Calendar } from "primereact/calendar";
 import { OverlayPanel } from "primereact/overlaypanel";
@@ -60,49 +60,57 @@ export default function CreateSales() {
         setClientSelected(e.value);
     };
 
-    const formik = useFormik({
-        initialValues: {
-            saleClientId: null,
-            saleDate: "",
-            statusSale: "",
-            statusPayment: "",
-            totalSale: null,
-        },
-        validate: (data) => {
-            let errors = {};
+    const initialValues = {
+        saleClientId: null,
+        saleDate: "",
+        statusSale: "",
+        statusPayment: "",
+        totalSale: null,
+    };
 
-            if (!data.saleDate) {
-                errors.name = "Fecha de venta es requerido.";
-            }
+    const validate = (data) => {
+        let errors = {};
 
-            if (!data.statusSale) {
-                errors.email = "Estado de la venta es requerido";
-            }
+        if (!saleClientSelected) {
+            errors.saleClientId = "Debe asociar un cliente a la venta.";
+        }
+        if (!data.saleDate) {
+            errors.saleDate = "Fecha de venta es requerido.";
+        }
 
-            if (!data.statusPayment) {
-                errors.password = "El estado de pago es requerido";
-            }
+        if (!data.statusSale) {
+            errors.statusSale = "Estado de la venta es requerido";
+        }
 
-            if (!data.totalSale) {
-                errors.accept = "Debe asociar productos a la venta para poder continuar";
-            }
+        if (!data.statusPayment) {
+            errors.statusPayment = "El estado de pago es requerido";
+        }
 
-            return errors;
-        },
-        onSubmit: (data) => {
+        if (!data.totalSale) {
+            errors.totalSale = "Debe asociar productos a la venta para poder continuar";
+        }
+
+        return errors;
+    };
+
+    const onSubmit = (data, form) => {
+        if (!saleClientSelected) {
+            
+        } else {
             var dateSelected = new Date(data.saleDate);
             var formatDate = dateSelected.toISOString().split("T")[0];
             setSaleDate(formatDate);
             setStatusSaleSelected(data.statusSale.name);
             setStatusPaymentSelected(data.statusPayment.name);
             setTotalSale(totalSale);
-            create();
-        },
-    });
+            create(form);    
+        }
+        
+    };
 
-    const isFormFieldValid = (name) => !!(formik.touched[name] && formik.errors[name]);
-    const getFormErrorMessage = (name) => {
-        return isFormFieldValid(name) && <small className="p-error">{formik.errors[name]}</small>;
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
     useEffect(() => {
         let cosamappeada = addedProductsAtSale.map((p) => {
@@ -128,7 +136,7 @@ export default function CreateSales() {
             history.push("/sales");
         }, 4000);
     }
-    const createSale = () => {
+    const createSale = (form) => {
         _saleService
             .createSale(saleClientSelected.id, saleDate, statusSaleSelected.name, statusPaymentSelected.name, totalSale)
             .then((responseCreateSale) => {
@@ -147,7 +155,7 @@ export default function CreateSales() {
                 handleClickRedirect();
             })
             .then(() => {
-                formik.resetForm();
+                form.restart();
             })
             .catch(() => {
                 toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
@@ -161,14 +169,14 @@ export default function CreateSales() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const create = () => {
+    const create = (form) => {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta compra?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => createSale(),
+            accept: () => createSale(form),
             reject,
         });
     };
@@ -204,23 +212,15 @@ export default function CreateSales() {
                 <h3>Crear una venta</h3>
             </div>
             <div className="">
-                <Button
-                    type="button"
-                    icon="pi pi-search"
-                    label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"}
-                    onClick={(e) => op.current.toggle(e)}
-                    aria-haspopup
-                    aria-controls="overlay_panel"
-                    className="select-product-button"
-                    tooltip="Asociar un cliente a la venta es opcional"
-                />
+                <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
+              
 
                 <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
                     <div className="p-inputgroup create-brand__table">
                         <InputText placeholder="Buscar cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
                         <Button icon="pi pi-search" className="p-button-primary" />
                     </div>
-                    <DataTable value={clients} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={saleClientSelected} onSelectionChange={onClientSelect}>
+                    <DataTable id="saleClientId" value={clients} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={saleClientSelected} onSelectionChange={onClientSelect}>
                         <Column field="name" sortable header="Nombre"></Column>
                         <Column field="lastname" sortable header="Apellido"></Column>
                         <Column field="document" sortable header="Documento"></Column>
@@ -228,97 +228,81 @@ export default function CreateSales() {
                     </DataTable>
                 </OverlayPanel>
             </div>
-            <form onSubmit={formik.handleSubmit}>
-                <div className="create-sale-form">
-                    <div>
-                        <span>
-                            <label htmlFor="saleDate" className={classNames({ "p-error": isFormFieldValid("saleDate") })}>
-                                Fecha de venta*
-                            </label>
+            <Form
+                onSubmit={onSubmit}
+                initialValues={initialValues}
+                validate={validate}
+                render={({ handleSubmit }) => (
+                    <>
+                        <form onSubmit={handleSubmit}>
+                            <div className="create-sale-form card">
+                                <Field
+                                    name="saleDate"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="saleDate" className={classNames({ "p-error": isFormFieldValid("saleDate") })}>
+                                                    Fecha de venta*
+                                                </label>
+                                                <Calendar id="saleDate" {...input} autoFocus readOnlyInput className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="statusSale"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
+                                                    Estado de la venta*
+                                                </label>
+                                                <Dropdown id="statusSale" {...input} options={statusSale} optionLabel="name" placeholder="Seleccione el estado" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="statusPayment"
+                                    render={({ input, meta }) => (
+                                        <div className="field ">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="statusPayment" className={classNames({ "p-error": isFormFieldValid("statusPayment") })}>
+                                                    Estado de pago*
+                                                </label>
+                                                <Dropdown id="statusPayment" {...input} options={statusPayment} optionLabel="name" placeholder="Seleccione el estado" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="totalSale"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="totalSale" className={classNames({ "p-error": isFormFieldValid("totalSale") })}>
+                                                    Total venta*
+                                                </label>
+                                                <InputNumber id="totalSale" {...input} mode="currency" currency="COP" locale="es" disabled className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                            </div>
+                            <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
-                            <Calendar
-                                id="saleDate"
-                                name="saleDate"
-                                value={formik.values.saleDate}
-                                onChange={formik.handleChange}
-                                readOnlyInput
-                                className={classNames({ "p-invalid": isFormFieldValid("saleDate"), "create-sale-form__input": true })}
-                                placeholder="aaaa-mm-dd"
-                                dateFormat="yy-mm-dd"
-                                
-                            />
-                        </span>
-                        {getFormErrorMessage("saleDate")}
-                    </div>
-
-                    <div>
-                        <span>
-                            <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
-                                Estado de la venta*
-                            </label>
-
-                            <Dropdown
-                                id="statusSale"
-                                name="statusSale"
-                                value={formik.values.statusSale}
-                                onChange={formik.handleChange}
-                                options={statusSale}
-                                placeholder="Seleccione el estado"
-                                optionLabel="name"
-                                className={classNames({ "p-invalid": isFormFieldValid("name"), "create-sale-form__input": true })}
-                            />
-                        </span>
-                        {getFormErrorMessage("statusSale")}
-                    </div>
-
-                    <div>
-                        <span>
-                            <label htmlFor="statusPayment" className={classNames({ "p-error": isFormFieldValid("statusPayment") })}>
-                                Estado de pago*
-                            </label>
-
-                            <Dropdown
-                                id="statusPayment"
-                                name="statusPayment"
-                                value={formik.values.statusPayment}
-                                onChange={formik.handleChange}
-                                options={statusPayment}
-                                placeholder="Seleccione el estado"
-                                optionLabel="name"
-                                className={classNames({ "p-invalid": isFormFieldValid("name"), "create-sale-form__input": true })}
-                            />
-                        </span>
-                        {getFormErrorMessage("statusPayment")}
-                    </div>
-
-                    <div>
-                        <span>
-                            <label htmlFor="totalSale" className={classNames({ "p-error": isFormFieldValid("totalSale") })}>
-                                Total venta*
-                            </label>
-                            <InputNumber
-                                id="totalSale"
-                                name="totalSale"
-                                value={formik.values.totalSale}
-                                onChange={formik.handleChange}
-                                className={classNames({ "p-invalid": isFormFieldValid("name"), "create-sale-form__input": true })}
-                                mode="currency"
-                                currency="COP"
-                                locale="es"
-                                placeholder="Total venta"
-                                disabled
-                            />
-                        </span>
-                        {getFormErrorMessage("totalSale")}
-                    </div>
-                </div>
-                {/* <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} /> */}
-
-                    <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
-                <div className="create-product-buttons">
-                    <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
-                </div>
-            </form>
+                            <div className="create-product-buttons">
+                                <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
+                                <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
+                            </div>
+                        </form>
+                    </>
+                )}
+            />
         </div>
     );
 }

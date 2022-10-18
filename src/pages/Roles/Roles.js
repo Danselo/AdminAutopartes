@@ -27,55 +27,80 @@ export default function Roles() {
     const [permissions, setPermissions] = useState([]);
     const [roles, setRoles] = useState([]);
     const [permissionSelected, setPermissionSelected] = useState([]);
-    console.log(roles);
+    const [permissionsOfRolSelected, setPermissionsOfRolSelected] = useState([]);
+
     const permissionsArray = [
         {
             name: "Dashboard",
             permissions: [],
+            checked: false,
         },
         {
             name: "Proveedores",
             permissions: [],
+            checked: false,
         },
         {
             name: "Compras",
             permissions: [],
+            checked: false,
         },
         {
             name: "Categorias",
             permissions: [],
+            checked: false,
         },
         {
             name: "Marcas",
             permissions: [],
+            checked: false,
         },
         {
             name: "Productos",
             permissions: [],
+            checked: false,
         },
         {
             name: "Vehiculos",
             permissions: [],
+            checked: false,
         },
         {
             name: "Clientes",
             permissions: [],
+            checked: false,
         },
         {
             name: "Ventas",
             permissions: [],
+            checked: false,
         },
     ];
 
     permissions.forEach((element) => {
         const nameOfModule = element.modules_permissions.name;
-
         permissionsArray.forEach((elementJSON) => {
             if (elementJSON.name === nameOfModule) {
                 elementJSON.permissions.push(element);
             }
         });
     });
+
+    // permissions.forEach((element) => {
+    //     console.log(element)
+    //     const nameOfModule = element.modules_permissions.name;
+
+    //     permissionsSelectedArray.forEach((elementJSON) => {
+    //         if (elementJSON.name === nameOfModule) {
+    //             const a = permissionsOfRolSelected.find((permission) => permission ===
+    //             )
+    //             if (a) {
+    //                 elementJSON.permissions.push(element);
+
+    //             }
+    //         }
+    //     });
+    // });
 
     const leftContents = (
         <React.Fragment>
@@ -88,6 +113,24 @@ export default function Roles() {
             <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
         </React.Fragment>
     );
+
+    useEffect(() => {
+        _rolService.getRoles().then((response) => {
+            setRoles(response);
+        });
+    }, []);
+
+    const getPermissionsOfRolSelected = (idRolSelected) => {
+        _rolesPermissionsService
+            .getPermissionsOfRolSelected(idRolSelected)
+            .then((response) => {
+                setPermissionsOfRolSelected(response);
+            })
+            .catch((e) => {
+                console.log("Falle aqui", e);
+            });
+    };
+
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
@@ -143,6 +186,8 @@ export default function Roles() {
     }
 
     function onClickDialogEdit() {
+        getPermissionsOfRolSelected(rolSelected.id);
+        getRolesPermissions();
         setDisplayDialogEdit(true);
     }
 
@@ -203,7 +248,7 @@ export default function Roles() {
                     _rolesPermissionsService
                         .createRolPermission(rol.id, permissionId)
                         .then((e) => {
-                            console.log("Se agrego el permiso exitosamente", e)
+                            console.log("Se agrego el permiso exitosamente", e);
                         })
                         .catch((e) => {
                             console.log("Algo salio mal al crear rol permission", e);
@@ -280,6 +325,30 @@ export default function Roles() {
 
         setPermissionSelected(selectedPermissions);
     };
+
+    const onPermissionChangeEdit = (e) => {
+        console.log(e);
+
+        let _selectedPermissions = [...permissionsOfRolSelected];
+        console.log(_selectedPermissions);
+
+        if (e.checked) {
+            _selectedPermissions.push(e.value);
+        } else {
+            for (let i = 0; i < _selectedPermissions.length; i++) {
+                const selectedPermission = _selectedPermissions[i];
+                console.log(selectedPermission);
+
+                if (selectedPermission.idPermissions === e.value.id) {
+                    _selectedPermissions.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        setPermissionsOfRolSelected(_selectedPermissions);
+    };
+
     return (
         <div>
             <Toast ref={toast} />
@@ -323,37 +392,34 @@ export default function Roles() {
 
             <Dialog header="Editar rol" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-rol-form">
-                <div className="create-rol-form">
-                    <div className="create-rol-form--header">
-                        <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
-                        <div className="create-rol-form--input">
-                            <label htmlFor="buyId">Nombre del rol</label>
-                            <InputText value={rolSelected.name} onChange={onChangeRolSelectedEditForm} placeholder="Nombre" className="create-rol-form__input" />
+                    <div className="create-rol-form">
+                        <div className="create-rol-form--header">
+                            <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
+                            <div className="create-rol-form--input">
+                                <label htmlFor="buyId">Nombre del rol</label>
+                                <InputText value={rolSelected.name} onChange={onChangeRolSelectedEditForm} placeholder="Nombre" className="create-rol-form__input" />
+                            </div>
+                        </div>
+                        <div className="create-rol-form--body">
+                            <div className="create-rol-form--body-text">
+                                <h5 className="text-center">Permisos del rol por modulo</h5>
+                                <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
+                            </div>
+
+                            {permissionsArray.map((element) => (
+                                <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
+                                    <div className="">
+                                        {element.permissions.map((permissionObject) => (
+                                            <div className="field-radiobutton" key={permissionObject.name}>
+                                                <Checkbox inputId={permissionObject.id} name="permission" value={permissionObject} onChange={onPermissionChangeEdit} checked={permissionsOfRolSelected.some((item) => item.idPermissions === permissionObject.id)} />
+                                                <label htmlFor={permissionObject.id}>{permissionObject.name}</label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Panel>
+                            ))}
                         </div>
                     </div>
-                    <div className="create-rol-form--body">
-                        <div className="create-rol-form--body-text">
-                            <h5 className="text-center">Permisos del rol por modulo</h5>
-                            <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
-                        </div>
-
-                        {permissionsArray.map((element) => (
-                            <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
-                                <div className="">
-                                    {element.permissions.map((info) => (
-                                        <div className="field-radiobutton" key={info.name}>
-                                            <Checkbox inputId={info.id} name="permission" value={info.id} onChange={onPermissionChange} checked={permissionSelected.indexOf(info.id) !== -1} />
-                                            <label htmlFor={info.id}>{info.name}</label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Panel>
-                        ))}
-                    </div>
-                </div>
-
-
-                    
                 </div>
             </Dialog>
 

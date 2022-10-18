@@ -34,4 +34,9 @@ export class RolesPermissionsService {
             });
     }
 
+    getPermissionsOfRolSelected(idRol){
+        return axios.get(`${baseRolesPermissionsURL}/get-permissions-of-rol/${idRol}`).then((res) => res.data);
+
+    }
+
 }
