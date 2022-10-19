@@ -86,22 +86,6 @@ export default function Roles() {
         });
     });
 
-    // permissions.forEach((element) => {
-    //     console.log(element)
-    //     const nameOfModule = element.modules_permissions.name;
-
-    //     permissionsSelectedArray.forEach((elementJSON) => {
-    //         if (elementJSON.name === nameOfModule) {
-    //             const a = permissionsOfRolSelected.find((permission) => permission ===
-    //             )
-    //             if (a) {
-    //                 elementJSON.permissions.push(element);
-
-    //             }
-    //         }
-    //     });
-    // });
-
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -124,7 +108,14 @@ export default function Roles() {
         _rolesPermissionsService
             .getPermissionsOfRolSelected(idRolSelected)
             .then((response) => {
-                setPermissionsOfRolSelected(response);
+                let responseMapped = response.map((element)=>{ return {
+                    id: element.idPermissions,
+                    idModule: element.permissions.idModule,
+                    name :  element.permissions.name
+                    }
+                })
+                console.log(responseMapped);
+                setPermissionsOfRolSelected(responseMapped);
             })
             .catch((e) => {
                 console.log("Falle aqui", e);
@@ -334,12 +325,13 @@ export default function Roles() {
 
         if (e.checked) {
             _selectedPermissions.push(e.value);
-        } else {
+        }
+         else {
             for (let i = 0; i < _selectedPermissions.length; i++) {
                 const selectedPermission = _selectedPermissions[i];
                 console.log(selectedPermission);
 
-                if (selectedPermission.idPermissions === e.value.id) {
+                if (selectedPermission.id === e.value.id) {
                     _selectedPermissions.splice(i, 1);
                     break;
                 }
@@ -411,7 +403,7 @@ export default function Roles() {
                                     <div className="">
                                         {element.permissions.map((permissionObject) => (
                                             <div className="field-radiobutton" key={permissionObject.name}>
-                                                <Checkbox inputId={permissionObject.id} name="permission" value={permissionObject} onChange={onPermissionChangeEdit} checked={permissionsOfRolSelected.some((item) => item.idPermissions === permissionObject.id)} />
+                                                <Checkbox inputId={permissionObject.id} name="permission" value={permissionObject} onChange={onPermissionChangeEdit} checked={permissionsOfRolSelected.some((item) => item.id === permissionObject.id)} />
                                                 <label htmlFor={permissionObject.id}>{permissionObject.name}</label>
                                             </div>
                                         ))}
