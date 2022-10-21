@@ -1,4 +1,4 @@
-.create-product-tittle{
+.create-sale-tittle{
     display: flex;
     justify-content: center;
 
@@ -7,7 +7,7 @@
 .create-sale-form{
     display: flex;
   flex-direction: column;
-  width: 30vw;
+  width: 25rem;
     margin: 2rem auto 2rem auto;
 }
 
@@ -20,4 +20,15 @@
 .create-sale-form__span{
     display: flex;
     flex-direction: column;
+}
+
+.p-success{
+    color: rgb(46, 176, 46);
+    margin-top: .5rem;
+}
+
+.create-sale-tittle__button{
+    display: flex;
+    flex-direction: column;
+    width: 16rem;
 }

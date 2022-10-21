@@ -26,7 +26,7 @@ const _productService = new ProductService();
 export default function CreateSales() {
     const toast = useRef(null);
     const [clients, setClients] = useState([]);
-    const [saleClientSelected, setClientSelected] = useState(null);
+    const [saleClientSelected, setSaleClientSelected] = useState(null);
     const [statusSaleSelected, setStatusSaleSelected] = useState([]);
     const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
     const [saleDate, setSaleDate] = useState("");
@@ -36,7 +36,8 @@ export default function CreateSales() {
     const op = useRef(null);
     const isMounted = useRef(false);
     const [globalFilter, setGlobalFilter] = useState(null);
-
+    console.log(addedProductsAtSale)
+console.log(totalSale)
     useEffect(() => {
         if (isMounted.current && saleClientSelected) {
             op.current.hide();
@@ -57,15 +58,14 @@ export default function CreateSales() {
     }, []);
 
     const onClientSelect = (e) => {
-        setClientSelected(e.value);
+        setSaleClientSelected(e.value);
     };
 
     const initialValues = {
-        saleClientId: null,
         saleDate: "",
         statusSale: "",
         statusPayment: "",
-        totalSale: null,
+        totalSale: totalSale,
     };
 
     const validate = (data) => {
@@ -94,18 +94,10 @@ export default function CreateSales() {
     };
 
     const onSubmit = (data, form) => {
-        if (!saleClientSelected) {
-            
-        } else {
-            var dateSelected = new Date(data.saleDate);
-            var formatDate = dateSelected.toISOString().split("T")[0];
-            setSaleDate(formatDate);
-            setStatusSaleSelected(data.statusSale.name);
-            setStatusPaymentSelected(data.statusPayment.name);
+        if (saleClientSelected) {
             setTotalSale(totalSale);
-            create(form);    
-        }
-        
+            create(form, data);
+        } 
     };
 
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
@@ -131,14 +123,17 @@ export default function CreateSales() {
     let history = useHistory();
 
     function handleClickRedirect() {
-        toast.current.show({ severity: "success", summary: "Todo ha salido bien!", detail: "Compra creada exitosamente, seras redireccionado a la pantalla principal", life: 4000 });
+        toast.current.show({ severity: "success", summary: "Todo ha salido bien!", detail: "Venta creada exitosamente, seras redireccionado a la pantalla principal", life: 4000 });
         setTimeout(() => {
             history.push("/sales");
         }, 4000);
     }
-    const createSale = (form) => {
+
+    const createSale = (form, data) => {
+        var dateSelected = new Date(data.saleDate);
+            var formatDate = dateSelected.toISOString().split("T")[0];
         _saleService
-            .createSale(saleClientSelected.id, saleDate, statusSaleSelected.name, statusPaymentSelected.name, totalSale)
+            .createSale(saleClientSelected.id, formatDate, data.statusSale.name, data.statusPayment.name, totalSale)
             .then((responseCreateSale) => {
                 products.forEach((element) => {
                     _saleService
@@ -169,14 +164,14 @@ export default function CreateSales() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const create = (form) => {
+    const create = (form, data) => {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta compra?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => createSale(form),
+            accept: () => createSale(form, data),
             reject,
         });
     };
@@ -208,12 +203,14 @@ export default function CreateSales() {
             <Link to={"/Sales"}>
                 <Button label="Regresar" icon="pi pi-angle-left" className="p-button-sm p-button-danger" />
             </Link>
-            <div className="create-product-tittle">
+            <div className="create-sale-tittle">
                 <h3>Crear una venta</h3>
             </div>
-            <div className="">
-                <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.name : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
-              
+            <div>
+                <div className="create-sale-tittle__button">
+                    <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.document : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
+                    {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la compra</small>}
+                </div>
 
                 <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
                     <div className="p-inputgroup create-brand__table">
@@ -254,6 +251,8 @@ export default function CreateSales() {
                                     name="statusSale"
                                     render={({ input, meta }) => (
                                         <div className="field">
+                                             {console.log("input", input)}
+                                            {console.log("meta", meta)}
                                             <span className="create-sale-form__span">
                                                 <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
                                                     Estado de la venta*
@@ -281,12 +280,14 @@ export default function CreateSales() {
                                 <Field
                                     name="totalSale"
                                     render={({ input, meta }) => (
+                                        
                                         <div className="field">
+                                           
                                             <span className="create-sale-form__span">
                                                 <label htmlFor="totalSale" className={classNames({ "p-error": isFormFieldValid("totalSale") })}>
                                                     Total venta*
                                                 </label>
-                                                <InputNumber id="totalSale" {...input} mode="currency" currency="COP" locale="es" disabled className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                <InputNumber id="totalSale" value={totalSale} {...input} mode="currency" currency="COP" locale="es" disabled className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                             </span>
                                             {getFormErrorMessage(meta)}
                                         </div>
