@@ -65,6 +65,10 @@ export default function Roles() {
             name: "Ventas",
             permissions: [],
         },
+        {
+            name: "Usuarios",
+            permissions: [],
+        },
     ];
 
     permissions.forEach((element) => {

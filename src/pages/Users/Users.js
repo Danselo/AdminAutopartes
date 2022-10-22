@@ -1,34 +1,32 @@
-import React, {useEffect,useState,useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { TableUser } from "../../components/TableUsers/TableUser";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import "./users.css";
 import { UserService } from "../../service/UserService";
-import {RolesService} from "../../service/RolesService";
+import { RolesService } from "../../service/RolesService";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
-import { Password } from 'primereact/password';
+import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
-
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
 const _userService = new UserService();
 const _roleService = new RolesService();
 
-
 export default function Users() {
-    const [userSelected, setUserSelected] = useState({})
+    const [userSelected, setUserSelected] = useState({});
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [userEmail, setUserEmail] = useState("");
-    const [userName, setUserName] = useState("");
-    const [userPassword, setUserPassword] = useState("");
+    // const [userEmail, setUserEmail] = useState("");
+    // const [userName, setUserName] = useState("");
+    // const [userPassword, setUserPassword] = useState("");
 
-    const [userLastname, setUserLastname] = useState("");
+    // const [userLastname, setUserLastname] = useState("");
     const [userStatus] = useState(true);
-
-    const [selectedUserRole, setSelectedUserRole] = useState("");
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     // const leftContents = (
@@ -36,25 +34,25 @@ export default function Users() {
     //         // <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
     //         // </Link>
 
-
     // );
-    const rightContents = (
+
+    const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!userSelected.name}  />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!userSelected.name} />
         </React.Fragment>
     );
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createUserAlert = () => {
+    const createUserAlert = (form,data) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta Usuario?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateUser(),
+            accept: () => CreateUser(form,data),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -97,15 +95,15 @@ export default function Users() {
         setDisplayDialogEdit(false);
     };
 
-    const onHideDialogCreate = () => {
-        createUserAlert();
+    const onHideDialogCreate = (form,data) => {
+        createUserAlert(form,data);
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
     };
     const onHideDialogEditX = () => {
-        setDisplayDialogCreate(false);
+        setDisplayDialogEdit(false);
     };
     const onHideDialogCancel = () => {
         cancelCreate();
@@ -117,29 +115,27 @@ export default function Users() {
         setDisplayDialogEdit(false);
     };
 
-    const onUserRolChange = (e) => {
-        setSelectedUserRole(e.value);
-    };
-    const renderFooterDialog = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear Usuario" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-            </div>
-        );
-    };
+    // const onUserRolChange = (e) => {
+    //     setSelectedUserRole(e.value);
+    // };
+    // const renderFooterDialog = () => {
+    //     return (
+          
+    //     );
+    // };
 
     const renderFooterDialogEdit = () => {
         return (
             <div>
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar Usuario" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus  />
+                <Button label="Editar Usuario" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
             </div>
         );
     };
     function EditUser() {
         console.log(userSelected);
-        _userService.updateUser(userSelected)
+        _userService
+            .updateUser(userSelected)
             .then(() => {
                 setUserSelected({});
                 loadUsers();
@@ -155,13 +151,15 @@ export default function Users() {
             setRoles(response);
         });
     }
-    function CreateUser() {
+    function CreateUser(form,data) {
+        // console.log(`Esta es los datos: ${data.name} ${data.lastname} rol: ${data.idRol.id} password: ${data.password} email ${data.email}`);
+        
         _userService
-            .createUser(userEmail,userPassword, userName,userLastname,userStatus,selectedUserRole.id)
+            .createUser(data.email, data.password, data.name, data.lastname, userStatus, data.idRol.id)
             .then(() => {
-                setUserName("");
                 loadUsers();
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Usuario creado exitosamente", life: 3000 });
+                form.restart();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -174,25 +172,93 @@ export default function Users() {
         });
     };
 
-    const onEditUserSelected =  (e)=>{
-        console.log(e)
-         const userUpdated = {
+    const onEditUserSelected = (e) => {
+        console.log(e);
+        const userUpdated = {
             ...userSelected,
-            [e.target.name]:e.target.value
-        }
+            [e.target.name]: e.target.value,
+        };
         console.log(userUpdated);
-        setUserSelected(userUpdated)
-    }
+        setUserSelected(userUpdated);
+    };
     useEffect(() => {
         _userService.getUsers().then((response) => {
             setUsers(response);
         });
     }, []);
-    // const rightContents = (
+    // const leftContents = (
     //     <React.Fragment>
     //         <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
     //     </React.Fragment>
     // );
+    const initialValues = {
+        idRol: null,
+        name: "",
+        lastname: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    };
+
+    const validate = (data) => {
+        let errors = {};
+
+        if (!data.idRol) {
+            errors.idRol = "Debe asociar un Rol al usuario.";
+        }
+        if (!data.name) {
+            errors.name = "El nombre es requerido";
+        }
+
+        if (!data.lastname) {
+            errors.lastname = "El apellido es requerido";
+        }
+
+        if (!data.email) {
+            errors.email = "El email es requerdo";
+        }  else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
+            errors.email = 'Email invalido. E.g. example@email.com';
+        }else(
+            
+            users.forEach((element) => {
+                const userMail = element.email;
+
+                    if (data.email === userMail) {
+                        errors.email = 'El correo ya existe';
+                    }
+            })
+        )
+
+        if (!data.password) {
+            errors.password = "Debe digitar una contraseña";
+        }
+
+        if (data.password !== data.confirmPassword ) {
+            errors.confirmPassword = "Las contraseñas no coinciden";
+        }
+
+        return errors;
+    };
+    const onSubmit = (data,form) => {
+        // setUserEmail(data.email);
+        // setUserName(data.name);
+        // setUserLastname(data.lastname);
+        // setUserPassword(data.password);
+        // setSelectedUserRole(data.idRol);
+        // const userObject = {
+        //     email : data.email,
+        //     name : data.name,
+        //     lastname: data.lastname,
+        //     password : data.password,
+        //     rol: data.idRol,
+        // }
+        onHideDialogCreate(form,data);
+
+    };
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
     return (
         <div>
             <Toast ref={toast} />
@@ -200,36 +266,124 @@ export default function Users() {
             <div className="text-center">
                 <h3>Gestión de Usuarios</h3>
             </div>
-            <Toolbar right={rightContents} />
-            <Dialog header="Crear un nuevo Usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }} footer={renderFooterDialog()}>
-                <div className="create-user-form">
-                    <h5>Ingrese los datos del Usuario</h5>
+            <Toolbar left={leftContents} />
+            <Dialog header="Crear un nuevo Usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={initialValues}
+                    validate={validate}
+                    render={({ handleSubmit }) => (
+                        <form onSubmit={handleSubmit}>
+                            <div className="create-user-form">
+                                <h5>Ingrese los datos del Usuario</h5>
+                                <Field
+                                    name="email"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>
+                                                </label>
+                                                <InputText id="email" {...input} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="password"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}>
+                                                </label>
+                                                <Password id="password" {...input} placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="confirmPassword"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}>
+                                                </label>
+                                                <Password id="confirmPassword" {...input} placeholder="Confirmar Contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
 
-                    <div className="create_user_form_complete_name">
-                    <InputText name="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} placeholder="Correo Electronico" className="create-vehicle-form__input" />
-                    <Password  name="password" value={userPassword } onChange={(e) => setUserPassword(e.target.value)} placeholder="Digite su contraseña" toggleMask />
-                    </div>
-                    <div className="create_user_form_complete_name">
-                    <InputText name="name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
-                    <InputText name="lastname" value={userLastname} onChange={(e) => setUserLastname(e.target.value)} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
-                    </div>
-                    <Dropdown  value={selectedUserRole} options={roles} onChange={onUserRolChange} optionLabel="name" placeholder="Rol" className="create-vehicle-form__dropdown" />
-                </div>
+                                <Field
+                                    name="name"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>
+                                                </label>
+                                                <InputText id="name" {...input} placeholder="Digite el Nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                 <Field
+                                    name="lastname"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}>
+                                                </label>
+                                                <InputText id="lastname" {...input} placeholder="Digite el apellido" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })}/>
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="idRol"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}>
+                                                </label>
+                                                <Dropdown id="idRol" {...input} options={roles} optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                            </div>
+                                <div className="submit-user-create">
+                                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                <Button label="Crear Usuario" icon="pi pi-check"  />
+                            </div>
+                        </form>
+                    )}
+                />
             </Dialog>
             <Dialog header="Editar usuario" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
-            <div className="create-user-form">
+                <div className="create-user-form">
                     <h5>Ingrese los datos del Usuario</h5>
-                    <InputText  name="email" value={userSelected.email} onChange={onEditUserSelected} placeholder="Correo Electronico" className="create-vehicle-form__input" />
+                    <InputText name="email" value={userSelected.email} onChange={onEditUserSelected} placeholder="Correo electronico" className="create-vehicle-form__input" />
                     <InputText name="name" value={userSelected.name} onChange={onEditUserSelected} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
                     <InputText name="lastname" value={userSelected.lastname} onChange={onEditUserSelected} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
                     <Password name="password" value={userSelected.password} onChange={onEditUserSelected} placeholder="Digite su contraseña" toggleMask />
-                    <Dropdown value={userSelected.idRol} 
-                    name="idRol" optionValue="id"
-                    options={roles} onChange={onEditUserSelected} optionLabel="name" placeholder="Rol del usuario" className="create-vehicle-form__dropdown" />
+                    <Password name="confirmPassword" value={userSelected.password} onChange={onEditUserSelected} placeholder="Confirmar Contraseña" toggleMask />
+
+                    <Dropdown value={userSelected.idRol} name="idRol" optionValue="id" options={roles} onChange={onEditUserSelected} optionLabel="name" placeholder="Rol del usuario" className="create-vehicle-form__dropdown" />
                 </div>
             </Dialog>
-            <TableUser className="table-users" users = {users} setUserSelected={setUserSelected} />
-
+            <TableUser className="table-users" users={users} setUserSelected={setUserSelected} />
         </div>
     );
 }
