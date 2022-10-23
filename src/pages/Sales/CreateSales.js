@@ -36,8 +36,7 @@ export default function CreateSales() {
     const op = useRef(null);
     const isMounted = useRef(false);
     const [globalFilter, setGlobalFilter] = useState(null);
-    console.log(addedProductsAtSale)
-console.log(totalSale)
+   
     useEffect(() => {
         if (isMounted.current && saleClientSelected) {
             op.current.hide();
@@ -94,6 +93,7 @@ console.log(totalSale)
     };
 
     const onSubmit = (data, form) => {
+        console.log(3434334);
         if (saleClientSelected) {
             setTotalSale(totalSale);
             create(form, data);
@@ -145,6 +145,7 @@ console.log(totalSale)
                         .catch((e) => {
                             toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
                         });
+
                 });
 
                 handleClickRedirect();
@@ -189,11 +190,11 @@ console.log(totalSale)
         });
     };
     useEffect(() => {
-        let total = 0;
-        addedProductsAtSale.forEach((element) => {
-            total += element.price;
-            setTotalSale(total);
-        });
+        let total = addedProductsAtSale.reduce((acum, current) => {
+            acum += current.price * current.amount;
+            return acum
+        },0);
+        setTotalSale(total)
     }, [addedProductsAtSale]);
 
     return (
@@ -225,6 +226,8 @@ console.log(totalSale)
                     </DataTable>
                 </OverlayPanel>
             </div>
+            <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
+            <span>${totalSale}</span>
             <Form
                 onSubmit={onSubmit}
                 initialValues={initialValues}
@@ -251,8 +254,7 @@ console.log(totalSale)
                                     name="statusSale"
                                     render={({ input, meta }) => (
                                         <div className="field">
-                                             {console.log("input", input)}
-                                            {console.log("meta", meta)}
+                                             
                                             <span className="create-sale-form__span">
                                                 <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
                                                     Estado de la venta*
@@ -277,24 +279,7 @@ console.log(totalSale)
                                         </div>
                                     )}
                                 />
-                                <Field
-                                    name="totalSale"
-                                    render={({ input, meta }) => (
-                                        
-                                        <div className="field">
-                                           
-                                            <span className="create-sale-form__span">
-                                                <label htmlFor="totalSale" className={classNames({ "p-error": isFormFieldValid("totalSale") })}>
-                                                    Total venta*
-                                                </label>
-                                                <InputNumber id="totalSale" value={totalSale} {...input} mode="currency" currency="COP" locale="es" disabled className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
-                                            </span>
-                                            {getFormErrorMessage(meta)}
-                                        </div>
-                                    )}
-                                />
                             </div>
-                            <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
                             <div className="create-product-buttons">
                                 <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
