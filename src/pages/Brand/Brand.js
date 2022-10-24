@@ -8,6 +8,8 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Toolbar } from "primereact/toolbar";
 import { BrandService } from "../../service/BrandService";
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
 
 const _brandService = new BrandService();
 
@@ -24,8 +26,8 @@ export default function Brand() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteBrandAlert()} disabled={!brandIdSelected}/>
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected}/>
+            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteBrandAlert()} disabled={!brandIdSelected} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
         </React.Fragment>
     );
 
@@ -37,26 +39,26 @@ export default function Brand() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createBrandAlert = () => {
+    const createBrandAlert = (brandName, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta marca?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateBrand(),
+            accept: () => CreateBrand(brandName, form),
             reject: () => setDisplayDialogCreate(true),
         });
     };
 
-    const editBrandAlert = () => {
+    const editBrandAlert = (newBrandName, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta marca?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
-            accept: () => EditBrand(brandIdSelected, newBrandName),
+            accept: () => EditBrand(brandIdSelected, newBrandName, form),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -91,14 +93,14 @@ export default function Brand() {
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = () =>{
-        editBrandAlert()
+    const onHideDialogEdit = (newBrandName,form) => {
+        editBrandAlert(newBrandName, form)
         setDisplayDialogEdit(false);
 
     }
 
-    const onHideDialogCreate = () => {
-        createBrandAlert();
+    const onHideDialogCreate = (brandName, form) => {
+        createBrandAlert(brandName, form);
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
@@ -111,42 +113,29 @@ export default function Brand() {
         cancelCreate();
         setDisplayDialogCreate(false);
     };
-    const renderFooterDialog = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear marca" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-            </div>
-        );
-    };
-
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Editar marca" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
-    };
-    function EditBrand(id, newName) {
+  
+    function EditBrand(id, newName, form) {
         _brandService.updateBrand(id, newName)
-        .then(() => {
-            setBrandName(newName);
-            loadBrands();
-            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca edita exitosamente", life: 3000 });
-        })
-        .catch((e) => {
-            toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-            console.log(e);
-        });
+            .then(() => {
+                setBrandName(newName);
+                loadBrands();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca edita exitosamente", life: 3000 });
+                form.restart();
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
+            });;
     }
-    function CreateBrand() {
+    function CreateBrand(brandName, form) {
+        // setBrandName(brandName)
         _brandService
             .createBrand(brandName)
             .then(() => {
                 setBrandName("");
                 loadBrands();
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca creada exitosamente", life: 3000 });
+                form.restart();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -169,7 +158,7 @@ export default function Brand() {
 
     const loadBrands = () => {
         _brandService.getBrands().then((response) => {
-            
+
             setBrands(response);
             setBrandIdSelected("");
         });
@@ -181,7 +170,57 @@ export default function Brand() {
         });
 
     }, []);
-   
+
+    const initialValues = {
+        brandName: "",
+
+    };
+    const initialValuesEdit = {
+        newBrandName: brandNameSelected,
+
+    };
+
+    const validate = (data) => {
+       console.log(data);
+        let validateExistingName = brands.map((brand) =>{
+            if(brand.name === data.brandName){
+                return true
+            }else{
+                return false
+            }
+        })
+        let errors = {};
+
+        if (!data.brandName) {
+            errors.brandName = "Debe ingresar un nombre de marca creaar.";
+        }
+        if (validateExistingName) {
+            errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
+        }
+        if (!data.newBrandName) {
+             errors.brandName = "Debe ingresar un nombre de marca.";
+
+         }
+        return errors;
+    };
+
+    const onSubmit = (data, form) => {
+        console.log(data);
+        let brandName = data.brandName;           
+        onHideDialogCreate(brandName, form);
+    };
+
+    const onSubmitEdit = (data, form) => {
+        console.log("Entre al onSubmitEdit");
+        let newBrandName = data.newBrandName;
+        onHideDialogEdit(newBrandName, form);
+    };
+
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
+
     return (
         <div>
             <Toast ref={toast} />
@@ -192,22 +231,74 @@ export default function Brand() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear nueva marca" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialog()}>
-                <div className="create-brand-form">
-                    <h5>Ingrese el nombre de la nueva marca</h5>
-                    <InputText value={brandName} onChange={(e) => setBrandName(e.target.value)} placeholder="Nombre marca" />
-                </div>
+               <Dialog header="Crear nueva marca" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={initialValues}
+                    validate={validate}
+                    render={({ handleSubmit }) => (
+                        <>
+                            <form onSubmit={handleSubmit}>
+                                <div className="create-brand-form">
+                                    <Field
+                                        name="brandName"
+                                        render={({ input, meta }) => (
+                                            <div className="field ">
+                                                <span className="create-sale-form__span">
+                                                    <label htmlFor="brandName" className={classNames({ "p-error": isFormFieldValid("brandName") })}>
+                                                        Nombre de marca*
+                                                    </label>
+                                                    <InputText id="brandName" {...input} autoFocus placeholder="Ingrese el nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+
+
+                                </div>
+                                <div>
+                                    <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                    <Button type="submit" label="Crear marca" icon="pi pi-check" />
+                                </div>
+                            </form>
+                        </>
+                    )}
+                />
+                 </Dialog>
+
+            <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Form
+                    onSubmit={onSubmitEdit}
+                    initialValues={initialValuesEdit}
+                    validate={validate}
+                    render={({ handleSubmit }) => (
+                        <>
+                            <form onSubmit={handleSubmit}>
+                                <div className="create-brand-form">
+                                <Field
+                                        name="newBrandName"
+                                        render={({ input, meta }) => (
+                                                <span className="create-sale-form__span">
+                                                    <label htmlFor="newBrandName" className={classNames({ "p-error": isFormFieldValid("newBrandName") })}>
+                                                        Nombre de marca*
+                                                    </label>
+                                                    <InputText id="newBrandName" {...input} autoFocus placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                {getFormErrorMessage(meta)}
+                                                </span>                  
+                                        )}
+                                    />
+                                </div>
+                                <div>
+                                    <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                    <Button type="submit" label="Editar marca" icon="pi pi-check" /></div>
+                            </form>
+                        </>
+                    )}
+                />
             </Dialog>
 
-            <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
-                <div className="create-brand-form">
-                    <h5>Ingrese el nuevo nombre</h5>
-                    <InputText value={newBrandName} onChange={(e) => setNewBrandName(e.target.value)} placeholder={brandNameSelected} />
-                </div>
-            </Dialog>
-
-
-            <TableBrand className="table-products" brands={brands} setBrandIdSelected={setBrandIdSelected} setBrandNameSelected ={setBrandNameSelected}/>
+            <TableBrand className="table-products" brands={brands} setBrandIdSelected={setBrandIdSelected} setBrandNameSelected={setBrandNameSelected} />
         </div>
     );
 }
