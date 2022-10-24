@@ -12,6 +12,7 @@ import { OverlayPanel } from "primereact/overlaypanel";
 import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 
+
 const _productService = new ProductService();
 
 export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
@@ -193,6 +194,12 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
         if (!data.amount) {
             errors.amount = "Debe ingresar al menos un producto";
         }
+        if (data.amount.value === 0) {
+            errors.amount = "No puede asociar 0 productos a la venta";
+        }
+        if (data.amount.value < 0) {
+            errors.amount = "No puede asociar cantidades negativas a la venta";
+        }
 
         if (saleProductSelected && data.amount.value > saleProductSelected.amount) {
             errors.amount = "Esta cantidad supera el stock disponible, " + saleProductSelected.amount + " producto(s) disponibles";
@@ -227,7 +234,7 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
         }
     };
     const productosFiltrados = filterProductsSelected();
- 
+   
     return (
         <div className="datatable-crud-demo">
             <Toast ref={toast} />

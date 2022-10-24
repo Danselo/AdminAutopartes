@@ -17,7 +17,7 @@ import { Calendar } from "primereact/calendar";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputNumber } from "primereact/inputnumber";
+
 
 const _saleService = new SaleService();
 const _clientService = new ClientService();
@@ -27,16 +27,16 @@ export default function CreateSales() {
     const toast = useRef(null);
     const [clients, setClients] = useState([]);
     const [saleClientSelected, setSaleClientSelected] = useState(null);
-    const [statusSaleSelected, setStatusSaleSelected] = useState([]);
-    const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
-    const [saleDate, setSaleDate] = useState("");
+    // const [statusSaleSelected, setStatusSaleSelected] = useState([]);
+    // const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
+    // const [saleDate, setSaleDate] = useState("");
     const [totalSale, setTotalSale] = useState(0);
     const [addedProductsAtSale, setAddedProductsAtSale] = useState([]);
     const [products, setProducts] = useState([]);
     const op = useRef(null);
     const isMounted = useRef(false);
     const [globalFilter, setGlobalFilter] = useState(null);
-   
+
     useEffect(() => {
         if (isMounted.current && saleClientSelected) {
             op.current.hide();
@@ -64,7 +64,7 @@ export default function CreateSales() {
         saleDate: "",
         statusSale: "",
         statusPayment: "",
-        totalSale: totalSale,
+        // totalSale: totalSale,
     };
 
     const validate = (data) => {
@@ -85,9 +85,9 @@ export default function CreateSales() {
             errors.statusPayment = "El estado de pago es requerido";
         }
 
-        if (!data.totalSale) {
-            errors.totalSale = "Debe asociar productos a la venta para poder continuar";
-        }
+        // if (!data.totalSale) {
+        //     errors.totalSale = "Debe asociar productos a la venta para poder continuar";
+        // }
 
         return errors;
     };
@@ -97,7 +97,7 @@ export default function CreateSales() {
         if (saleClientSelected) {
             setTotalSale(totalSale);
             create(form, data);
-        } 
+        }
     };
 
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
@@ -131,7 +131,7 @@ export default function CreateSales() {
 
     const createSale = (form, data) => {
         var dateSelected = new Date(data.saleDate);
-            var formatDate = dateSelected.toISOString().split("T")[0];
+        var formatDate = dateSelected.toISOString().split("T")[0];
         _saleService
             .createSale(saleClientSelected.id, formatDate, data.statusSale.name, data.statusPayment.name, totalSale)
             .then((responseCreateSale) => {
@@ -145,7 +145,6 @@ export default function CreateSales() {
                         .catch((e) => {
                             toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
                         });
-
                 });
 
                 handleClickRedirect();
@@ -192,9 +191,9 @@ export default function CreateSales() {
     useEffect(() => {
         let total = addedProductsAtSale.reduce((acum, current) => {
             acum += current.price * current.amount;
-            return acum
-        },0);
-        setTotalSale(total)
+            return acum;
+        }, 0);
+        setTotalSale(total);
     }, [addedProductsAtSale]);
 
     return (
@@ -208,9 +207,15 @@ export default function CreateSales() {
                 <h3>Crear una venta</h3>
             </div>
             <div>
-                <div className="create-sale-tittle__button">
-                    <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.document : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
-                    {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la compra</small>}
+                <div className="create-sale-header">
+                    <div className="create-sale-tittle__button">
+                        <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.document : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
+                        {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la compra</small>}
+                    </div>
+                    <div className="create-sale-header__card">
+                        <h5>Total de la venta</h5>
+                        $ {totalSale}
+                    </div>
                 </div>
 
                 <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
@@ -226,8 +231,8 @@ export default function CreateSales() {
                     </DataTable>
                 </OverlayPanel>
             </div>
+
             <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
-            <span>${totalSale}</span>
             <Form
                 onSubmit={onSubmit}
                 initialValues={initialValues}
@@ -254,7 +259,6 @@ export default function CreateSales() {
                                     name="statusSale"
                                     render={({ input, meta }) => (
                                         <div className="field">
-                                             
                                             <span className="create-sale-form__span">
                                                 <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
                                                     Estado de la venta*

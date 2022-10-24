@@ -32,3 +32,17 @@
     flex-direction: column;
     width: 16rem;
 }
+
+.create-sale-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 0 2rem 0 ;
+}
+
+.create-sale-header__card{
+    background-color: white;
+    border-radius: 4px;
+    padding: 1rem;
+    box-shadow: 10px 10px 30px -14px rgba(0,0,0,0.75);
+}
