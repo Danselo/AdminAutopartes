@@ -29,10 +29,10 @@ export default function Users() {
     const [userStatus] = useState(true);
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
-    // const leftContents = (
-    //         // <Link to={"/pages/CreateUser/CreateUser"}>
-    //         // <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
-    //         // </Link>
+    // const rightContents = (
+    //         <Link to={"/pages/CreateUser/CreateUser"}>
+    //         <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
+    //         </Link>
 
     // );
 
@@ -45,14 +45,14 @@ export default function Users() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createUserAlert = (form,data) => {
+    const createUserAlert = (form, data) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta Usuario?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateUser(form,data),
+            accept: () => CreateUser(form, data),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -65,6 +65,17 @@ export default function Users() {
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
             accept: () => EditUser(),
+            reject: () => setDisplayDialogEdit(false),
+        });
+    };
+    const editUserStatusAlert = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea cambiar el estado del Usuario?",
+            header: "Confirmacion",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Editar",
+            rejectLabel: "Cancelar",
+            accept: () => EditStatus(),
             reject: () => setDisplayDialogEdit(false),
         });
     };
@@ -95,8 +106,8 @@ export default function Users() {
         setDisplayDialogEdit(false);
     };
 
-    const onHideDialogCreate = (form,data) => {
-        createUserAlert(form,data);
+    const onHideDialogCreate = (form, data) => {
+        createUserAlert(form, data);
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
@@ -120,18 +131,15 @@ export default function Users() {
     // };
     // const renderFooterDialog = () => {
     //     return (
-          
+
     //     );
     // };
 
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar Usuario" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
-    };
+    // const renderFooterDialogEdit = () => {
+    //     return (
+
+    //     );
+    // };
     function EditUser() {
         console.log(userSelected);
         _userService
@@ -146,14 +154,34 @@ export default function Users() {
                 console.log(e);
             });
     }
+    function EditStatus() {
+            if (userSelected.status === true){
+                userSelected.status = false;
+            }else if(userSelected.status === false){
+                userSelected.status = true;
+            }
+
+        console.log(userSelected);
+        _userService
+            .updateUser(userSelected)
+            .then(() => {
+                setUserSelected({});
+                loadUsers();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "El estado del usuario se cambio exitosamente", life: 3000 });
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
+            });
+    }
     function getRoles() {
         _roleService.getRoles().then((response) => {
             setRoles(response);
         });
     }
-    function CreateUser(form,data) {
+    function CreateUser(form, data) {
         // console.log(`Esta es los datos: ${data.name} ${data.lastname} rol: ${data.idRol.id} password: ${data.password} email ${data.email}`);
-        
+
         _userService
             .createUser(data.email, data.password, data.name, data.lastname, userStatus, data.idRol.id)
             .then(() => {
@@ -173,12 +201,10 @@ export default function Users() {
     };
 
     const onEditUserSelected = (e) => {
-        console.log(e);
         const userUpdated = {
             ...userSelected,
             [e.target.name]: e.target.value,
         };
-        console.log(userUpdated);
         setUserSelected(userUpdated);
     };
     useEffect(() => {
@@ -186,11 +212,11 @@ export default function Users() {
             setUsers(response);
         });
     }, []);
-    // const leftContents = (
-    //     <React.Fragment>
-    //         <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
-    //     </React.Fragment>
-    // );
+    const rightContents = (
+        <React.Fragment>
+            <Button label={userSelected.status ? "Desactivar" : "Activar"} className={ userSelected.status ? "p-button-danger p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between" }  icon="pi pi-eye-slash" onClick={() => editUserStatusAlert()}  disabled={!userSelected.name} />
+        </React.Fragment>
+    );
     const initialValues = {
         idRol: null,
         name: "",
@@ -216,30 +242,28 @@ export default function Users() {
 
         if (!data.email) {
             errors.email = "El email es requerdo";
-        }  else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
-            errors.email = 'Email invalido. E.g. example@email.com';
-        }else(
-            
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
+            errors.email = "Email invalido. E.g. example@email.com";
+        } else
             users.forEach((element) => {
                 const userMail = element.email;
 
-                    if (data.email === userMail) {
-                        errors.email = 'El correo ya existe';
-                    }
-            })
-        )
+                if (data.email === userMail) {
+                    errors.email = "El correo ya existe";
+                }
+            });
 
         if (!data.password) {
             errors.password = "Debe digitar una contraseña";
         }
 
-        if (data.password !== data.confirmPassword ) {
+        if (data.password !== data.confirmPassword) {
             errors.confirmPassword = "Las contraseñas no coinciden";
         }
 
         return errors;
     };
-    const onSubmit = (data,form) => {
+    const onSubmit = (data, form) => {
         // setUserEmail(data.email);
         // setUserName(data.name);
         // setUserLastname(data.lastname);
@@ -252,8 +276,69 @@ export default function Users() {
         //     password : data.password,
         //     rol: data.idRol,
         // }
-        onHideDialogCreate(form,data);
+        onHideDialogCreate(form, data);
+    };
+    //----------------------EDIT VALIDATION --------------------
+    const validateEdit = (data) => {
+        let errors = {};
 
+        if (!data.idRol) {
+            errors.idRol = "Debe asociar un Rol al usuario.";
+        }
+        if (!data.name) {
+            errors.name = "El nombre es requerido";
+        }
+
+        if (!data.lastname) {
+            errors.lastname = "El apellido es requerido";
+        }
+        users.forEach((element) => {
+            const userMail = element.email;
+
+            if (   data.email === userSelected.email ) {
+
+            }else {
+                errors.email ="el correo ya existe";
+            }
+        });
+
+        if (!data.email) {
+            errors.email = "El email es requerdo";
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
+            errors.email = "Email invalido. E.g. example@email.com";
+        }
+        
+
+        if (!data.password) {
+            errors.password = "Debe digitar una contraseña";
+        }
+
+        return errors;
+    };
+    const initialValuesEdit = {
+        idRol: userSelected.idRol,
+        name: userSelected.name,
+        lastname: userSelected.lastname,
+        email: userSelected.email,
+        password: userSelected.password,
+        // confirmPassword: "",
+        
+    };
+    const onSubmitEdit = (data, form) => {
+        // setUserEmail(data.email);
+        // setUserName(data.name);
+        // setUserLastname(data.lastname);
+        // setUserPassword(data.password);
+        // setSelectedUserRole(data.idRol);
+        // const userObject = {
+        //     email : data.email,
+        //     name : data.name,
+        //     lastname: data.lastname,
+        //     password : data.password,
+        //     rol: data.idRol,
+        // }
+        console.log(userSelected.idRol);
+        onHideDialogEdit();
     };
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
     const getFormErrorMessage = (meta) => {
@@ -266,7 +351,7 @@ export default function Users() {
             <div className="text-center">
                 <h3>Gestión de Usuarios</h3>
             </div>
-            <Toolbar left={leftContents} />
+            <Toolbar left={leftContents} right={rightContents}/>
             <Dialog header="Crear un nuevo Usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
                 <Form
                     onSubmit={onSubmit}
@@ -281,8 +366,7 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>
-                                                </label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}></label>
                                                 <InputText id="email" {...input} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -295,8 +379,7 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}>
-                                                </label>
+                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}></label>
                                                 <Password id="password" {...input} placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
@@ -309,8 +392,7 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}>
-                                                </label>
+                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}></label>
                                                 <Password id="confirmPassword" {...input} placeholder="Confirmar Contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
@@ -324,8 +406,7 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>
-                                                </label>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}></label>
                                                 <InputText id="name" {...input} placeholder="Digite el Nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -333,14 +414,13 @@ export default function Users() {
                                         </div>
                                     )}
                                 />
-                                 <Field
+                                <Field
                                     name="lastname"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}>
-                                                </label>
-                                                <InputText id="lastname" {...input} placeholder="Digite el apellido" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })}/>
+                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}></label>
+                                                <InputText id="lastname" {...input} placeholder="Digite el apellido" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -352,10 +432,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}>
-                                                </label>
-                                                <Dropdown id="idRol" {...input} options={roles} optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
-
+                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}></label>
+                                                <Dropdown id="idRol" {...input}  options={roles} optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -363,25 +441,110 @@ export default function Users() {
                                     )}
                                 />
                             </div>
-                                <div className="submit-user-create">
+                            <div className="submit-user-create">
                                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                                <Button label="Crear Usuario" icon="pi pi-check"  />
+                                <Button label="Crear Usuario" icon="pi pi-check" />
                             </div>
                         </form>
                     )}
                 />
             </Dialog>
-            <Dialog header="Editar usuario" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }} footer={renderFooterDialogEdit()}>
-                <div className="create-user-form">
-                    <h5>Ingrese los datos del Usuario</h5>
-                    <InputText name="email" value={userSelected.email} onChange={onEditUserSelected} placeholder="Correo electronico" className="create-vehicle-form__input" />
-                    <InputText name="name" value={userSelected.name} onChange={onEditUserSelected} placeholder="Digite el Nombre" className="create-vehicle-form__input" />
-                    <InputText name="lastname" value={userSelected.lastname} onChange={onEditUserSelected} placeholder="Digite el Apellido" className="create-vehicle-form__input" />
-                    <Password name="password" value={userSelected.password} onChange={onEditUserSelected} placeholder="Digite su contraseña" toggleMask />
-                    <Password name="confirmPassword" value={userSelected.password} onChange={onEditUserSelected} placeholder="Confirmar Contraseña" toggleMask />
+            <Dialog header="Editar usuario" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <Form
+                    onSubmit={onSubmitEdit}
+                    initialValues={initialValuesEdit}
+                    validate={validateEdit}
+                    render={({ handleSubmit }) => (
+                        <form onSubmit={handleSubmit}>
+                            <div className="create-user-form">
+                                <h5>Ingrese los nuevos datos del Usuario</h5>
+                                <Field
+                                    name="email"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}></label>
+                                                <InputText id="email" {...input}  onChange={onEditUserSelected} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="password"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}></label>
+                                                <Password id="password" {...input} onChange={onEditUserSelected}  placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                {/* <Field
+                                    name="confirmPassword"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}></label>
+                                                <Password id="confirmPassword" {...input} placeholder="Confirmar Contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                /> */}
 
-                    <Dropdown value={userSelected.idRol} name="idRol" optionValue="id" options={roles} onChange={onEditUserSelected} optionLabel="name" placeholder="Rol del usuario" className="create-vehicle-form__dropdown" />
-                </div>
+                                <Field
+                                    name="name"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}></label>
+                                                <InputText id="name" {...input}  onChange={onEditUserSelected} placeholder="Digite el Nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="lastname"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}></label>
+                                                <InputText id="lastname" {...input}  onChange={onEditUserSelected} placeholder="Digite el apellido" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="idRol"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}></label>
+                                                <Dropdown id="idRol" {...input} options={roles}   optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                            </div>
+                            <div className="submit-user-create">
+                                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+                                <Button label="Editar Usuario" icon="pi pi-check" autoFocus />
+                            </div>
+                        </form>
+                    )}
+                />
             </Dialog>
             <TableUser className="table-users" users={users} setUserSelected={setUserSelected} />
         </div>

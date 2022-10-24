@@ -9,13 +9,24 @@ import { Button } from "primereact/button";
 export const TableUser = ({setUserSelected,users}) => {
     const [globalFilter, setGlobalFilter] = useState(null);
     const [usersSelected, setUsersSelected] = useState([]);
+    console.log(users)
 // console.log(usersSelected)
     useEffect(() => {
         if (usersSelected) {
             setUserSelected(usersSelected)
         }
     }, [usersSelected, setUserSelected])
-    
+
+    const statusBodyTemplate = (rowData) => {
+        if (rowData.status === true) {
+            return <span className="role-badge-status-active">ACTIVO</span>;
+        }else if(rowData.status === false){
+            return <span className="role-badge-status-inactive">INACTIVO</span>;
+        }else{
+            return <span className="role-badge-status-na">NA</span>; 
+        }
+        
+    }
 
     return (
         <>
@@ -27,9 +38,11 @@ export const TableUser = ({setUserSelected,users}) => {
             <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
+            <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
             <Column field="lastname" sortable header="Apellido"></Column>
             <Column field="email" sortable header="Email"></Column>
             <Column field="idRol" sortable header="Rol"></Column>
+            {/* <Column field="roles_users.name" sortable header="Rol"></Column> */}
 
         </DataTable>
         </>
