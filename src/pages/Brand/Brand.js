@@ -192,17 +192,45 @@ export default function Brand() {
         let errors = {};
 
         if (!data.brandName) {
+            console.log(data.brandName)
             errors.brandName = "Debe ingresar un nombre de marca creaar.";
         }
-        if (validateExistingName) {
-            errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
-        }
+        // if (validateExistingName) {
+        //     errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
+        // }
         if (!data.newBrandName) {
+            console.log(data.brandName)
              errors.brandName = "Debe ingresar un nombre de marca.";
 
          }
         return errors;
     };
+    const validateCreate = (data) => {
+        console.log(data);
+        console.log(brands)
+         let validateExistingName = brands.map((brand) =>{
+            console.log(brand.name)
+            console.log(data.brandName)
+
+             if(brand.name === data.brandName){
+                 return true
+             }else{
+                 return false
+             }
+         })
+         console.log(validateExistingName)
+         let errors = {};
+ 
+         if (!data.brandName) {
+             console.log(data.brandName)
+             errors.brandName = "Debe ingresar un nombre de marca creaar.";
+         }
+        //  if (validateExistingName) {
+        //      errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
+        //  }
+     
+         return errors;
+     };
 
     const onSubmit = (data, form) => {
         console.log(data);
@@ -235,7 +263,7 @@ export default function Brand() {
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
-                    validate={validate}
+                    validate={validateCreate}
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>

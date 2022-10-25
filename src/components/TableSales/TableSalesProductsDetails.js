@@ -28,7 +28,7 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
     const [deleteProductDialog, setDeleteProductDialog] = useState(false);
     const [product, setProduct] = useState(emptyProduct);
     const [selectedProducts, setSelectedProducts] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
+    // const [submitted, setSubmitted] = useState(false);
     const [products, setProducts] = useState([]);
     const [saleProductSelected, setSaleProductSelected] = useState(null);
     const toast = useRef(null);
@@ -61,12 +61,12 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
 
     const openNew = () => {
         setProduct(emptyProduct);
-        setSubmitted(false);
+        // setSubmitted(false);
         setProductDialog(true);
     };
 
     const hideDialog = () => {
-        setSubmitted(false);
+        // setSubmitted(false);
         setProductDialog(false);
         setSaleProductSelected(null);
     };
@@ -77,7 +77,7 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
 
     const saveProduct = (form, product) => {
         
-        setSubmitted(true);
+        // setSubmitted(true);
         if (product.idProduct) {
             let _AddedProducts = [...AddedProducts];
             if (product.id) {
