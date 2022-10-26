@@ -93,11 +93,10 @@ export default function Brand() {
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = (newBrandName,form) => {
-        editBrandAlert(newBrandName, form)
+    const onHideDialogEdit = (newBrandName, form) => {
+        editBrandAlert(newBrandName, form);
         setDisplayDialogEdit(false);
-
-    }
+    };
 
     const onHideDialogCreate = (brandName, form) => {
         createBrandAlert(brandName, form);
@@ -113,9 +112,10 @@ export default function Brand() {
         cancelCreate();
         setDisplayDialogCreate(false);
     };
-  
+
     function EditBrand(id, newName, form) {
-        _brandService.updateBrand(id, newName)
+        _brandService
+            .updateBrand(id, newName)
             .then(() => {
                 setBrandName(newName);
                 loadBrands();
@@ -125,7 +125,7 @@ export default function Brand() {
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                 console.log(e);
-            });;
+            });
     }
     function CreateBrand(brandName, form) {
         // setBrandName(brandName)
@@ -158,7 +158,6 @@ export default function Brand() {
 
     const loadBrands = () => {
         _brandService.getBrands().then((response) => {
-
             setBrands(response);
             setBrandIdSelected("");
         });
@@ -168,57 +167,77 @@ export default function Brand() {
         _brandService.getBrands().then((response) => {
             setBrands(response);
         });
-
     }, []);
 
     const initialValues = {
         brandName: "",
-
     };
     const initialValuesEdit = {
         newBrandName: brandNameSelected,
-
     };
 
-    const validate = (data) => {
-       console.log(data);
-        let validateExistingName = brands.map((brand) =>{
-            if(brand.name === data.brandName){
-                return true
-            }else{
-                return false
+    const validateEdit = (data) => {
+
+        let validateExistingName = brands.map((brand) => {
+            if (brand.name === data.newBrandName) {
+                return true;
+            } else {
+                return false;
             }
-        })
+        });
+        let errors = {};
+        if (validateExistingName.includes(true)) {
+            errors.newBrandName = "El nombre " + data.newBrandName + " ya existe, ingrese otro nombre";
+        }
+        if (!data.newBrandName) {
+            
+            errors.newBrandName = "Debe ingresar un nombre de marca.";
+        }
+        return errors;
+    };
+    const validateCreate = (data) => {
+        
+        let validateExistingName = brands.map((brand) => {
+        
+            if (brand.name === data.brandName) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        
         let errors = {};
 
         if (!data.brandName) {
-            errors.brandName = "Debe ingresar un nombre de marca creaar.";
+           
+            errors.brandName = "Debe ingresar un nombre de marca.";
         }
-        if (validateExistingName) {
+        if (validateExistingName.includes(true)) {
             errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
         }
-        if (!data.newBrandName) {
-             errors.brandName = "Debe ingresar un nombre de marca.";
 
-         }
         return errors;
     };
 
     const onSubmit = (data, form) => {
-        console.log(data);
-        let brandName = data.brandName;           
+       
+        let brandName = data.brandName;
         onHideDialogCreate(brandName, form);
     };
 
     const onSubmitEdit = (data, form) => {
-        console.log("Entre al onSubmitEdit");
+
         let newBrandName = data.newBrandName;
         onHideDialogEdit(newBrandName, form);
     };
 
-    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const isFormFieldValid = (meta) => {
+        let a = !!(meta.touched && meta.error);
+        return a
+    }
     const getFormErrorMessage = (meta) => {
-        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+        
+        return isFormFieldValid(meta) ? <small className="p-error">{meta.error}</small> : <small className="p-error"></small>;
     };
 
     return (
@@ -231,11 +250,11 @@ export default function Brand() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-               <Dialog header="Crear nueva marca" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Crear nueva marca" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
-                    validate={validate}
+                    validate={validateCreate}
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
@@ -254,8 +273,6 @@ export default function Brand() {
                                             </div>
                                         )}
                                     />
-
-
                                 </div>
                                 <div>
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
@@ -265,33 +282,37 @@ export default function Brand() {
                         </>
                     )}
                 />
-                 </Dialog>
+            </Dialog>
 
             <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
-            <Form
+                <Form
                     onSubmit={onSubmitEdit}
                     initialValues={initialValuesEdit}
-                    validate={validate}
+                    validate={validateEdit}
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
                                 <div className="create-brand-form">
-                                <Field
+                                    <Field
                                         name="newBrandName"
                                         render={({ input, meta }) => (
-                                                <span className="create-sale-form__span">
-                                                    <label htmlFor="newBrandName" className={classNames({ "p-error": isFormFieldValid("newBrandName") })}>
-                                                        Nombre de marca*
-                                                    </label>
-                                                    <InputText id="newBrandName" {...input} autoFocus placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            
+                                            <span className="create-sale-form__span">
+                                               
+                                                <label htmlFor="newBrandName" className={classNames({ "p-error": isFormFieldValid("newBrandName") })}>
+                                                    Nombre de marca*
+                                                </label>
+                                                <InputText id="newBrandName" {...input} autoFocus  
+                                                placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 {getFormErrorMessage(meta)}
-                                                </span>                  
+                                            </span>
                                         )}
                                     />
                                 </div>
                                 <div>
-                                    <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                                    <Button type="submit" label="Editar marca" icon="pi pi-check" /></div>
+                                    {/* <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" /> */}
+                                    <Button type="submit" label="Editar marca" icon="pi pi-check" />
+                                </div>
                             </form>
                         </>
                     )}

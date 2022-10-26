@@ -19,7 +19,7 @@ export const TableProductsBrands = ({ setProductsBrandsIdSelected, productsbrand
 
     return (
         <>
-            <div className="p-inputgroup create-productsbrands__table">
+            <div className="p-inputgroup create-brand__table">
                 <InputText placeholder="Buscar marca de productos" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
