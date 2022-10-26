@@ -15,6 +15,16 @@ export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected })
             setBrandNameSelected(params.name);
         }
     }
+    const statusBodyTemplate = (rowData) => {
+        if (rowData.status === true) {
+            return <span className="brand-badge-status-active">ACTIVO</span>;
+        }else if(rowData.status === false){
+            return <span className="brand-badge-status-inactive">INACTIVO</span>;
+        }else{
+            return <span className="brand-badge-status-na">NA</span>; 
+        }
+        
+    }
 
     return (
         <>
@@ -26,6 +36,7 @@ export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected })
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" sortable header="Id marca"></Column>
                 <Column field="name" sortable header="Nombre"></Column>
+                <Column field="status" body={statusBodyTemplate} header="Estado"></Column>
             </DataTable>
         </>
     );
