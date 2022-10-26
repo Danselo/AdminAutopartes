@@ -145,8 +145,13 @@ export default function Products() {
         </React.Fragment>
     );
     const rightContents = (
-        <React.Fragment>
-            <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
+        <React.Fragment>            
+            <Button 
+            label={productSelected.state ? "Desactivar": "Activar"} 
+            className={productSelected.state? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
+            disabled = {!productSelected.name}
+            icon={productSelected.state? "pi pi-eye-slash": "pi pi-eye"} 
+            onClick={() => changeProductStatusDialog(productSelected)} />
         </React.Fragment>
     );
     const reject = () => {
@@ -188,11 +193,53 @@ export default function Products() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
+
+    const changeProductStatusDialog = (productData) => {
+        let productState
+        if (productData.state === false) {
+            productState = "activar"
+        }else{
+            productState = "desactivar"
+        }
+
+        confirmDialog({
+            message: "¿Esta seguro que desea " + productState +" este producto?",
+            header: "Cambio de estado del producto " + productData.id,
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: productState,
+            rejectLabel: "Cancelar",
+            accept: () => changeProductStatus(productData),
+            reject,
+        });
+    };
+
+    const changeProductStatus = (productData) =>{
+        let newState
+        if (productData.state === false) {
+            newState = true
+            
+        }else if(productData.state === true){
+            newState = false
+        }
+
+        _productService.updateProduct({
+            id: productData.id, 
+            state: newState}).then((e) =>{
+                loadProducts();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 }); 
+            }).catch((eror) =>{
+                toast.current.show({ severity: "error", summary: "Error", detail: eror, life: 3000 });
+            })
+
+    }
     function onClickDialogCreate() {
         getBrands();
         getCategories();
         setDisplayDialogCreate(true);
     }
+
+   
 
     function onClickDialogEdit() {
         getVehiclesOfProductSelected(productSelected.id);
