@@ -18,7 +18,7 @@ export const TableProducts = ({ setProductSelected, products }) => {
     }, [TableProductSelected, setProductSelected]);
 
     const statusBodyTemplate = (rowData) => {
-        console.log("producto seleccionado",rowData)
+        
         if (rowData.state === true) {
             return <span className="product-badge-state-active">ACTIVO</span>;
         }else if(rowData.state === false){

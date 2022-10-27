@@ -41,6 +41,7 @@ export const TableVehicles = ({ setVehicleSelected, vehicles }) => {
                 <Column field="name" sortable header="Nombre"></Column>
                 <Column field="model" sortable header="Modelo"></Column>
                 <Column field="brands_vehicles.name" sortable header="Marca"></Column>
+                <Column field="status" sortable header="Estado"></Column>
             </DataTable>
         </>
     );

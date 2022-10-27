@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./dataTableBrands.css";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 
-export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected }) => {
+export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected, setBrandSelected }) => {
     const [globalFilter, setGlobalFilter] = useState(null);
     const [selectedBrand, setSelectedBrand] = useState([]);
-    function setBrandId(params) {
+    const [TableBrandSelected, setTableBrandSelected] = useState([]);
+    
+    function setBrandSelectedFromTable(params) {
+        setTableBrandSelected(params)
         setSelectedBrand(params);
         if (params != null) {
             setBrandIdSelected(params.id);
@@ -25,6 +28,11 @@ export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected })
         }
         
     }
+    useEffect(() => {
+        if (TableBrandSelected) {
+            setBrandSelected(TableBrandSelected);
+        }
+    }, [TableBrandSelected, setBrandSelected]);
 
     return (
         <>
@@ -32,7 +40,18 @@ export const TableBrand = ({ setBrandIdSelected, brands, setBrandNameSelected })
                 <InputText placeholder="Buscar marca" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
-            <DataTable value={brands} header="Marcas" paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-brands" showGridlines rows={10} selection={selectedBrand} onSelectionChange={(e) => setBrandId(e.value)} dataKey="id" globalFilter={globalFilter}>
+            <DataTable 
+            value={brands} 
+            header="Marcas" 
+            paginator 
+            responsiveLayout="scroll" 
+            emptyMessage="No se encontraron datos" 
+            className="table-brands" 
+            showGridlines rows={10} 
+            selection={selectedBrand} 
+            onSelectionChange={(e) => setBrandSelectedFromTable(e.value)} 
+            dataKey="id" 
+            globalFilter={globalFilter}>
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" sortable header="Id marca"></Column>
                 <Column field="name" sortable header="Nombre"></Column>
