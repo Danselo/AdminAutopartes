@@ -228,8 +228,8 @@ export default function Products() {
             state: newState}).then((e) =>{
                 loadProducts();
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 }); 
-            }).catch((eror) =>{
-                toast.current.show({ severity: "error", summary: "Error", detail: eror, life: 3000 });
+            }).catch((error) =>{
+                toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
             })
 
     }

@@ -35,4 +35,9 @@ export class BrandService {
         return axios.get(`${baseBrandURL}/get-vehicles-where-brand/${idBrand}`).then(res => res.data)
     }
 
+    changeStatusOfBrand(idBrand, status){
+        return axios
+        .put(`${baseBrandURL}/change-status-of-brand/${idBrand}`, status);
+    }
+
 }

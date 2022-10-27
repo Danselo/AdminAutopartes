@@ -14,6 +14,17 @@ export const TableVehicles = ({ setVehicleSelected, vehicles }) => {
         }
     }, [TableVehiclesSelected, setVehicleSelected]);
 
+    const statusBodyTemplate = (rowData) => {
+        if (rowData.status === true) {
+            return <span className="brand-badge-status-active">ACTIVO</span>;
+        }else if(rowData.status === false){
+            return <span className="brand-badge-status-inactive">INACTIVO</span>;
+        }else{
+            return <span className="brand-badge-status-na">NA</span>; 
+        }
+        
+    }
+
     return (
         <>
             <div className="p-inputgroup create-brand__table">
@@ -41,7 +52,7 @@ export const TableVehicles = ({ setVehicleSelected, vehicles }) => {
                 <Column field="name" sortable header="Nombre"></Column>
                 <Column field="model" sortable header="Modelo"></Column>
                 <Column field="brands_vehicles.name" sortable header="Marca"></Column>
-                <Column field="status" sortable header="Estado"></Column>
+                <Column field="status" body={statusBodyTemplate} sortable header="Estado"></Column>
             </DataTable>
         </>
     );

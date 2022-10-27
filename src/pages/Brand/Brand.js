@@ -25,7 +25,7 @@ export default function Brand() {
     const [brandSelected, setBrandSelected] = useState({});
     const [vehiclesWhereBrand, setVehiclesWhereBrand] = useState({});
     const [brands, setBrands] = useState([]);
-console.log("marcca seleccionada",brandSelected)
+    console.log("marcca seleccionada", brandSelected);
 
     const leftContents = (
         <React.Fragment>
@@ -34,30 +34,34 @@ console.log("marcca seleccionada",brandSelected)
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
         </React.Fragment>
     );
-
+    console.log(vehiclesWhereBrand);
+    console.log(!vehiclesWhereBrand.length === 0);
     const rightContents = (
         <React.Fragment>
-            <Button 
-            label={brandSelected.state ? "Desactivar": "Activar"} 
-            className={brandSelected.state? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
-            disabled = {!brandSelected.name}
-            icon={brandSelected.state? "pi pi-eye-slash": "pi pi-eye"} 
-            onClick={() => {vehiclesWhereBrand ? setDisplayDialogStatus(true): onChangeBrandStatusDialog(brandSelected)}} />
+            <Button
+                label={brandSelected.status ? "Desactivar" : "Activar"}
+                className={brandSelected.status ? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
+                disabled={!brandSelected.name}
+                icon={brandSelected.status ? "pi pi-eye-slash" : "pi pi-eye"}
+                onClick={() => {
+                    vehiclesWhereBrand ? setDisplayDialogStatus(true) : onChangeBrandStatusDialog(brandSelected);
+                }}
+            />
         </React.Fragment>
     );
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
     const onChangeBrandStatusDialog = (brandData) => {
-        let brandState
-        if (brandData.state === false) {
-            brandState = "activar"
-        }else{
-            brandState = "desactivar"
+        let brandState;
+        if (brandData.status === false) {
+            brandState = "activar";
+        } else {
+            brandState = "desactivar";
         }
 
         confirmDialog({
-            message: "¿Esta seguro que desea " + brandState +" esta marca?",
+            message: "¿Esta seguro que desea " + brandState + " esta marca?",
             header: "Cambio de estado de la marca " + brandData.name,
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -121,11 +125,10 @@ console.log("marcca seleccionada",brandSelected)
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = (newBrandName,form) => {
-        editBrandAlert(newBrandName, form)
+    const onHideDialogEdit = (newBrandName, form) => {
+        editBrandAlert(newBrandName, form);
         setDisplayDialogEdit(false);
-
-    }
+    };
 
     const onHideDialogCreate = (brandName, form) => {
         createBrandAlert(brandName, form);
@@ -142,13 +145,30 @@ console.log("marcca seleccionada",brandSelected)
         cancelCreate();
         setDisplayDialogCreate(false);
     };
-  
-    function changeBrandStatus() {
 
+    function changeBrandStatus(brandData) {
+        let newState;
+        console.log(brandData.status)
+        if (brandData.status === false) {
+
+            newState = true;
+        } else if (brandData.status === true) {
+            newState = false;
+        }
+        console.log("estado",newState)
+        _brandService.changeStatusOfBrand(brandData.id, {status: newState}).then((response) => {
+            loadBrands();
+            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+            setDisplayDialogStatus(false)
+        }).catch((error) => {
+            toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
+            setDisplayDialogStatus(false)
+        });
     }
 
     function EditBrand(id, newName, form) {
-        _brandService.updateBrand(id, newName)
+        _brandService
+            .updateBrand(id, newName)
             .then(() => {
                 setBrandName(newName);
                 loadBrands();
@@ -158,7 +178,7 @@ console.log("marcca seleccionada",brandSelected)
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                 console.log(e);
-            });;
+            });
     }
     function CreateBrand(brandName, form) {
         // setBrandName(brandName)
@@ -191,21 +211,21 @@ console.log("marcca seleccionada",brandSelected)
 
     useEffect(() => {
         if (brandSelected.id !== undefined) {
-            _brandService.getVehiclesWhereBrand(brandSelected.id).then((response) => {
-                setVehiclesWhereBrand(response)
-            }).catch((e) =>{
-                console.log(e,"No se encontraron productos")
-            });;
-            
+            _brandService
+                .getVehiclesWhereBrand(brandSelected.id)
+                .then((response) => {
+                    setVehiclesWhereBrand(response);
+                })
+                .catch((e) => {
+                    console.log(e, "No se encontraron productos");
+                });
         }
-
     }, [brandSelected]);
 
-    console.log(vehiclesWhereBrand)
+    console.log(vehiclesWhereBrand);
 
     const loadBrands = () => {
         _brandService.getBrands().then((response) => {
-
             setBrands(response);
             setBrandIdSelected("");
         });
@@ -215,27 +235,24 @@ console.log("marcca seleccionada",brandSelected)
         _brandService.getBrands().then((response) => {
             setBrands(response);
         });
-
     }, []);
 
     const initialValues = {
         brandName: "",
-
     };
     const initialValuesEdit = {
         newBrandName: brandNameSelected,
-
     };
 
     const validate = (data) => {
-       console.log(data);
-        let validateExistingName = brands.map((brand) =>{
-            if(brand.name === data.brandName){
-                return true
-            }else{
-                return false
+        console.log(data);
+        let validateExistingName = brands.map((brand) => {
+            if (brand.name === data.brandName) {
+                return true;
+            } else {
+                return false;
             }
-        })
+        });
         let errors = {};
 
         if (!data.brandName) {
@@ -245,15 +262,14 @@ console.log("marcca seleccionada",brandSelected)
             errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
         }
         if (!data.newBrandName) {
-             errors.brandName = "Debe ingresar un nombre de marca.";
-
-         }
+            errors.brandName = "Debe ingresar un nombre de marca.";
+        }
         return errors;
     };
 
     const onSubmit = (data, form) => {
         console.log(data);
-        let brandName = data.brandName;           
+        let brandName = data.brandName;
         onHideDialogCreate(brandName, form);
     };
 
@@ -271,7 +287,7 @@ console.log("marcca seleccionada",brandSelected)
         return (
             <div>
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Desactivar" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+                <Button label={brandSelected.status ? "Desactivar" : "Activar"} icon="pi pi-check" onClick={() => changeBrandStatus(brandSelected)} autoFocus />
             </div>
         );
     };
@@ -286,7 +302,7 @@ console.log("marcca seleccionada",brandSelected)
 
             <Toolbar left={leftContents} right={rightContents} />
 
-               <Dialog header="Crear nueva marca" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Crear nueva marca" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
@@ -309,8 +325,6 @@ console.log("marcca seleccionada",brandSelected)
                                             </div>
                                         )}
                                     />
-
-
                                 </div>
                                 <div>
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
@@ -320,10 +334,10 @@ console.log("marcca seleccionada",brandSelected)
                         </>
                     )}
                 />
-                 </Dialog>
+            </Dialog>
 
-            <Dialog header="Editar marca" visible={displayDialogEdit}  onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
-            <Form
+            <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <Form
                     onSubmit={onSubmitEdit}
                     initialValues={initialValuesEdit}
                     validate={validate}
@@ -331,36 +345,34 @@ console.log("marcca seleccionada",brandSelected)
                         <>
                             <form onSubmit={handleSubmit}>
                                 <div className="create-brand-form">
-                                <Field
+                                    <Field
                                         name="newBrandName"
                                         render={({ input, meta }) => (
-                                                <span className="create-sale-form__span">
-                                                    <label htmlFor="newBrandName" className={classNames({ "p-error": isFormFieldValid("newBrandName") })}>
-                                                        Nombre de marca*
-                                                    </label>
-                                                    <InputText id="newBrandName" {...input} autoFocus placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="newBrandName" className={classNames({ "p-error": isFormFieldValid("newBrandName") })}>
+                                                    Nombre de marca*
+                                                </label>
+                                                <InputText id="newBrandName" {...input} autoFocus placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 {getFormErrorMessage(meta)}
-                                                </span>                  
+                                            </span>
                                         )}
                                     />
                                 </div>
                                 <div>
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                                    <Button type="submit" label="Editar marca" icon="pi pi-check" /></div>
+                                    <Button type="submit" label="Editar marca" icon="pi pi-check" />
+                                </div>
                             </form>
                         </>
                     )}
                 />
             </Dialog>
 
-            <Dialog header={"¿Esta seguro que desea desactivar la marca " + brandSelected.name+"?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
-            <p>Los siguientes vehiculos estan asociados a esta marca</p>
-            <strong>Nota:</strong><p>Si hay productos asociados a los vehiculos en pantalla, estos tambien se desactivaran</p>
-            <TableVehiclesOfBrandSelected
-             className="table-products" 
-             vehicles={vehiclesWhereBrand} 
-              />
-
+            <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") +" la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <p>Los siguientes vehiculos estan asociados a esta marca</p>
+                <strong>Nota:</strong>
+                <p>Si hay productos asociados a los vehiculos en pantalla, estos tambien se {brandSelected.status ? "desactivaran" : "activaran"}</p>
+                <TableVehiclesOfBrandSelected className="table-products" vehicles={vehiclesWhereBrand} />
             </Dialog>
 
             <TableBrand className="table-products" brands={brands} setBrandSelected={setBrandSelected} setBrandIdSelected={setBrandIdSelected} setBrandNameSelected={setBrandNameSelected} />

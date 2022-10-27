@@ -30,8 +30,8 @@
 
 .product-badge-state-inactive{
     background-color: rgb(206, 154, 31);
-    width: 5rem;
-    padding: 1rem;
+    width: 100%;
+    padding: .5rem;
     border-radius: .5rem;
     color: white;
     font-weight: 500;
