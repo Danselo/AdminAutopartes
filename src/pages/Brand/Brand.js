@@ -247,6 +247,7 @@ export default function Brand() {
     const validate = (data) => {
         console.log(data);
         let validateExistingName = brands.map((brand) => {
+            console.log(brand)
             if (brand.name === data.brandName) {
                 return true;
             } else {
@@ -258,16 +259,17 @@ export default function Brand() {
         if (!data.brandName) {
             errors.brandName = "Debe ingresar un nombre de marca creaar.";
         }
-        if (validateExistingName) {
+        if (validateExistingName.includes(true)) {
             errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
         }
         if (!data.newBrandName) {
-            errors.brandName = "Debe ingresar un nombre de marca.";
+            errors.newBrandName = "Debe ingresar un nombre de marca.";
         }
         return errors;
     };
 
     const onSubmit = (data, form) => {
+       
         console.log(data);
         let brandName = data.brandName;
         onHideDialogCreate(brandName, form);
