@@ -16,11 +16,12 @@ export class ProductService {
     getVehiclesOfProducts(){
       return axios.get(`${baseProductURL}/find-vehicles-of-a-product`).then((res) => res.data);
     }
-    createProduct(id, name, description, idCategory) {
+    createProduct(id, name, description, idCategory, idBrand) {
         return axios
             .post(baseProductURL + "/create", {
                 id,
                 idCategory,
+                idBrand,
                 name,
                 description,
             })
@@ -75,4 +76,6 @@ export class ProductService {
                 return response.data;
             });
     }
+
+    
 }

@@ -1,32 +1,32 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./categories.css";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { TableCategories } from "../../components/TableCategories/TableCategories";
+import { TableProductsBrands } from "../../components/TableProductsBrands/TableProductsBrands";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Toolbar } from "primereact/toolbar";
-import { CategoryService } from "../../service/CategoryService";
+import { ProductsBrandsService } from "../../service/ProductsBrandsService";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
 
-const _categoryService = new CategoryService();
-export default function Categories() {
+const _productsBrandsService = new ProductsBrandsService();
+
+export default function ProductsBrand() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [categoryName, setCategoryName] = useState("");
-    const [newCategoryName, setNewCategoryName] = useState("");
-    const [categoryIdSelected, setCategoryIdSelected] = useState("");
-    const [categoryNameSelected, setCategoryNameSelected] = useState("");
-    const [categories, setCategories] = useState([]);
+    const [productsBrandName, setProductsBrandsName] = useState("");
+    const [newProductsBrandsName, setNewProductsBrandsName] = useState("");
+    const [productsbrandsIdSelected, setProductsBrandsIdSelected] = useState("");
+    const [productsBrandNameSelected, setProductsBrandsNameSelected] = useState("");
+    const [productsbrands, setProductsBrands] = useState([]);
 
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteCategoryAlert()} disabled={!categoryIdSelected} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!categoryIdSelected} />
+            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteProductsBrandsAlert()} disabled={!productsbrandsIdSelected} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!productsbrandsIdSelected} />
         </React.Fragment>
     );
 
@@ -38,37 +38,37 @@ export default function Categories() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createCategoryAlert = (categoryName, form) => {
+    const createProductsBrandsAlert = (productsBrandName, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta categoria?",
+            message: "¿Esta seguro que desea agregar esta marca de productos?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateCategory(categoryName, form),
+            accept: () => CreateProductsBrands(productsBrandName, form),
             reject: () => setDisplayDialogCreate(true),
         });
     };
 
-    const editCategoryAlert = (newCategoryName, form) => {
+    const editProductsBrandsAlert = (newProductsBrandsName, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta categoria?",
+            message: "¿Esta seguro que desea editar esta marca de productos?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
-            accept: () => EditCategory(categoryIdSelected, newCategoryName, form),
+            accept: () => EditProductsBrands(productsbrandsIdSelected, newProductsBrandsName, form),
             reject: () => setDisplayDialogCreate(true),
         });
     };
-    const deleteCategoryAlert = () => {
+    const deleteProductsBrandsAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea eliminar esta Categoria?",
+            message: "¿Esta seguro que desea eliminar esta Marca de productos?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
-            accept: () => deleteCategory(categoryIdSelected),
+            accept: () => deleteProductsBrands(productsbrandsIdSelected),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -92,14 +92,14 @@ export default function Categories() {
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = (newCategoryName, form) => {
-        editCategoryAlert(newCategoryName, form)
+    const onHideDialogEdit = (newProductsBrandsName, form) => {
+        editProductsBrandsAlert(newProductsBrandsName, form)
         setDisplayDialogEdit(false);
 
     }
 
-    const onHideDialogCreate = (categoryName, form) => {
-        createCategoryAlert(categoryName, form);
+    const onHideDialogCreate = (productsBrandName, form) => {
+        createProductsBrandsAlert(productsBrandName, form);
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
@@ -112,26 +112,42 @@ export default function Categories() {
         cancelCreate();
         setDisplayDialogCreate(false);
     };
+    // const renderFooterDialog = () => {
+    //     return (
+    //         <div>
+    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+    //             <Button label="Crear marca" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+    //         </div>
+    //     );
+    // };
 
-    function EditCategory(id, newName, form) {
-        _categoryService.updateCategory(id, newName)
+    // const renderFooterDialogEdit = () => {
+    //     return (
+    //         <div>
+    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+    //             <Button label="Editar marca" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+    //         </div>
+    //     );
+    // };
+    function EditProductsBrands(id, newName, form) {
+        _productsBrandsService.updateProductsBrands(id, newName)
             .then(() => {
-                setCategoryName(newName);
-                loadCategories();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
+                setProductsBrandsName(newName);
+                loadProductsBrands();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca edita exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                 console.log(e);
             });
     }
-    function CreateCategory(categoryName, form) {
-        _categoryService
-            .createCategory(categoryName)
+    function CreateProductsBrands(productsBrandName, form) {
+        _productsBrandsService
+            .createProductsBrands(productsBrandName)
             .then(() => {
-                setCategoryName("");
-                loadCategories();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
+                setProductsBrandsName("");
+                loadProductsBrands();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca creada exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -139,12 +155,12 @@ export default function Categories() {
             });
     }
 
-    function deleteCategory(id) {
-        _categoryService
-            .deleteCategory(id)
+    function deleteProductsBrands(id) {
+        _productsBrandsService
+            .deleteProductsBrands(id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
-                loadCategories();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca eliminada exitosamente", life: 3000 });
+                loadProductsBrands();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -152,29 +168,31 @@ export default function Categories() {
             });
     }
 
-    const loadCategories = () => {
-        _categoryService.getCategories().then((response) => {
-            setCategories(response);
-            setCategoryIdSelected("");
+    const loadProductsBrands = () => {
+        _productsBrandsService.getProductsBrands().then((response) => {
+            setProductsBrands(response);
+            setProductsBrandsIdSelected("");
         });
     };
+
     useEffect(() => {
-        _categoryService.getCategories().then((response) => {
-            setCategories(response);
+        _productsBrandsService.getProductsBrands().then((response) => {
+            setProductsBrands(response);
         });
+
     }, []);
 
     const initialValues = {
-        categoryName: "",
+        productsBrandName: "",
     };
     const initialValuesEdit = {
-        newCategoryName: categoryNameSelected,
+        newProductsBrandsName: productsBrandNameSelected,
     };
 
     const validateEdit = (data) => {
 
-        let validateExistingName = categories.map((category) => {
-            if (category.name === data.newCategoryName) {
+        let validateExistingName = productsbrands.map((productsbrand) => {
+            if (productsbrand.name === data.newProductsBrandsName) {
                 return true;
             } else {
                 return false;
@@ -182,20 +200,20 @@ export default function Categories() {
         });
         let errors = {};
         if (validateExistingName.includes(true)) {
-            errors.newCategoryName = "El nombre " + data.newCategoryName + " ya existe, ingrese otro nombre";
+            errors.newProductsBrandsName = "El nombre " + data.newProductsBrandsName + " ya existe, ingrese otro nombre";
         }
-        if (!data.newCategoryName) {
+        if (!data.newProductsBrandsName) {
 
-            errors.newCategoryName = "Debe ingresar un nombre de categoria.";
+            errors.newProductsBrandsName = "Debe ingresar un nombre de marca.";
         }
         return errors;
     };
 
     const validateCreate = (data) => {
 
-        let validateExistingName = categories.map((category) => {
+        let validateExistingName = productsbrands.map((productsbrand) => {
 
-            if (category.name === data.categoryName) {
+            if (productsbrand.name === data.productsBrandName) {
                 return true;
             } else {
                 return false;
@@ -204,12 +222,12 @@ export default function Categories() {
 
         let errors = {};
 
-        if (!data.categoryName) {
+        if (!data.productsBrandName) {
 
-            errors.categoryName = "Debe ingresar un nombre de categoria.";
+            errors.productsBrandName = "Debe ingresar un nombre de marca.";
         }
         if (validateExistingName.includes(true)) {
-            errors.categoryName = "El nombre " + data.categoryName + " ya existe, ingrese otro nombre";
+            errors.productsBrandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
         }
 
         return errors;
@@ -217,14 +235,14 @@ export default function Categories() {
 
     const onSubmit = (data, form) => {
 
-        let categoryName = data.categoryName;
-        onHideDialogCreate(categoryName, form);
+        let productsBrandName = data.productsBrandName;
+        onHideDialogCreate(productsBrandName, form);
     };
 
     const onSubmitEdit = (data, form) => {
 
-        let newCategoryName = data.newCategoryName;
-        onHideDialogEdit(newCategoryName, form);
+        let newProductsBrandsName = data.newProductsBrandsName;
+        onHideDialogEdit(newProductsBrandsName, form);
     };
 
     const isFormFieldValid = (meta) => {
@@ -241,12 +259,12 @@ export default function Categories() {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h4>Categorias registradas</h4>
+                <h4>Marcas de productos registradas</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear nueva categoria" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Crear nueva marca de producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
@@ -254,16 +272,16 @@ export default function Categories() {
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
-                                <div className="create-category-form">
+                                <div className="create-brand-form">
                                     <Field
-                                        name="categoryName"
+                                        name="productsBrandName"
                                         render={({ input, meta }) => (
                                             <div className="field ">
                                                 <span className="create-sale-form__span">
-                                                    <label htmlFor="categoryName" className={classNames({ "p-error": isFormFieldValid("categoryName") })}>
-                                                        Nombre de categoria*
+                                                    <label htmlFor="productsBrandName" className={classNames({ "p-error": isFormFieldValid("productsBrandName") })}>
+                                                        Nombre de marca*
                                                     </label>
-                                                    <InputText id="categoryName" {...input} autoFocus placeholder="Ingrese el nombre de la categoria" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                    <InputText id="productsBrandName" {...input} autoFocus placeholder="Ingrese el nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 </span>
                                                 {getFormErrorMessage(meta)}
                                             </div>
@@ -280,7 +298,7 @@ export default function Categories() {
                 />
             </Dialog>
 
-            <Dialog header="Editar categoria" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Editar marca" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
                 <Form
                     onSubmit={onSubmitEdit}
                     initialValues={initialValuesEdit}
@@ -288,23 +306,23 @@ export default function Categories() {
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
-                                <div className="create-category-form">
+                                <div className="create-brand-form">
                                     <Field
-                                        name="newCategoryName"
+                                        name="newProductsBrandsName"
                                         render={({ input, meta }) => (
 
                                             <span className="create-sale-form__span">
 
-                                                <label htmlFor="newCategoryName" className={classNames({ "p-error": isFormFieldValid("newCategoryName") })}>
-                                                    Nombre de categoria*
+                                                <label htmlFor="newProductsBrandsName" className={classNames({ "p-error": isFormFieldValid("newProductsBrandsName") })}>
+                                                    Nombre de marca*
                                                 </label>
-                                                <InputText id="newCategoryName" {...input} autoFocus
-                                                    placeholder="Ingrese el nuevo nombre de la categoria" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                <InputText id="newProductsBrandsName" {...input} autoFocus
+                                                    placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 {getFormErrorMessage(meta)}
                                             </span>
                                         )}
                                     />
-                                </div>
+                                  </div>
                                 <div>
                                     {/* <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" /> */}
                                     <Button type="submit" label="Editar marca" icon="pi pi-check" />
@@ -316,7 +334,7 @@ export default function Categories() {
             </Dialog>
 
 
-            <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected={setCategoryNameSelected} />
+            <TableProductsBrands className="table-products" productsbrands={productsbrands} setProductsBrandsIdSelected={setProductsBrandsIdSelected} setProductsBrandsNameSelected={setProductsBrandsNameSelected} />
         </div>
     );
 }

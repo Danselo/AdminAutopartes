@@ -67,6 +67,10 @@
   color: #ef9a9a;
 }
 
+.p-success {
+  color: #37c848;
+}
+
 .p-text-secondary {
   color: rgba(255, 255, 255, 0.6);
 }

@@ -11,8 +11,13 @@ import TableSalesProductsDetail from "../../components/TableSales/TableSalesProd
 import { useHistory } from "react-router-dom";
 import { SaleService } from "../../service/SaleService";
 import { ClientService } from "../../service/ClientService";
-import { useForm, Controller } from "react-hook-form";
+import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
+import { Calendar } from "primereact/calendar";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+
 
 const _saleService = new SaleService();
 const _clientService = new ClientService();
@@ -21,37 +26,26 @@ const _productService = new ProductService();
 export default function CreateSales() {
     const toast = useRef(null);
     const [clients, setClients] = useState([]);
-    const [saleClientSelected, setClientSelected] = useState([]);
-    const [statusSaleSelected, setStatusSaleSelected] = useState([]);
-    const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
-    const [saleDate, setSaleDate] = useState("");
+    const [saleClientSelected, setSaleClientSelected] = useState(null);
+    // const [statusSaleSelected, setStatusSaleSelected] = useState([]);
+    // const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
+    // const [saleDate, setSaleDate] = useState("");
     const [totalSale, setTotalSale] = useState(0);
     const [addedProductsAtSale, setAddedProductsAtSale] = useState([]);
     const [products, setProducts] = useState([]);
-
-    const defaultValues = {
-        saleClientId: null,
-        saleDate: "",
-        statusSale: "",
-        statusPayment: "",
-        totalSale:null ,
-    };
-    const {
-        control,
-        formState: { errors },
-        handleSubmit,
-        reset,
-    } = useForm({ defaultValues });
+    const op = useRef(null);
+    const isMounted = useRef(false);
+    const [globalFilter, setGlobalFilter] = useState(null);
 
     useEffect(() => {
-        let cosamappeada = addedProductsAtSale.map((p) => {
-            let { TemporalId, ...loDemas } = p;
-            return loDemas;
-        });
-        setProducts(cosamappeada);
-    }, [addedProductsAtSale]);
+        if (isMounted.current && saleClientSelected) {
+            op.current.hide();
+            toast.current.show({ severity: "info", summary: "Cliente seleccionado", detail: saleClientSelected.name, life: 3000 });
+        }
+    }, [saleClientSelected]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
+        isMounted.current = true;
         _clientService
             .getClients()
             .then((response) => {
@@ -62,9 +56,62 @@ export default function CreateSales() {
             });
     }, []);
 
-    const onSaleClientChange = (e) => {
-        setClientSelected(e.value);
+    const onClientSelect = (e) => {
+        setSaleClientSelected(e.value);
     };
+
+    const initialValues = {
+        saleDate: "",
+        statusSale: "",
+        statusPayment: "",
+        // totalSale: totalSale,
+    };
+
+    const validate = (data) => {
+        let errors = {};
+
+        if (!saleClientSelected) {
+            errors.saleClientId = "Debe asociar un cliente a la venta.";
+        }
+        if (!data.saleDate) {
+            errors.saleDate = "Fecha de venta es requerido.";
+        }
+
+        if (!data.statusSale) {
+            errors.statusSale = "Estado de la venta es requerido";
+        }
+
+        if (!data.statusPayment) {
+            errors.statusPayment = "El estado de pago es requerido";
+        }
+
+        // if (!data.totalSale) {
+        //     errors.totalSale = "Debe asociar productos a la venta para poder continuar";
+        // }
+
+        return errors;
+    };
+
+    const onSubmit = (data, form) => {
+        console.log(3434334);
+        if (saleClientSelected) {
+            setTotalSale(totalSale);
+            create(form, data);
+        }
+    };
+
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
+    useEffect(() => {
+        let cosamappeada = addedProductsAtSale.map((p) => {
+            let { TemporalId, ...loDemas } = p;
+            return loDemas;
+        });
+        setProducts(cosamappeada);
+    }, [addedProductsAtSale]);
+
     const statusSale = [
         { name: "Activo", id: "1" },
         { name: "Terminado", id: "0" },
@@ -76,14 +123,17 @@ export default function CreateSales() {
     let history = useHistory();
 
     function handleClickRedirect() {
-        toast.current.show({ severity: "success", summary: "Todo ha salido bien!", detail: "Compra creada exitosamente, seras redireccionado a la pantalla principal", life: 4000 });
+        toast.current.show({ severity: "success", summary: "Todo ha salido bien!", detail: "Venta creada exitosamente, seras redireccionado a la pantalla principal", life: 4000 });
         setTimeout(() => {
             history.push("/sales");
         }, 4000);
     }
-    const createSale = () => {
+
+    const createSale = (form, data) => {
+        var dateSelected = new Date(data.saleDate);
+        var formatDate = dateSelected.toISOString().split("T")[0];
         _saleService
-            .createSale(saleClientSelected.id, saleDate, statusSaleSelected.name, statusPaymentSelected.name, totalSale)
+            .createSale(saleClientSelected.id, formatDate, data.statusSale.name, data.statusPayment.name, totalSale)
             .then((responseCreateSale) => {
                 products.forEach((element) => {
                     _saleService
@@ -100,7 +150,7 @@ export default function CreateSales() {
                 handleClickRedirect();
             })
             .then(() => {
-                reset();
+                form.restart();
             })
             .catch(() => {
                 toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
@@ -114,14 +164,14 @@ export default function CreateSales() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const create = () => {
+    const create = (form, data) => {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta compra?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => createSale(),
+            accept: () => createSale(form, data),
             reject,
         });
     };
@@ -138,27 +188,14 @@ export default function CreateSales() {
             reject,
         });
     };
-
-    const onSubmit = (data) => {
-        console.log(data);
-        setSaleDate(data.saleDate);
-        setStatusSaleSelected(data.statusSale.name);
-        setStatusPaymentSelected(data.statusPayment.name);
-        setTotalSale(totalSale);
-        create();
-    };
-
     useEffect(() => {
-        let total = 0;
-        addedProductsAtSale.forEach((element) => {
-            total += element.price;
-            setTotalSale(total);
-        });
+        let total = addedProductsAtSale.reduce((acum, current) => {
+            acum += current.price * current.amount;
+            return acum;
+        }, 0);
+        setTotalSale(total);
     }, [addedProductsAtSale]);
 
-    const getFormErrorMessage = (name) => {
-        return errors[name] && <small className="p-error">{errors[name].message}</small>;
-    };
     return (
         <div>
             <Toast ref={toast} />
@@ -166,92 +203,96 @@ export default function CreateSales() {
             <Link to={"/Sales"}>
                 <Button label="Regresar" icon="pi pi-angle-left" className="p-button-sm p-button-danger" />
             </Link>
-            <div className="create-product-tittle">
+            <div className="create-sale-tittle">
                 <h3>Crear una venta</h3>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="create-buy-form">
-                    <div>
-                        <label htmlFor="saleClientId">Id cliente</label>
-                        <Dropdown id="saleClientId" value={saleClientSelected} options={clients} optionLabel="document" onChange={onSaleClientChange} placeholder="Cliente" className="create-buy-form__input" />
+            <div>
+                <div className="create-sale-header">
+                    <div className="create-sale-tittle__button">
+                        <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.document : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
+                        {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la compra</small>}
                     </div>
-
-                    <div>
-                        {/* <label htmlFor="saleDate">Fecha de venta</label>
-                        <InputText id="saleDate" value={saleDate} onChange={(e) => setSaleDate(e.target.value)} placeholder="aaaa-mm-dd" allowEmpty={false} required={true} className="create-buy-form__input" /> */}
-                        <span>
-                            <label htmlFor="saleDate" className={classNames({ "p-error": !!errors.saleDate })}>
-                                Fecha de venta*
-                            </label>
-                            <Controller
-                                name="saleDate"
-                                control={control}
-                                rules={{ required: "Fecha de venta es requerido.", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Fecha de venta invalida. E.g. 2020-10-10' } }}
-                                render={({ field, fieldState }) => <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error })} placeholder="aaaa-mm-dd" />}
-                            />
-                        </span>
-                        {getFormErrorMessage("saleDate")}
-                    </div>
-
-                    <div>
-                        {/* <label htmlFor="statusSale">Estado de la venta</label>
-                        <Dropdown id="statusSale" value={statusSaleSelected} options={statusSale} optionLabel="name" onChange={onSaleStatusChange} placeholder="Seleccione el estado" className="create-buy-form__input" /> */}
-                        <span>
-                            <label htmlFor="statusSale" className={classNames({ "p-error": !!errors.statusSale })}>
-                                Estado de la venta*
-                            </label>
-                            <Controller
-                                name="statusSale"
-                                control={control}
-                                rules={{ required: "Estado de la venta es requerido." }}
-                                render={({ field, fieldState }) => <Dropdown id={field.name} {...field} options={statusSale} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error })} />}
-                            />
-                        </span>
-                        {getFormErrorMessage("statusSale")}
-                    </div>
-
-                    <div>
-                        {/* <label htmlFor="statusPayment">Estado de pago</label>
-                        <Dropdown id="statusPayment" value={statusPaymentSelected} options={statusPayment} optionLabel="name" onChange={onSaleStatusPaymentChange} placeholder="Seleccione el estado de pago" className="create-buy-form__input" /> */}
-                        <span>
-                            <label htmlFor="statusPayment" className={classNames({ "p-error": !!errors.statusPayment })}>
-                                Estado de pago*
-                            </label>
-                            <Controller
-                                name="statusPayment"
-                                control={control}
-                                rules={{ required: "Estado del pago es requerido." }}
-                                render={({ field, fieldState }) => <Dropdown id={field.name} {...field} options={statusPayment} placeholder="Seleccione el estado" optionLabel="name" className={classNames({ "p-invalid": fieldState.error })} />}
-                            />
-                        </span>
-                        {getFormErrorMessage("statusPayment")}
-                    </div>
-
-                    <div>
-                        {/* <label htmlFor="totalSale">Total venta</label>
-                        <InputNumber id="totalSale" value={totalSale} placeholder="Total venta" disabled className="create-buy-form__input" mode="currency" currency="COP" locale="es" /> */}
-                        <span>
-                            <label htmlFor="totalSale" className={classNames({ "p-error": !!errors.totalSale })}>
-                                Total venta*
-                            </label>
-                            <Controller
-                                name="totalSale"
-                                control={control}
-                                rules={{ required: "Debes asociar productos a la venta." }}
-                                render={({ field, fieldState }) => <InputText id={field.name} {...field} className={classNames({ "p-invalid": fieldState.error })} mode="currency" currency="COP" locale="es" placeholder="Total venta" disabled />}
-                            />
-                        </span>
-                        {getFormErrorMessage("totalSale")}
+                    <div className="create-sale-header__card">
+                        <h5>Total de la venta</h5>
+                        $ {totalSale}
                     </div>
                 </div>
-                <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
 
-                <div className="create-product-buttons">
-                    <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
+                <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
+                    <div className="p-inputgroup create-brand__table">
+                        <InputText placeholder="Buscar cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
+                        <Button icon="pi pi-search" className="p-button-primary" />
+                    </div>
+                    <DataTable id="saleClientId" value={clients} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={saleClientSelected} onSelectionChange={onClientSelect}>
+                        <Column field="name" sortable header="Nombre"></Column>
+                        <Column field="lastname" sortable header="Apellido"></Column>
+                        <Column field="document" sortable header="Documento"></Column>
+                        <Column field="telephone" sortable header="Telefono"></Column>
+                    </DataTable>
+                </OverlayPanel>
+            </div>
 
-                    <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
-                </div>
-            </form>
+            <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
+            <Form
+                onSubmit={onSubmit}
+                initialValues={initialValues}
+                validate={validate}
+                render={({ handleSubmit }) => (
+                    <>
+                        <form onSubmit={handleSubmit}>
+                            <div className="create-sale-form card">
+                                <Field
+                                    name="saleDate"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="saleDate" className={classNames({ "p-error": isFormFieldValid("saleDate") })}>
+                                                    Fecha de venta*
+                                                </label>
+                                                <Calendar id="saleDate" {...input} autoFocus readOnlyInput className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} placeholder="aaaa-mm-dd" dateFormat="yy-mm-dd" />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="statusSale"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
+                                                    Estado de la venta*
+                                                </label>
+                                                <Dropdown id="statusSale" {...input} options={statusSale} optionLabel="name" placeholder="Seleccione el estado" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                                <Field
+                                    name="statusPayment"
+                                    render={({ input, meta }) => (
+                                        <div className="field ">
+                                            <span className="create-sale-form__span">
+                                                <label htmlFor="statusPayment" className={classNames({ "p-error": isFormFieldValid("statusPayment") })}>
+                                                    Estado de pago*
+                                                </label>
+                                                <Dropdown id="statusPayment" {...input} options={statusPayment} optionLabel="name" placeholder="Seleccione el estado" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                            </span>
+                                            {getFormErrorMessage(meta)}
+                                        </div>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="create-product-buttons">
+                                <Button type="submit" icon="pi pi-check" label="Crear venta" className="mr-2"></Button>
+                                <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
+                            </div>
+                        </form>
+                    </>
+                )}
+            />
         </div>
     );
 }

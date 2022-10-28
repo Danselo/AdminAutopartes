@@ -1,45 +1,48 @@
-.create-product-tittle{
+.create-sale-tittle{
     display: flex;
     justify-content: center;
 
 }
 
-.create-product-upload-img{
+.create-sale-form{
     display: flex;
-    justify-content: right;
-    align-items: center;
-
+  flex-direction: column;
+  width: 25rem;
+    margin: 2rem auto 2rem auto;
 }
 
-.create-product-upload-img p{
-    
-    margin:auto 20px  ;
-
-}
-
-/* .create-product-form{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.create-sale-form__input{
     width: 20rem;
-    justify-content: center;
-    margin: 1.5rem auto;
-    row-gap: 1.8rem;
-    column-gap: 1rem;
-    
-} */
-
-.jjj{
-   
-    width: 20rem;
+    margin: .5rem 0 .5rem 0;
+    justify-self: center;
 }
 
-.create-product-buttons{
+.create-sale-form__span{
     display: flex;
-    justify-content: center;
-    column-gap: 2rem;
-    margin-bottom: 1rem;
+    flex-direction: column;
 }
 
-.form-venta{
-    margin-bottom: 1rem;
+.p-success{
+    color: rgb(46, 176, 46);
+    margin-top: .5rem;
+}
+
+.create-sale-tittle__button{
+    display: flex;
+    flex-direction: column;
+    width: 16rem;
+}
+
+.create-sale-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 0 2rem 0 ;
+}
+
+.create-sale-header__card{
+    background-color: white;
+    border-radius: 4px;
+    padding: 1rem;
+    box-shadow: 10px 10px 30px -14px rgba(0,0,0,0.75);
 }
