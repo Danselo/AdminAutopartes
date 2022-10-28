@@ -1,6 +1,7 @@
 .create-brand-form{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     
 }
 
@@ -14,4 +15,17 @@
 
 .dc-brand-between{
     margin: 0 1rem 0 0;
+}
+
+.create-brand-form__span{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.create-brand-buttons{
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
 }

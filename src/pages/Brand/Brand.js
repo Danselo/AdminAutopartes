@@ -25,7 +25,6 @@ export default function Brand() {
     const [brandSelected, setBrandSelected] = useState({});
     const [vehiclesWhereBrand, setVehiclesWhereBrand] = useState({});
     const [brands, setBrands] = useState([]);
-    console.log("marcca seleccionada", brandSelected);
 
     const leftContents = (
         <React.Fragment>
@@ -34,8 +33,6 @@ export default function Brand() {
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
         </React.Fragment>
     );
-    console.log(vehiclesWhereBrand);
-    console.log(!vehiclesWhereBrand.length === 0);
     const rightContents = (
         <React.Fragment>
             <Button
@@ -222,8 +219,6 @@ export default function Brand() {
         }
     }, [brandSelected]);
 
-    console.log(vehiclesWhereBrand);
-
     const loadBrands = () => {
         _brandService.getBrands().then((response) => {
             setBrands(response);
@@ -245,9 +240,7 @@ export default function Brand() {
     };
 
     const validate = (data) => {
-        console.log(data);
         let validateExistingName = brands.map((brand) => {
-            console.log(brand)
             if (brand.name === data.brandName) {
                 return true;
             } else {
@@ -262,6 +255,22 @@ export default function Brand() {
         if (validateExistingName.includes(true)) {
             errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
         }
+        return errors;
+    };
+
+    const validateEdit = (data) => {
+        let validateExistingName = brands.map((brand) => {
+            if (brand.name === data.newBrandName) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        let errors = {};
+        console.log(validateExistingName)
+        if (validateExistingName.includes(true)) {
+            errors.newBrandName = "El nombre " + data.newBrandName + " ya existe, ingrese otro nombre";
+        }
         if (!data.newBrandName) {
             errors.newBrandName = "Debe ingresar un nombre de marca.";
         }
@@ -270,7 +279,7 @@ export default function Brand() {
 
     const onSubmit = (data, form) => {
        
-        console.log(data);
+        console.log("entre al onSubmit",data);
         let brandName = data.brandName;
         onHideDialogCreate(brandName, form);
     };
@@ -317,7 +326,7 @@ export default function Brand() {
                                         name="brandName"
                                         render={({ input, meta }) => (
                                             <div className="field ">
-                                                <span className="create-sale-form__span">
+                                                <span className="create-brand-form__span">
                                                     <label htmlFor="brandName" className={classNames({ "p-error": isFormFieldValid("brandName") })}>
                                                         Nombre de marca*
                                                     </label>
@@ -328,7 +337,7 @@ export default function Brand() {
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className="create-brand-buttons">
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                     <Button type="submit" label="Crear marca" icon="pi pi-check" />
                                 </div>
@@ -342,7 +351,7 @@ export default function Brand() {
                 <Form
                     onSubmit={onSubmitEdit}
                     initialValues={initialValuesEdit}
-                    validate={validate}
+                    validate={validateEdit}
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
