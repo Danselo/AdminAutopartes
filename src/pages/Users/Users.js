@@ -73,7 +73,7 @@ export default function Users() {
             message: "¿Esta seguro que desea cambiar el estado del Usuario?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Editar",
+            acceptLabel: "Cambiar estado",
             rejectLabel: "Cancelar",
             accept: () => EditStatus(),
             reject: () => setDisplayDialogEdit(false),
@@ -89,6 +89,18 @@ export default function Users() {
             rejectLabel: "Cancelar",
             accept: () => reject(),
             reject: () => setDisplayDialogCreate(true),
+        });
+    };
+    const cancelEdit = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea perder el progreso?",
+            header: "Confirmacion",
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: "No crear",
+            rejectLabel: "Cancelar",
+            accept: () => reject(),
+            reject: () => setDisplayDialogEdit(true),
         });
     };
     function onClickDialogCreate() {
@@ -122,7 +134,7 @@ export default function Users() {
     };
 
     const onHideDialogCancelEdit = () => {
-        cancelCreate();
+        cancelEdit();
         setDisplayDialogEdit(false);
     };
 
@@ -147,7 +159,7 @@ export default function Users() {
             .then(() => {
                 setUserSelected({});
                 loadUsers();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Usuario  editado exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -324,7 +336,7 @@ export default function Users() {
         // confirmPassword: "",
         
     };
-    const onSubmitEdit = (data, form) => {
+    const onSubmitEdit = () => {
         // setUserEmail(data.email);
         // setUserName(data.name);
         // setUserLastname(data.lastname);

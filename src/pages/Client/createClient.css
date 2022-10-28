@@ -36,7 +36,7 @@
     justify-content: center;
     column-gap: 2rem;
     margin-bottom: 1rem;
-} */
+} 
 
 .create-client-form{
     display: flex;
@@ -44,4 +44,5 @@
     align-items: center;
     gap: 1.2em;
     padding: 2px;
+    text-align: center;
 }
