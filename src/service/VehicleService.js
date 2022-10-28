@@ -36,5 +36,9 @@ export class VehicleService {
         return axios
         .delete(`${baseVehicleURL}/delete/${id}`);
     }
+    changeStatusOfVehicle(idVehicle, status){
+        return axios
+        .put(`${baseVehicleURL}/change-status-of-vehicle/${idVehicle}`, status);
+    }
 
 }

@@ -31,10 +31,15 @@ export default function Vehicles() {
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!vehicleSelected.name} />
         </React.Fragment>
     );
-    console.log(vehicleSelected.length)
+ 
     const rightContents = (
-        <React.Fragment>
-            <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
+        <React.Fragment>            
+            <Button 
+            label={vehicleSelected.status ? "Desactivar": "Activar"} 
+            className={vehicleSelected.status? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
+            disabled = {!vehicleSelected.name}
+            icon={vehicleSelected.status? "pi pi-eye-slash": "pi pi-eye"} 
+            onClick={() => changeVehicleStatusDialog(vehicleSelected)} />
         </React.Fragment>
     );
     const reject = () => {
@@ -51,6 +56,54 @@ export default function Vehicles() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
+    const changeVehicleStatusDialog = (vehicleData) => {
+        let vehicleState
+        if (vehicleData.status === false) {
+            vehicleState = "activar"
+        }else{
+            vehicleState = "desactivar"
+        }
+
+        confirmDialog({
+            message: "¿Esta seguro que desea " + vehicleState +" este vehiculo?",
+            header: "Cambio de estado del vehiculo " + vehicleData.id,
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: vehicleState,
+            rejectLabel: "Cancelar",
+            accept: () => changeVahicleStatus(vehicleData),
+            reject,
+        });
+    };
+
+    const changeVahicleStatus = (vehicleData) =>{
+        let newState
+        if (vehicleData.status === false) {
+            newState = true
+            
+        }else if(vehicleData.status === true){
+            newState = false
+        }
+
+        _vehicleService.changeStatusOfVehicle(
+            vehicleData.id, 
+            {status: newState}).then((e) =>{
+           
+                if (e.data == null) {
+
+                    loadVehicles();
+                    toast.current.show({ severity: "error", summary: "No procede", detail: "Lo sentimos, pero no puede activar este vehiculo, porque la marca de este vehiculo se encuentra desactivada", life: 9000 }); 
+
+                }else{                    
+                    loadVehicles();
+                    toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 }); 
+
+                }
+            }).catch((error) =>{
+                toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
+            })
+
+    }
 
     const editVehicleAlert = () => {
         confirmDialog({
