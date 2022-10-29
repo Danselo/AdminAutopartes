@@ -10,6 +10,9 @@ import { Toolbar } from "primereact/toolbar";
 import { CategoryService } from "../../service/CategoryService";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
+import {TableProductsWhereCategory } from "../../components/TableCategories/TableProductsWhereCategory";
+
+
 
 const _categoryService = new CategoryService();
 export default function Categories() {
@@ -17,11 +20,13 @@ export default function Categories() {
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
     const [categoryName, setCategoryName] = useState("");
-    const [newCategoryName, setNewCategoryName] = useState("");
     const [categoryIdSelected, setCategoryIdSelected] = useState("");
     const [categoryNameSelected, setCategoryNameSelected] = useState("");
     const [categories, setCategories] = useState([]);
-
+    const [categorySelected, setCategorySelected] = useState({});
+    const [productsWhereCategory, setProductsWhereCategory] = useState({});
+    const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
+   
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -32,7 +37,15 @@ export default function Categories() {
 
     const rightContents = (
         <React.Fragment>
-            <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
+            <Button
+                label={categorySelected.status ? "Desactivar" : "Activar"}
+                className={categorySelected.status ? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
+                disabled={!categorySelected.name}
+                icon={categorySelected.status ? "pi pi-eye-slash" : "pi pi-eye"}
+                onClick={() => {
+                    productsWhereCategory.length !== 0 ? setDisplayDialogStatus(true) : onChangeCategoryStatusDialog(categorySelected);
+                }}
+            />
         </React.Fragment>
     );
     const reject = () => {
@@ -47,6 +60,25 @@ export default function Categories() {
             rejectLabel: "Cancelar",
             accept: () => CreateCategory(categoryName, form),
             reject: () => setDisplayDialogCreate(true),
+        });
+    };
+    const onChangeCategoryStatusDialog = (categoryData) => {
+        let categoryState;
+        if (categoryData.status === false) {
+            categoryState = "activar";
+        } else {
+            categoryState = "desactivar";
+        }
+
+        confirmDialog({
+            message: "¿Esta seguro que desea " + categoryState + " esta categoría?",
+            header: "Cambio de estado de la categoría " + categoryData.name,
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: categoryState,
+            rejectLabel: "Cancelar",
+            accept: () => changeCategoryStatus(categoryData),
+            reject,
         });
     };
 
@@ -113,6 +145,26 @@ export default function Categories() {
         setDisplayDialogCreate(false);
     };
 
+    function changeCategoryStatus(categoryData) {
+        let newState;
+       
+        if (categoryData.status === false) {
+
+            newState = true;
+        } else if (categoryData.status === true) {
+            newState = false;
+        }
+        console.log("estado",newState)
+        _categoryService.changeStatusOfCategory(categoryData.id, {status: newState}).then((response) => {
+            loadCategories();
+            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+            setDisplayDialogStatus(false)
+        }).catch((error) => {
+            toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
+            setDisplayDialogStatus(false)
+        });
+    }
+
     function EditCategory(id, newName, form) {
         _categoryService.updateCategory(id, newName)
             .then(() => {
@@ -151,6 +203,18 @@ export default function Categories() {
                 console.log(e);
             });
     }
+    useEffect(() => {
+        if (categorySelected.id !== undefined) {
+            _categoryService
+                .getProductsWhereCategory(categorySelected.id)
+                .then((response) => {
+                    setProductsWhereCategory(response);
+                })
+                .catch((e) => {
+                    console.log(e, "No se encontraron productos");
+                });
+        }
+    }, [categorySelected]);
 
     const loadCategories = () => {
         _categoryService.getCategories().then((response) => {
@@ -236,6 +300,16 @@ export default function Categories() {
         return isFormFieldValid(meta) ? <small className="p-error">{meta.error}</small> : <small className="p-error"></small>;
     };
 
+    const renderFooterDialog = () => {
+        return (
+            <div>
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                <Button label={categorySelected.status ? "Desactivar" : "Activar"} icon="pi pi-check" onClick={() => changeCategoryStatus(categorySelected)} autoFocus />
+            </div>
+        );
+    };
+
+
     return (
         <div>
             <Toast ref={toast} />
@@ -306,7 +380,7 @@ export default function Categories() {
                                     />
                                 </div>
                                 <div>
-                                    {/* <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" /> */}
+                                    <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                     <Button type="submit" label="Editar marca" icon="pi pi-check" />
                                 </div>
                             </form>
@@ -315,8 +389,13 @@ export default function Categories() {
                 />
             </Dialog>
 
+            <Dialog header={"¿Esta seguro que desea " + (categorySelected.status ? "desactivar" : "activar") +" la marca " + categorySelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <p>Los siguientes productos estan asociados a esta categoria, si desactiva la categoria los productos asociados tambien se desactivaran</p>
+                <TableProductsWhereCategory className="table-products" products={productsWhereCategory} />
+            </Dialog>
 
-            <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected={setCategoryNameSelected} />
+
+            <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected={setCategoryNameSelected} setCategorySelected={setCategorySelected}/>
         </div>
     );
 }

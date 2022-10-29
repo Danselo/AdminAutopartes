@@ -10,6 +10,7 @@ import { Toolbar } from "primereact/toolbar";
 import { VehicleService } from "../../service/VehicleService";
 import { BrandService } from "../../service/BrandService";
 import { Dropdown } from "primereact/dropdown";
+import {TableProductsWhereVehicle } from "../../components/TableVehicles/TableProductsWhereVehicle";
 
 const _vehicleService = new VehicleService();
 const _brandService = new BrandService();
@@ -23,6 +24,10 @@ export default function Vehicles() {
     const [selectedVehicleBrand, setSelectedVehicleBrand] = useState("");
     const [vehicles, setVehicles] = useState([]);
     const [brands, setBrands] = useState([]);
+    const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
+    const [productsWhereVehicle, setProductsWhereVehicle] = useState({});
+
+
 
     const leftContents = (
         <React.Fragment>
@@ -38,8 +43,11 @@ export default function Vehicles() {
             label={vehicleSelected.status ? "Desactivar": "Activar"} 
             className={vehicleSelected.status? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
             disabled = {!vehicleSelected.name}
+            onClick={() => {
+                productsWhereVehicle.length !== 0 ? setDisplayDialogStatus(true) : changeVehicleStatusDialog(vehicleSelected);
+            }}
             icon={vehicleSelected.status? "pi pi-eye-slash": "pi pi-eye"} 
-            onClick={() => changeVehicleStatusDialog(vehicleSelected)} />
+            />
         </React.Fragment>
     );
     const reject = () => {
@@ -256,6 +264,18 @@ export default function Vehicles() {
                 console.log(e);
             });
     }
+    useEffect(() => {
+        if (vehicleSelected.id !== undefined) {
+            _vehicleService
+                .getProductsWhereVehicle(vehicleSelected.id)
+                .then((response) => {
+                    setProductsWhereVehicle(response);
+                })
+                .catch((e) => {
+                    console.log(e, "No se encontraron productos");
+                });
+        }
+    }, [vehicleSelected]);
 
     const loadVehicles = () => {
         _vehicleService.getVehicles().then((response) => {
@@ -308,6 +328,10 @@ export default function Vehicles() {
                     name="idBrand" optionValue="id"
                     options={brands} onChange={onChangeVehicleSelectedEditForm} optionLabel="name" placeholder="Marca del vehiculo" className="create-vehicle-form__dropdown" />
                 </div>
+            </Dialog>
+            <Dialog header={"¿Esta seguro que desea " + (vehicleSelected.status ? "desactivar" : "activar") +" el vehiculo " + vehicleSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <p>Los siguientes productos estan asociados a este vehiculo, si desactiva el vehiculo los productos asociados tambien se desactivaran</p>
+                <TableProductsWhereVehicle className="table-products" products={productsWhereVehicle} />
             </Dialog>
 
             <TableVehicles className="table-products" vehicles={vehicles} setVehicleSelected={setVehicleSelected} />

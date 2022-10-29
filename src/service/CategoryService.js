@@ -31,4 +31,12 @@ export class CategoryService {
         .delete(`${baseCategoryURL}/delete/${id}`);
     }
 
+    getProductsWhereCategory(idCategory){
+        return axios.get(`${baseCategoryURL}/get-products-where-category/${idCategory}`).then(res => res.data)
+    }
+    changeStatusOfCategory(idCategory, status){
+        return axios
+        .put(`${baseCategoryURL}/change-status-of-category/${idCategory}`, status);
+    }
+
 }
