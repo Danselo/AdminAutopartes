@@ -30,5 +30,14 @@ export class ProductsBrandsService {
         return axios
         .delete(`${baseProductsBrandsURL}/delete/${id}`);
     }
+    
+    getProductsWhereBrand(idBrand){
+        return axios.get(`${baseProductsBrandsURL}/get-products-where-brand/${idBrand}`).then(res => res.data)
+    }
+
+    changeStatusOfBrand(idBrand, status){
+        return axios
+        .put(`${baseProductsBrandsURL}/change-status-of-brand/${idBrand}`, status);
+    }
 
 }
