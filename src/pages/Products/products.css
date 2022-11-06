@@ -42,3 +42,14 @@
 .table-product--column-gray{
     background-color: rgba(201, 206, 206, 0.495);
 }
+
+.create-product-form__inputTextarea{
+    height: 15rem;
+    width: 42rem;
+}
+
+.create-product-form__grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem 2rem;
+}

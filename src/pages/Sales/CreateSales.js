@@ -93,7 +93,6 @@ export default function CreateSales() {
     };
 
     const onSubmit = (data, form) => {
-        console.log(3434334);
         if (saleClientSelected) {
             setTotalSale(totalSale);
             create(form, data);

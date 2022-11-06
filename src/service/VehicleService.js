@@ -41,7 +41,9 @@ export class VehicleService {
         .put(`${baseVehicleURL}/change-status-of-vehicle/${idVehicle}`, status);
     }
     getProductsWhereVehicle(idVehicle){
-        return axios.get(`${baseVehicleURL}/get-products-where-vehicle/${idVehicle}`).then(res => res.data)
+        return axios.get(`${baseVehicleURL}/get-products-where-vehicle/${idVehicle}`).then(res => res.data).catch((e) =>{
+            console.error(e)
+        })
     }
 
 }

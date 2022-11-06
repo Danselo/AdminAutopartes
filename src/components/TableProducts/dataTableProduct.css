@@ -18,33 +18,72 @@
 }
 .product-badge-state-active{
     background-color: rgb(28, 165, 67);
-    width: 100%;
+    width: 5rem;
     padding: .5rem;
     border-radius: .5rem;
     color: white;
     font-weight: 500;
-    margin: auto;
     font-size: .8rem;
 }
 
 
 .product-badge-state-inactive{
     background-color: rgb(206, 154, 31);
-    width: 100%;
+    width: 5rem;
     padding: .5rem;
     border-radius: .5rem;
     color: white;
     font-weight: 500;
-    margin: auto;
     font-size: .8rem;
 }
 
 .product-badge-state-na{
     background-color: rgb(243, 59, 59);
-    width: 100%;
+    width: 5rem;
     padding: .5rem;
     border-radius: .5rem;
     color: white;
     font-weight: bold;
-    margin: auto;
+   
 }
+.info-dialog__body-data{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 0;
+}
+
+.info-image{
+    width: 30rem;
+    height: 22rem;
+    object-fit: cover;
+
+}
+
+.info-dialog__image-container{ 
+    display: flex;
+    justify-content: center;
+}
+hr{
+    border: .05rem dashed black;
+    
+}
+
+.info-dialog__tittle{
+    margin: auto auto 1rem auto;
+}
+.info-dialog__body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+h6{
+    font-weight: bold;
+}
+
+.info-dialog__footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+}
+

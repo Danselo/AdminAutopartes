@@ -10,7 +10,7 @@ import { BuyService } from "../../service/BuyService";
 
 const _buyService = new BuyService();
 
-export const TableBuys = ({ setBuySelected, buys }) => {
+export const TableBuys = ({ buys }) => {
     let emptyBuyInfo = {
         createdAt: null,
         datePurchase: null,
@@ -32,12 +32,6 @@ export const TableBuys = ({ setBuySelected, buys }) => {
     const [TableBuysSelected, setTableBuysSelected] = useState([]);
     const [buyInfo, setBuyInfo] = useState(emptyBuyInfo);
     const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
-
-    useEffect(() => {
-        if (TableBuysSelected) {
-            setBuySelected(TableBuysSelected);
-        }
-    }, [TableBuysSelected, setBuySelected]);
 
     const getBuyDetail = (id) => {
         _buyService
