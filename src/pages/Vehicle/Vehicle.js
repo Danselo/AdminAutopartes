@@ -223,9 +223,10 @@ export default function Vehicles() {
     };
 
     const initialValuesEdit = {
-        vehicleName: vehicleSelected.name,
-        vehicleModel: vehicleSelected.model,
-        selectedVehicleBrand: vehicleSelected.brands_vehicles?.name,
+        ...vehicleSelected
+        // vehicleName: vehicleSelected.name,
+        // vehicleModel: vehicleSelected.model,
+        // selectedVehicleBrand: vehicleSelected.brands_vehicles?.name,
     };
 
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
@@ -237,7 +238,13 @@ export default function Vehicles() {
         createVehicleAlert(form, data);
     };
     const onSubmitEdit = (data, form) => {
-        console.log(data)
+        // console.log(eventOnChange.target);
+        // const vehicleUpdated = {
+        //     ...vehicleSelected,
+        //     [eventOnChange.target.name]: eventOnChange.target.value,
+        // };
+        // console.log(vehicleUpdated);
+        // setVehicleSelected(vehicleUpdated);
         editVehicleAlert(data, form);
        
     };
@@ -296,6 +303,7 @@ export default function Vehicles() {
 
     function EditVehicle(form, data) {
 
+
         _vehicleService
             .updateVehicle(vehicleSelected)
             .then(() => {
@@ -303,6 +311,7 @@ export default function Vehicles() {
                 loadVehicles();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Vehículo edito exitosamente", life: 3000 });
                 setDisplayDialogEdit(false);
+                form.restart();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -457,42 +466,42 @@ console.log(vehicleSelected)
                         <>
                             <form onSubmit={handleSubmit}>
                             <Field
-                                            name="vehicleName"
+                                            name="name"
                                             render={({ input, meta }) => (
                                                 <div className="field">
                                                     <span className="create-sale-form__span">
-                                                        <label htmlFor="vehicleName" className={classNames({ "p-error": isFormFieldValid("vehicleName") })}>
+                                                        <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>
                                                             Nombre del vehículo*
                                                         </label>
-                                                        <InputText id="vehicleName" {...input} autoFocus placeholder="Nombre del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <InputText id="name" {...input} autoFocus placeholder="Nombre del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
                                             )}
                                         />
                                         <Field
-                                            name="vehicleModel"
+                                            name="model"
                                             render={({ input, meta }) => (
                                                 <div className="field">
                                                     <span className="create-sale-form__span">
-                                                        <label htmlFor="vehicleModel" className={classNames({ "p-error": isFormFieldValid("vehicleModel") })}>
+                                                        <label htmlFor="model" className={classNames({ "p-error": isFormFieldValid("model") })}>
                                                             Modelo del vehículo*
                                                         </label>
-                                                        <InputText id="vehicleModel" {...input} placeholder="Modelo del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <InputText id="model" {...input} placeholder="Modelo del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
                                             )}
                                         />
                                         <Field
-                                            name="selectedVehicleBrand"
+                                            name="idBran"
                                             render={({ input, meta }) => (
                                                 <div className="field">
                                                     <span className="create-sale-form__span">
-                                                        <label htmlFor="selectedVehicleBrand" className={classNames({ "p-error": isFormFieldValid("selectedVehicleBrand") })}>
+                                                        <label htmlFor="idBran" className={classNames({ "p-error": isFormFieldValid("idBran") })}>
                                                             Marca del vehículo*
                                                         </label>
-                                                        <Dropdown id="selectedVehicleBrand" {...input} options={brands} optionLabel="name" optionValue="name" placeholder="Marca del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <Dropdown id="idBran" {...input} options={brands} optionLabel="name" optionValue="name" placeholder="Marca del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
