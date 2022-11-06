@@ -26,18 +26,24 @@ export default function CreatePurchase() {
     const [providers, setProviders] = useState([]);
     const [buyProviderSelected, setSelectedProvider] = useState([]);
     const [buyId, setBuyId] = useState("");
+    
+  function handleChange(e) {
+    setBuyId(e.target.value);
+  }
     const [buyDatePurchase, setBuyDatePurchase] = useState("");
     const [buyTotalPurchase, setBuyTotalPurchase] = useState(0);
-    const [buyShippingPrice, setBuyShippingPrice] = useState(0);
-    const [buyIvaPercentage, setBuyIvaPercentage] = useState(0);
-    const [buyTotalIva, setBuyTotalIva] = useState(0);
-    const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState(0);
-    const [buyTotalDiscounts, setBuyTotalDiscounts] = useState(0);
+    // const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState(0);
     const [buyInvoiceUrl, setBuyinvoiceUrl] = useState("");
-    const [quantityProducts, setQuantityProducts] = useState("");
     const [addedProductsAtBuy, setAddedProductsAtBuy] = useState([]);
+    const [globalTotal, setGlobalTotal] = useState(0);
     const [products, setProducts] = useState([]);
+    const [buys, setBuys] = useState([]);
+    if (addedProductsAtBuy) {
+        
+    }if (addedProductsAtBuy.length  > 1) {
 
+        console.log(addedProductsAtBuy[0].discountsPercentage)
+    }
     useEffect(() => {
         let cosamappeada = addedProductsAtBuy.map((p) => {
             let { TemporalId, ...loDemas } = p;
@@ -46,7 +52,6 @@ export default function CreatePurchase() {
         setProducts(cosamappeada);
     }, [addedProductsAtBuy]);
 
-    console.log(products);
 
     useEffect(() => {
         _providersService
@@ -59,25 +64,15 @@ export default function CreatePurchase() {
             });
     }, []);
 
-    const onBuyProviderChange = (e) => {
-        setSelectedProvider(e.value);
-    };
-    useEffect(() => {
-        const totalDiscount = buyTotalPurchase * (buyDiscountsPercentage / 100);
-        setBuyTotalDiscounts(totalDiscount);
-    }, [buyTotalPurchase, buyDiscountsPercentage]);
+        //---LOAD BUYS
+        useEffect(() => {
+            _buyService.getBuys().then((response) => {
+                setBuys(response);
+            });
+        }, []);
 
     //Verifica si hay applicados descuentos previos y luuego aplica el iva, actualiza automaticamente el campo del formulario
-    useEffect(() => {
-        if (buyTotalDiscounts !== 0) {
-            const buyWithDiscount = buyTotalPurchase - buyTotalDiscounts;
-            const buyAfterIvaAndDiscounts = buyWithDiscount * (buyIvaPercentage / 100);
-            setBuyTotalIva(buyAfterIvaAndDiscounts);
-        } else {
-            const totalIva = buyTotalPurchase * (buyIvaPercentage / 100);
-            setBuyTotalIva(totalIva);
-        }
-    }, [buyTotalPurchase, buyIvaPercentage, buyTotalDiscounts]);
+
     let history = useHistory();
 
     function handleClickRedirect() {
@@ -87,15 +82,17 @@ export default function CreatePurchase() {
         }, 4000);
     }
     const createBuy = () => {
+        var dateSelected = new Date(buyDatePurchase);
+        var formatDate = dateSelected.toISOString().split("T")[0];
         _buyService
-            .createBuy(buyId, buyProviderSelected.id, buyDatePurchase, buyTotalPurchase, buyShippingPrice, buyIvaPercentage, buyTotalIva, buyDiscountsPercentage, buyTotalDiscounts, buyInvoiceUrl)
+            .createBuy(buyId, buyProviderSelected.id, formatDate, globalTotal,buyInvoiceUrl)
             .then(() => {
                 products.forEach((element) => {
                     _buyService
-                        .addProductsToPurchase(element.idBuy, element.idProduct, element.amount, element.netPrice, element.shippingPrice, element.discountsPercentage, element.ivaPercentage, element.profitPercentage, element.salePrice)
+                        .addProductsToPurchase(element.idBuy, element.idProduct, element.amount, element.netPrice, element.profitPercentage, element.salePrice)
                         .then((response) => {
                             console.log("Response de agregar producto", response);
-                            _productService.updateProductFromBuy(element.idProduct, element.amount, element.ivaPercentage, element.salePrice);
+                            _productService.updateProductFromBuy(element.idProduct, element.amount, element.salePrice);
                         })
                         .catch((e) => {
                             toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
@@ -142,63 +139,51 @@ export default function CreatePurchase() {
     };
     //----------------- Validation -------------------------
     const initialValues = {
-        id: null,
-        idProvider: null,
-        factureNumber: "",
-        buyData: "",
-        buyTotal: "",
-        quantityProducts: quantityProducts,
-        buyDiscountsPercentage: buyShippingPrice,
-        buyShippingPrice: buyShippingPrice,
-        buyTotalDiscounts: 0,
-        buyIvaPercentage: 0,
-        URL_factura: "",
+        idBuy: buyId,
+        providerId: buyProviderSelected.id,
+        Data: buyDatePurchase,
+        URL_factura: buyInvoiceUrl,
+        buyTotalPurchase: buyTotalPurchase
     };
 
     const validate = (data) => {
+
         let errors = {};
-
-        if (!data.datePurchase) {
-            errors.buyData = "este campo es requerido";
+        if(!data.providerId){
+            errors.providerId = "el Proveedor es requerido";
         }
-        if (!data.totalPurchase) {
-            errors.buyTotal = "Este campo es requerido";
+        if(!data.idBuy){
+            errors.idBuy = "el numero de la factura es requerido";
+        }else if (data.idBuy < 0){
+            errors.idBuy = "el numero de la factura debe ser positivo";
+        }else if (data.idBuy <=1){
+            errors.idBuy = "el numero de la factura debe ser mayor que 1";
+            
         }
-        if(!data.datePurchase){
-            errors.buyData = "este campo es requerido";
+        if (!data.buyTotalPurchase) {
+            errors.buyTotalPurchase = "Este campo es requerido";
         }
-
-        if (!data.buyShippingPrice) {
-            errors.buyShippingPrice = "Este campo es requerido";
+        if(!data.Data){
+            errors.Data = "este campo es requerido";
         }
-        if(!quantityProducts){
-            errors.quantityProducts = "este campo es requerido";
-        }
-
-        if (!data.ivaPercentage) {
-            errors.buyIvaPercentage = "Este campo es requerido";
-        }
-        
-        if (!data.totalDiscounts) {
-            errors.totalDiscounts = "Este campo es requedio";
-        }
-        if (!data.discountsPercentage) {
-            errors.buyTotalDiscounts = "Este campo es requedio";
-        }
-        if (!data.invoiceUrl) {
+        if (!data.URL_factura) {
             errors.URL_factura = "Este campo es requedio";
         }
-        if(!data.id){
-            errors.id = "el numero de la factura es requerido";
-        }
+
+        buys.forEach((element) => {
+            const buyId = element.id;
+
+            if (data.idBuy === buyId) {
+                errors.idBuy = "El numero de factura existente";
+            }
+        });
 
 
-
-        
 
         return errors;
     };
     const onSubmit = (data, form) => {
+ 
         // setUserEmail(data.email);
         // setUserName(data.name);
         // setUserLastname(data.lastname);
@@ -234,12 +219,12 @@ export default function CreatePurchase() {
                     <form>
                         <div className="create-buy-form">
                             <Field
-                                name="idProvider"
+                                name="providerId"
                                 render={({ input, meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="idProvider" className={classNames({ "p-error": isFormFieldValid("idProvider") })}>Proveedor</label>
-                                            <Dropdown id="idProvider" {...input} options={providers} optionLabel="companyName" onChange={onBuyProviderChange} placeholder="Proveedor" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <label htmlFor="providerId" className={classNames({ "p-error": isFormFieldValid("providerId") })}>Proveedor</label>
+                                            <Dropdown id="providerId" {...input}  options={providers} value={buyProviderSelected} optionLabel="companyName" placeholder="Proveedor"  onChange={(e) => setSelectedProvider(e.value)} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -247,12 +232,12 @@ export default function CreatePurchase() {
                                 )}
                             />
                             <Field
-                                name="id"
+                                name="idBuy"
                                 render={({ input, meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="id" className={classNames({ "p-error": isFormFieldValid("id") })}>Numero de factura</label>
-                                            <InputText id="id" {...input} placeholder="Numero de Factura" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <label htmlFor="idBuy" className={classNames({ "p-error": isFormFieldValid("idBuy") })}>Numero de factura</label>
+                                            <InputText id="idBuy"   {...input}  placeholder="Numero de Factura"  value={buyId}  onChange={handleChange} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })}  />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -260,14 +245,14 @@ export default function CreatePurchase() {
                                 )}
                             />
                             <Field
-                                name="buyData"
+                                name="Data"
                                 render={({ input, meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="buyData" className={classNames({ "p-error": isFormFieldValid("buyData") })}>
+                                            <label htmlFor="Data" className={classNames({ "p-error": isFormFieldValid("Data") })}>
                                                 Fecha de compra
                                             </label>
-                                            <InputText id="buyData" {...input} placeholder="AAAA-MM-DD" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <Calendar id="Data" {...input}  placeholder="AAAA-MM-DD" value={buyDatePurchase}  onChange={(e) => setBuyDatePurchase(e.value)} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -275,77 +260,12 @@ export default function CreatePurchase() {
                                 )}
                             />
                             <Field
-                                name="quantityProducts"
+                                name="globalTotal"
                                 render={({ input, meta }) => (
-                                    <div className="quantityProducts">
+                                    <div className="globalTotal">
                                         <span>
-                                            <label htmlFor="quantityProducts" className={classNames({ "p-error": isFormFieldValid("quantityProducts") })}>Cantidad de Productos</label>
-                                            <InputNumber id="quantityProducts" {...input} onChange={(e) => setQuantityProducts(e.value)} placeholder="Cantidad productos" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
-                                        </span>
-                                        <br />
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )}
-                            />
-                             <Field
-                                name="buyShippingPrice"
-                                render={({ input, meta }) => (
-                                    <div className="buyShippingPrice">
-                                        <span>
-                                            <label htmlFor="buyShippingPrice" className={classNames({ "p-error": isFormFieldValid("buyShippingPrice") })}>Valor de envio</label>
-                                            <InputNumber id="buyShippingPrice" {...input} onChange={(e) => setBuyShippingPrice(e.value)} placeholder="Valor de envio" mode="currency" currency="COP" locale="es" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })}/>
-                                        </span>
-                                        <br />
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )}
-                            />
-                            <Field
-                                name="buyTotalDiscounts"
-                                render={({ input, meta }) => (
-                                    <div className="buyTotalDiscounts">
-                                        <span>
-                                            <label htmlFor="buyTotalDiscounts" className={classNames({ "p-error": isFormFieldValid("buyTotalDiscounts") })}>Porcentaje Descuento</label>
-                                            <InputNumber id="buyTotalDiscounts" {...input} onChange={(e) => setBuyDiscountsPercentage(e.value)} placeholder="Porcentaje descuento compra" suffix="%" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })}/>
-                                        </span>
-                                        <br />
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )}
-                            />
-                             <Field
-                                name="totalDiscounts"
-                                render={({ input, meta }) => (
-                                    <div className="totalDiscounts">
-                                        <span>
-                                            <label htmlFor="totalDiscounts" className={classNames({ "p-error": isFormFieldValid("totalDiscounts") })}>Total Descuento</label>
-                                            <InputNumber id="buyTotalDiscounts" {...input}  placeholder="Total descuento" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} mode="currency" currency="COP" locale="es" disabled />
-                                        </span>
-                                        <br />
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )}
-                            />
-                            <Field
-                                name="buyIvaPercentage"
-                                render={({ input, meta }) => (
-                                    <div className="buyIvaPercentage">
-                                        <span>
-                                            <label htmlFor="buyIvaPercentage" className={classNames({ "p-error": isFormFieldValid("buyIvaPercentage") })}>Porcentaje de Iva</label>
-                                            <InputNumber id="buyIvaPercentage" {...input}  placeholder="Porcentaje de IVA" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} suffix="%"  />
-                                        </span>
-                                        <br />
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )}
-                            />
-                            <Field
-                                name="buyTotalIva"
-                                render={({ input, meta }) => (
-                                    <div className="buyTotalIva">
-                                        <span>
-                                            <label htmlFor="buyTotalIva" className={classNames({ "p-error": isFormFieldValid("buyTotalIva") })}>Total IVA</label>
-                                            <InputNumber id="buyTotalIva" {...input} placeholder="Total IVA compra" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} mode="currency" currency="COP" locale="es" disabled />
+                                            <label htmlFor="globalTotal" className={classNames({ "p-error": isFormFieldValid("globalTotal") })}>Total Compra</label>
+                                            <InputNumber id="globalTotal" value={globalTotal}  placeholder="Total compra" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} mode="currency" currency="COP" locale="es" disabled />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -358,24 +278,28 @@ export default function CreatePurchase() {
                                     <div className="URL_factura">
                                         <span>
                                             <label htmlFor="URL_factura" className={classNames({ "p-error": isFormFieldValid("URL_factura") })}>Url Factura</label>
-                                            <InputText id="URL_factura" {...input} onChange={(e) => setBuyinvoiceUrl(e.target.value)} placeholder="URL factura" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <InputText id="URL_factura" {...input} onChange={(e) => setBuyinvoiceUrl(e.target.value)} value={buyInvoiceUrl} placeholder="URL factura" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
                                     </div>
                                 )}
                             />
-                        </div>
+                        </div>      
                     </form>
+                    
                 )}
+                
             />
+                <TableBuyDetail   idBuy={buyId}  buyUrl={buyInvoiceUrl} Provider={buyProviderSelected} 
+                setAddedProductsAtBuy={setAddedProductsAtBuy} setGlobalTotal = {setGlobalTotal} buyDate = {buyDatePurchase} />
 
-            <TableBuyDetail idBuy={buyId} shippingPrice={buyShippingPrice} quantityProducts={quantityProducts} discountsPercentage={buyDiscountsPercentage} ivaPercentage={buyIvaPercentage} setAddedProductsAtBuy={setAddedProductsAtBuy} />
+                <div className="create-product-buttons">
+                    <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2"></Button>
+                    <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
+                </div>
 
-            <div className="create-product-buttons">
-                <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2"></Button>
-                <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
-            </div>
+     
         </div>
     );
 }

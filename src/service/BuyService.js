@@ -17,18 +17,13 @@ export class BuyService {
         });
     }
    
-    createBuy(id, idProvider, datePurchase, totalPurchase, shippingPrice, ivaPercentage, totalIva, discountsPercentage, totalDiscounts, invoiceUrl) {
+    createBuy(id, idProvider, datePurchase, totalPurchase, invoiceUrl) {
         return axios
             .post(baseBuyURL + "/create", {
                 id,
                 idProvider,
                 datePurchase,
                 totalPurchase,
-                shippingPrice,
-                ivaPercentage,
-                totalIva,
-                discountsPercentage,
-                totalDiscounts,
                 invoiceUrl,
             })
             .then((response) => {
@@ -47,16 +42,13 @@ export class BuyService {
         return axios.delete(`${baseBuyURL}/delete/${id}`);
     }
 
-    addProductsToPurchase(idBuy, idProduct, amount, netPrice, shippingPrice, discountsPercentage, ivaPercentage, profitPercentage, salePrice) {
+    addProductsToPurchase(idBuy, idProduct, amount, netPrice, profitPercentage, salePrice) {
         return axios
             .post(baseBuyURL + "/assoiate-products-to-purchasse", {
                 idBuy,
                 idProduct,
                 amount,
                 netPrice,
-                shippingPrice,
-                discountsPercentage,
-                ivaPercentage,
                 profitPercentage,
                 salePrice,
             })

@@ -254,12 +254,6 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                 <Column field="provider.companyName" header="Id proveedor"></Column>
                 <Column field="datePurchase" sortable header="Fecha de compra"></Column>
                 <Column field="totalPurchase" className="table-product--column-gray" header="Total compra"></Column>
-                <Column field="shippingPrice" className="table-product--column-gray" header="Precio de envio"></Column>
-                <Column field="ivaPercentage" className="table-product--column-gray" hidden header="IVA"></Column>
-                <Column field="totalIva" className="table-product--column-gray" header="Total IVA"></Column>
-
-                <Column field="discountsPercentage" className="table-product--column-gray" hidden header="Descuento"></Column>
-                <Column field="totalDiscounts" className="table-product--column-gray" header="Total descuentos"></Column>
                 <Column field="invoiceUrl" className="" header="Factura"></Column>
                 <Column header="Ver detalle de compra" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
