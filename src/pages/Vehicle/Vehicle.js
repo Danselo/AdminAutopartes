@@ -13,7 +13,7 @@ import { Dropdown } from "primereact/dropdown";
 import { TableProductsWhereVehicle } from "../../components/TableVehicles/TableProductsWhereVehicle";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
-import { InputNumber } from "primereact/inputnumber";
+// import { InputNumber } from "primereact/inputnumber";
 
 const _vehicleService = new VehicleService();
 const _brandService = new BrandService();
@@ -22,9 +22,9 @@ export default function Vehicles() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [vehicleName, setVehicleName] = useState("");
-    const [vehicleModel, setVehicleModel] = useState("");
-    const [selectedVehicleBrand, setSelectedVehicleBrand] = useState("");
+    // const [vehicleName, setVehicleName] = useState("");
+    // const [vehicleModel, setVehicleModel] = useState("");
+    // const [selectedVehicleBrand, setSelectedVehicleBrand] = useState("");
     const [vehicles, setVehicles] = useState([]);
     const [brands, setBrands] = useState([]);
     const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
@@ -223,10 +223,10 @@ export default function Vehicles() {
     };
 
     const initialValuesEdit = {
-        ...vehicleSelected
-        // vehicleName: vehicleSelected.name,
-        // vehicleModel: vehicleSelected.model,
-        // selectedVehicleBrand: vehicleSelected.brands_vehicles?.name,
+        // ...vehicleSelected
+        vehicleName: vehicleSelected.name,
+        vehicleModel: vehicleSelected.model,
+        selectedVehicleBrand: vehicleSelected.brands_vehicles?.name,
     };
 
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
@@ -238,13 +238,7 @@ export default function Vehicles() {
         createVehicleAlert(form, data);
     };
     const onSubmitEdit = (data, form) => {
-        // console.log(eventOnChange.target);
-        // const vehicleUpdated = {
-        //     ...vehicleSelected,
-        //     [eventOnChange.target.name]: eventOnChange.target.value,
-        // };
-        // console.log(vehicleUpdated);
-        // setVehicleSelected(vehicleUpdated);
+     
         editVehicleAlert(data, form);
        
     };
@@ -301,11 +295,19 @@ export default function Vehicles() {
         return errors;
     };
 
-    function EditVehicle(form, data) {
+    function EditVehicle(data,form) {
+        const idBrand = brands.find((element) => element.name === data.selectedVehicleBrand )
+        let updatedDate = {
+            id: vehicleSelected.id,
+            name: data.vehicleName,
+            model: data.vehicleModel,
+            idBrand: idBrand.id 
+
+        }
 
 
         _vehicleService
-            .updateVehicle(vehicleSelected)
+            .updateVehicle(updatedDate)
             .then(() => {
                 setVehicleSelected({});
                 loadVehicles();
@@ -329,9 +331,9 @@ export default function Vehicles() {
         _vehicleService
             .createVehicle(data.vehicleName, data.vehicleModel, data.selectedVehicleBrand.id)
             .then(() => {
-                setVehicleName("");
-                setVehicleModel("");
-                setSelectedVehicleBrand("");
+                // setVehicleName("");
+                // setVehicleModel("");
+                // setSelectedVehicleBrand("");
                 loadVehicles();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Vehículo creado exitosamente", life: 3000 });
             })
@@ -378,7 +380,7 @@ export default function Vehicles() {
             setVehicles(response);
         });
     }, []);
-console.log(vehicleSelected)
+console.log("vehiculo seleccionado",vehicleSelected)
     return (
         <div>
             <Toast ref={toast} />
@@ -459,49 +461,49 @@ console.log(vehicleSelected)
 
             <Dialog header="Editar vehículo" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
                 <Form
-                    onSubmit={onSubmitEdit}
+                    onSubmit={editVehicleAlert}
                     initialValues={initialValuesEdit}
                     validate={validate}
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
                             <Field
-                                            name="name"
+                                            name="vehicleName"
                                             render={({ input, meta }) => (
                                                 <div className="field">
                                                     <span className="create-sale-form__span">
-                                                        <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>
+                                                        <label htmlFor="vehicleName" className={classNames({ "p-error": isFormFieldValid("vehicleName") })}>
                                                             Nombre del vehículo*
                                                         </label>
-                                                        <InputText id="name" {...input} autoFocus placeholder="Nombre del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <InputText id="vehicleName" disabled {...input} autoFocus placeholder="Nombre del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
                                             )}
                                         />
                                         <Field
-                                            name="model"
+                                            name="vehicleModel"
                                             render={({ input, meta }) => (
                                                 <div className="field">
                                                     <span className="create-sale-form__span">
-                                                        <label htmlFor="model" className={classNames({ "p-error": isFormFieldValid("model") })}>
+                                                        <label htmlFor="vehicleModel" className={classNames({ "p-error": isFormFieldValid("vehicleModel") })}>
                                                             Modelo del vehículo*
                                                         </label>
-                                                        <InputText id="model" {...input} placeholder="Modelo del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <InputText id="vehicleModel" {...input} placeholder="Modelo del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
                                             )}
                                         />
                                         <Field
-                                            name="idBran"
+                                            name="selectedVehicleBrand"
                                             render={({ input, meta }) => (
                                                 <div className="field">
                                                     <span className="create-sale-form__span">
-                                                        <label htmlFor="idBran" className={classNames({ "p-error": isFormFieldValid("idBran") })}>
+                                                        <label htmlFor="selectedVehicleBrand" className={classNames({ "p-error": isFormFieldValid("selectedVehicleBrand") })}>
                                                             Marca del vehículo*
                                                         </label>
-                                                        <Dropdown id="idBran" {...input} options={brands} optionLabel="name" optionValue="name" placeholder="Marca del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <Dropdown id="selectedVehicleBrand" {...input} options={brands} optionLabel="name" optionValue="name" placeholder="Marca del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
@@ -509,7 +511,7 @@ console.log(vehicleSelected)
                                         />
                                         <div className="create-product-buttons">
                                         <Button type="submit" icon="pi pi-check" label="Editar" className="mr-2"></Button>
-                                        <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                        <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogEdit(false)} className="p-button-text" />
                                     </div>
                             </form>
                         </>
