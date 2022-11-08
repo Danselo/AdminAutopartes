@@ -49,7 +49,9 @@ export default function TableBuyDetail({idBuy, setAddedProductsAtBuy, setGlobalT
     const [buyRepeat, setBuyRepeat] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(null);
     const op = useRef(null);
-    const isEdited = useRef(false);
+
+
+    const isMountedEdit = useRef(false);
     const isMounted = useRef(false);
 
     const formatCurrency = (value) => {
@@ -145,6 +147,8 @@ useEffect(() => {
 
             setAddedProducts(_AddedProducts);
             setProductDialog(false);
+            setProductDialogEdit(false);
+
             setProduct(emptyProduct);
         }
     };
@@ -188,7 +192,7 @@ useEffect(() => {
     };
 
     const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || "";
+        const val = e.value.id || "";
         let _product = { 
             ...product , 
             [name]:val
@@ -235,9 +239,10 @@ useEffect(() => {
         );
     };
     const onProductSelected = (e) => {
-         onInputNumberChange(e, "idProduct")
-    };
 
+         onInputChange(e, "idProduct");
+    };  
+    console.log(product);
     // const productDialogFooter = (
     //     <React.Fragment>
      
@@ -259,6 +264,7 @@ useEffect(() => {
         
     </Row>
     </ColumnGroup>;
+    console.log(AddedProducts);
         //----------------- Validation -------------------------
         const initialValues = {
             idProduct: product.idProduct,
@@ -329,8 +335,7 @@ useEffect(() => {
             return errors;
         };
         const onSubmitEdit = () => {
-
-            editProduct();
+            saveProduct();
             // setUserEmail(data.email);
             // setUserName(data.name);
             // setUserLastname(data.lastname);
@@ -372,11 +377,15 @@ useEffect(() => {
     }, []);
 
     useEffect(() => {
-        if (isMounted.current && product.idProduct && !isEdited.current) {
-            op.current.hide();
+
+        if (isMounted.current && product.idProduct && !isMountedEdit.current) {
+            // op.current.hide();
             toast.current.show({ severity: "info", summary: "Producto seleccionado", detail: product.idProduct, life: 3000 });
+
         }
     }, [product.idProduct]);
+
+    
     return (
         <div className="datatable-crud-demo">
             <Toast ref={toast} />
@@ -434,7 +443,7 @@ useEffect(() => {
                                                     <InputText placeholder="Buscar Producto" onInput={(e) => setGlobalFilter(e.target.value)} />
                                                     <Button icon="pi pi-search" className="p-button-primary" />
                                                 </div>
-                                                <DataTable id="idProduct" value={products.map((p=>p.id))} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={product.idProduct}  onSelectionChange={onProductSelected}  >
+                                                <DataTable id="idProduct" value={productosFiltrados} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={product}  onSelectionChange={onProductSelected}  >
                                                     <Column field="id" sortable header="Referencia"></Column>
                                                     <Column field="name" sortable header="Nombre"></Column>
                                                     <Column field="brand.name" sortable header="Marca"></Column>

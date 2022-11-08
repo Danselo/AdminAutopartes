@@ -22,7 +22,6 @@ export class UserService {
     }
 
     updateUser(user) {
-       
         const url = `${baseUserURL}/update/${user.id}`
         delete user.id
         delete user.createdAt

@@ -14,7 +14,17 @@ export const TableClient = ({setClientSelected,clients}) => {
             setClientSelected(clientsTableSelected)
         }
     }, [clientsTableSelected, setClientSelected])
-    
+    const statusBodyTemplate = (rowData) => {
+        if (rowData.status === true) {
+            return <span className="role-badge-status-active">ACTIVO</span>;
+        }else if(rowData.status === false){
+            return <span className="role-badge-status-inactive">INACTIVO</span>;
+        }else{
+            return <span className="role-badge-status-na">NA</span>; 
+        }
+        
+    }
+
 
 
 
@@ -27,6 +37,7 @@ export const TableClient = ({setClientSelected,clients}) => {
         <DataTable value={clients} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={clientsTableSelected} onSelectionChange={(e) => setClientsSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
              <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
+            <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
             <Column field="idUser" sortable header="Id Usuario"></Column>
             <Column field="name" sortable header="Nombre"></Column>
             <Column field="lastname" sortable header="Apellido"></Column>
