@@ -39,7 +39,7 @@ import {PermisisonsCheckService} from "./service/PermissionsCheckService"
 
 const _permissionsCheckService = new PermisisonsCheckService()
 const App = () => {
-    console.log(!_permissionsCheckService.userHasPermission(6))
+    
     const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
     const [inputStyle, setInputStyle] = useState("outlined");
@@ -211,7 +211,7 @@ const App = () => {
                     label: "Productos",
                     icon: "pi pi-fw pi-box",
                     to: "/Products",
-                    disabled: !_permissionsCheckService.userHasPermission(6),
+                    // disabled: !_permissionsCheckService?.userHasPermission(6),
                 },
                 
             ],

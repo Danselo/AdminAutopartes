@@ -137,19 +137,6 @@ export default function Vehicles() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
-
-    const cancelEdit = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmación",
-            icon: "pi pi-info-circle",
-            acceptClassName: "p-button-danger",
-            acceptLabel: "No crear",
-            rejectLabel: "Cancelar",
-            accept: () => reject(),
-            reject: () => setDisplayDialogEdit(true),
-        });
-    };
     function onClickDialogCreate() {
         getBrands();
         setDisplayDialogCreate(true);
@@ -159,17 +146,6 @@ export default function Vehicles() {
         getBrands();
         setDisplayDialogEdit(true);
     }
-
-    const onHideDialogEdit = () => {
-        editVehicleAlert();
-        setDisplayDialogEdit(false);
-    };
-
-    // const onHideDialogCreate = () => {
-    //     createVehicleAlert();
-    //     setDisplayDialogCreate(false);
-    // };
-
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
     };
@@ -181,31 +157,8 @@ export default function Vehicles() {
         setDisplayDialogCreate(false);
     };
 
-    const onHideDialogCancelEdit = () => {
-        cancelEdit();
-        setDisplayDialogEdit(false);
-    };
-
-    // const onVehicleBrandChange = (e) => {
-    //     setSelectedVehicleBrand(e.value);
-    // };
-    // const renderFooterDialog = () => {
-    //     return (
-    //         <div>
-    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-    //             <Button label="Crear vehículo" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-    //         </div>
-    //     );
-    // };
-
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar vehículo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
-    };
+ 
+ 
 
     const renderFooterDialogChangeStatus = () => {
         return (
@@ -237,22 +190,75 @@ export default function Vehicles() {
     const onSubmit = (data, form) => {
         createVehicleAlert(form, data);
     };
-    const onSubmitEdit = (data, form) => {
-     
-        editVehicleAlert(data, form);
-       
-    };
-
+    
     const validate = (data) => {
         let letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         let specialCharacters = ["/", "-", "_", "@", "!", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", '"', "'", ":", ";"];
-        console.log(data);
         let validateExistingNameAndModel = vehicles.map((vehicle) => {
             if (vehicle.name === data.vehicleName && vehicle.model === data.vehicleModel) {
                 return true;
             } else {
                 return false;
             }
+        });
+
+        let errors = {};
+        if (data.vehicleModel !== undefined) {
+            if (data.vehicleModel.length === 4) {
+                letters.forEach((letter) => {
+                    let arrayOfModel = data.vehicleModel.split("");
+                   
+                    if (arrayOfModel.includes(letter)) {
+                        errors.vehicleModel = "El modelo no puede contener letras, solo numeros.";
+                    }
+                });
+            }
+            if (data.vehicleModel.length === 4) {
+                specialCharacters.forEach((character) => {
+                    if (data.vehicleModel.includes(character)) {
+                        errors.vehicleModel = "El modelo no puede contener caracteres especiales, solo numeros.";
+                    }
+                });
+            }
+            if (data.vehicleModel.length > 4) {
+                errors.vehicleModel = "El modelo del vehículo no puede ser un numero mayor a 4 digitos";
+            }
+        }
+
+        if (!data.vehicleName) {
+            errors.vehicleName = "El nombre del vehículo es requerido.";
+        }
+        if (validateExistingNameAndModel.includes(true)) {
+            errors.vehicleName = "El vehículo " + data.vehicleName + " " + data.vehicleModel + " ya existe, ingrese otro nombre y/o modelo";
+        }
+
+        if (!data.vehicleModel) {
+            errors.vehicleModel = "El modelo del vehículo es requerido";
+        }
+
+        if (!data.selectedVehicleBrand) {
+            errors.selectedVehicleBrand = "La marca del vehículo es requerido";
+        }
+        return errors;
+    };
+
+
+    const validateEdit = (data) => {
+        let letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+        let specialCharacters = ["/", "-", "_", "@", "!", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", '"', "'", ":", ";"];
+        let currentName = vehicleSelected.name
+        let currentModel = vehicleSelected.model
+        let validateExistingNameAndModel = vehicles.map((vehicle) => {
+            if (currentName === data.vehicleName && currentModel === data.vehicleModel) {
+                return false
+                
+            }else if (vehicle.name === data.vehicleName && vehicle.model === data.vehicleModel) {
+                return true;
+            } else {
+                return false;
+            }
+
+           
         });
 
         let errors = {};
@@ -327,7 +333,6 @@ export default function Vehicles() {
     }
 
     function CreateVehicle(form, data) {
-        console.log(data);
         _vehicleService
             .createVehicle(data.vehicleName, data.vehicleModel, data.selectedVehicleBrand.id)
             .then(() => {
@@ -366,21 +371,11 @@ export default function Vehicles() {
         });
     };
 
-    const onChangeVehicleSelectedEditForm = (eventOnChange) => {
-        console.log(eventOnChange.target);
-        const vehicleUpdated = {
-            ...vehicleSelected,
-            [eventOnChange.target.name]: eventOnChange.target.value,
-        };
-        console.log(vehicleUpdated);
-        setVehicleSelected(vehicleUpdated);
-    };
     useEffect(() => {
         _vehicleService.getVehicles().then((response) => {
             setVehicles(response);
         });
     }, []);
-console.log("vehiculo seleccionado",vehicleSelected)
     return (
         <div>
             <Toast ref={toast} />
@@ -443,9 +438,6 @@ console.log("vehiculo seleccionado",vehicleSelected)
                                                 </div>
                                             )}
                                         />
-                                        {/* <InputText value={vehicleName} onChange={(e) => setVehicleName(e.target.value)} placeholder="Nombre del vehículo" className="create-vehicle-form__input" />
-                                        <InputText value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} placeholder="Modelo del vehículo" className="create-vehicle-form__input" />
-                                        <Dropdown value={selectedVehicleBrand} options={brands} onChange={onVehicleBrandChange} optionLabel="name" placeholder="Marca del vehículo" className="create-vehicle-form__dropdown" /> */}
                                     </div>
 
                                     <div className="create-product-buttons">
@@ -463,7 +455,7 @@ console.log("vehiculo seleccionado",vehicleSelected)
                 <Form
                     onSubmit={editVehicleAlert}
                     initialValues={initialValuesEdit}
-                    validate={validate}
+                    validate={validateEdit}
                     render={({ handleSubmit }) => (
                         <>
                             <form onSubmit={handleSubmit}>
@@ -475,7 +467,7 @@ console.log("vehiculo seleccionado",vehicleSelected)
                                                         <label htmlFor="vehicleName" className={classNames({ "p-error": isFormFieldValid("vehicleName") })}>
                                                             Nombre del vehículo*
                                                         </label>
-                                                        <InputText id="vehicleName" disabled {...input} autoFocus placeholder="Nombre del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                        <InputText id="vehicleName"  {...input} autoFocus placeholder="Nombre del vehículo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
