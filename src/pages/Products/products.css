@@ -50,6 +50,29 @@
 
 .create-product-form__grid{
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .5rem 2rem;
+    grid-template-columns: 20rem 20rem;
+    /* gap: .5rem .5rem; */
+    column-gap: 1.5rem;
+    justify-items: center;
+    justify-content: center;
 }
+
+.create-product-form__span{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    width: 20rem;
+}
+
+.create-product-form__label{
+    display: block;
+}
+.create-product-form__InputTextarea{
+    display: flex;
+    justify-content: flex-start;
+    /* width: 40rem; */
+    align-items: center;
+    margin: 0 0 0 5rem;
+
+}
+

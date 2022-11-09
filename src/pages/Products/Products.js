@@ -15,6 +15,8 @@ import { VehicleService } from "../../service/VehicleService";
 import { PickList } from "primereact/picklist";
 import { FileUpload } from "primereact/fileupload";
 import { InputTextarea } from "primereact/inputtextarea";
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
 import config from "../../config/config";
 const _categoryService = new CategoryService();
 const _productService = new ProductService();
@@ -41,6 +43,7 @@ export default function Products() {
 
     const onUpload = () => {
         toast.current.show({ severity: "info", summary: "Success", detail: "Archivo cargado" });
+        setDisplayDialogUploadImages(false)
     };
 
     let arraySelectedVehiclesOfProductEdit = selectedVehiclesOfProductEdit.map((objeto) => {
@@ -73,22 +76,22 @@ export default function Products() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createProductAlert = () => {
+    const createProductAlert = (data, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea crear este producto?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea crear este producto?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateProduct(),
+            accept: () => CreateProduct(data, form),
             reject: () => setDisplayDialogCreate(true),
         });
     };
 
     const editProductAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta vehiculo?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea editar esta vehiculo?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -99,8 +102,8 @@ export default function Products() {
 
     const cancelCreate = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea perder el progreso?",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -119,7 +122,7 @@ export default function Products() {
         }
 
         confirmDialog({
-            message: "¿Esta seguro que desea " + productState + " este producto?",
+            message: "¿Está seguro que desea " + productState + " este producto?",
             header: "Cambio de estado del producto " + productData.id,
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -145,7 +148,7 @@ export default function Products() {
             })
             .then((e) => {
                 loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
             })
             .catch((error) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
@@ -227,7 +230,7 @@ export default function Products() {
                     setProductSelected({});
                     loadProducts();
                     loadVehicles();
-                    toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Producto editado exitosamente", life: 3000 });
+                    toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto editado exitosamente", life: 3000 });
                 });
             })
             .catch((e) => {
@@ -236,24 +239,44 @@ export default function Products() {
             });
     }
 
-    function CreateProduct() {
+    function CreateProduct(data, form) {
+        
+        let productData = {
+            id: data.productReferenceId,
+            name: data.productName,
+            description: data.productDescription,
+            idCategory: data.selectedProductCategory.id,
+            idBrand: data.selectedProductBrand.id
+
+        }
+        console.log(productData)
+        
         _productService
-            .createProduct(productReferenceId, productName, productDescription, selectedProductCategory.id, selectedProductBrand.id)
+            .createProduct(
+                data.productReferenceId,
+                data.productName,
+                data.productDescription,
+                data.selectedProductCategory.id,
+                data.selectedProductBrand.id
+    
+            )
             .then(() => {
+                setProductReferenceId(data.productReferenceId)
                 setDisplayDialogUploadImages(true);
                 selectedVehicles.forEach((vehicle) => {
                     _productService
-                        .addVehicleToProduct(productReferenceId, vehicle.id)
+                        .addVehicleToProduct(data.productReferenceId, vehicle.id)
                         .then(() => {
-                            console.log("Se agrego el vehiculo");
+                            console.log("Se agrego el vehículo");
                         })
                         .catch((e) => {
-                            console.log("Algo salio mal al agregar un vehiculo");
+                            console.log("Algo salio mal al agregar un vehículo");
                         });
                 });
                 setProductName("");
                 loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Producto creado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto creado exitosamente", life: 3000 });
+                setDisplayDialogCreate(false)
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -326,8 +349,7 @@ export default function Products() {
     const renderFooterDialog = () => {
         return (
             <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear producto" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => displayDialogUploadImages(false)} className="p-button-text" />
             </div>
         );
     };
@@ -340,6 +362,47 @@ export default function Products() {
             </div>
         );
     };
+
+    const initialValues = {
+        productReferenceId: "",
+        productName: "",
+        selectedProductCategory: "",
+        selectedProductBrand: "",
+        productDescription: "",
+    };
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
+
+    const validate = (data) => {
+        let errors = {};
+        if (selectedVehicles.length === 0) {
+            errors.selectedVehicles = "Debe seleccionar al menos un vehiculo al producto.";
+        }
+        if (!data.productReferenceId) {
+            errors.productReferenceId = "La referencia del producto es requerido.";
+        }
+        if (!data.productName) {
+            errors.productName = "El nombre del producto es requerido.";
+        }
+
+        if (!data.selectedProductCategory) {
+            errors.selectedProductCategory = "Debe seleccionar una categoría.";
+        }
+
+        if (!data.selectedProductBrand) {
+            errors.selectedProductBrand = "Debe seleccionar una marca.";
+        }
+        if (!data.productDescription) {
+            errors.productDescription = "La descripción del producto es requerido.";
+        }
+
+        return errors;
+    };
+    const chooseOptions = {label: "Seleccionar imagen", icon: 'pi pi-fw pi-images', className: 'p-button-raised'};
+    const uploadOptions = {label: "Guardar imagen", icon: 'pi pi-fw pi-cloud-upload', className: 'p-button-raised'};
+    const cancelOptions = {label: "Cancelar", icon: 'pi pi-fw pi-times', className: 'p-button-raised'};
     return (
         <div>
             <Toast ref={toast} />
@@ -350,36 +413,116 @@ export default function Products() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+            <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
                 <div className="create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
-                    <div className="create-product-form__grid">
-                        <InputText value={productReferenceId} onChange={(e) => setProductReferenceId(e.target.value)} placeholder="Referencia del producto" className="create-product-form__input" />
-                        <InputText value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Nombre del producto" className="create-product-form__input" />
-                        <Dropdown value={selectedProductCategory} options={categories} onChange={onProductCategoryChange} optionLabel="name" placeholder="Categoria del producto" className="create-product-form__dropdown" />
-                        <Dropdown value={selectedProductBrand} options={brands} onChange={onProductBrandChange} optionLabel="name" placeholder="Marca del producto" className="create-product-form__dropdown" />
-                    </div>
+                    <Form
+                        onSubmit={createProductAlert}
+                        initialValues={initialValues}
+                        validate={validate}
+                        render={({ handleSubmit }) => (
+                            <>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="create-product-form__grid">
+                                        <Field
+                                            name="productReferenceId"
+                                            render={({ input, meta }) => (
+                                                <div>
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productReferenceId" className={classNames({ "p-error": isFormFieldValid("productReferenceId"), "create-product-form__label": true })}>
+                                                            Referencia*
+                                                        </label>
+                                                        <InputText id="productReferenceId" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Referencia del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="productName"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productName" className={classNames({ "p-error": isFormFieldValid("productName") })}>
+                                                            Nombre*
+                                                        </label>
+                                                        <InputText id="productName" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Nombre del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductCategory"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductCategory" className={classNames({ "p-error": isFormFieldValid("selectedProductCategory") })}>
+                                                            Categoría*
+                                                        </label>
+                                                        <Dropdown id="selectedProductCategory" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={categories} optionLabel="name" placeholder="Categoria del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductBrand"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductBrand" className={classNames({ "p-error": isFormFieldValid("selectedProductBrand") })}>
+                                                            Marca*
+                                                        </label>
+                                                        <Dropdown id="selectedProductBrand" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={brands} optionLabel="name" placeholder="Marca del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                    <Field
+                                        name="productDescription"
+                                        render={({ input, meta }) => (
+                                            <div className="create-product-form__InputTextarea">
+                                                <span className="create-product-form__span">
+                                                    <label htmlFor="productDescription" className={classNames({ "p-error": isFormFieldValid("productDescription") })}>
+                                                        Descripción*
+                                                    </label>
+                                                    <InputTextarea id="productDescription" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input create-product-form__inputTextarea": true })} placeholder="Descripción del producto" />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
 
-                    <InputTextarea value={productDescription} onChange={(e) => setProductDescription(e.target.value)} placeholder="Descripcion del producto" className="create-product-form__input create-product-form__inputTextarea " />
-
-                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
-                    <div className="picklist-vehicles">
-                        <div className="card">
-                            <PickList
-                                source={vehicles}
-                                target={selectedVehicles}
-                                itemTemplate={vehicleTemplate}
-                                sourceHeader="Vehiculos"
-                                targetHeader="Seleccionados"
-                                sourceStyle={{ height: "342px" }}
-                                targetStyle={{ height: "342px" }}
-                                onChange={onChange}
-                                filterBy="name"
-                                sourceFilterPlaceholder="Buscar"
-                                targetFilterPlaceholder="Buscar"
-                            />
-                        </div>
-                    </div>
+                                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
+                                    <div className="picklist-vehicles">
+                                        <div className="card">
+                                            <PickList
+                                                source={vehicles}
+                                                target={selectedVehicles}
+                                                itemTemplate={vehicleTemplate}
+                                                sourceHeader="Vehiculos"
+                                                targetHeader="Seleccionados"
+                                                sourceStyle={{ height: "342px" }}
+                                                targetStyle={{ height: "342px" }}
+                                                onChange={onChange}
+                                                filterBy="name"
+                                                sourceFilterPlaceholder="Buscar"
+                                                targetFilterPlaceholder="Buscar"
+                                            />
+                                        </div>
+                                        {selectedVehicles.length > 0 ? <small className="p-success">Vehículo(s) seleccionado(s) exitosamente</small> : <small className="p-error">*Debe seleccionar al menos un vehículo</small>}
+                                    </div>
+                                    <div className="create-product-buttons">
+                                        <Button type="submit" icon="pi pi-check" label="Crear producto" className="mr-2"></Button>
+                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" label="Cancelar"></Button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
+                    />
                 </div>
             </Dialog>
 
@@ -392,6 +535,9 @@ export default function Products() {
                         onUpload={onUpload}
                         accept="image/*"
                         maxFileSize={1000000}
+                        chooseOptions={chooseOptions} 
+                        uploadOptions={uploadOptions} 
+                        cancelOptions={cancelOptions}
                         // customUpload
                         // uploadHandler={customBase64Uploader}
                         // mode="basic"
@@ -431,7 +577,7 @@ export default function Products() {
                     </div>
                 </div>
             </Dialog>
-            <TableProducts className="table-products" products={products} setProductSelected={setProductSelected}  />
+            <TableProducts className="table-products" products={products} setProductSelected={setProductSelected} />
         </div>
     );
 }
