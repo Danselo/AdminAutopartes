@@ -26,6 +26,7 @@ export default function Client() {
     const [clientSelected, setClientSelected] = useState({});
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
+    const [validationSales, setValidationSales] = useState([]);
     const toast = useRef(null);
     const op = useRef(null);
     // const [clientName, setClientName] = useState("");
@@ -244,54 +245,54 @@ export default function Client() {
             reject: () => setDisplayDialogEdit(false),
         });
     };
-    // useEffect(() => {
-    //     sales.forEach((element) => { 
-    //         if(clientSelected.id === element.id ){
-    //             console.log(element.statusPayment);
-    //             setClientWithBuy(element.statusPayment)
-    //         }
-    //     });
-    // }, [setClientWithBuy]);
+    useEffect(() => {
+        loadClients();
+        sales.map((element) => { 
+            if(clientSelected.id === element.idClient ){
+           
+                if (element.statusSale === "Activo") {
+                    setClientWithBuy({
+                        id: element.idClient,
+                        statusSale: element.statusSale,
+                        statusPayment: element.statusPayment
     
-    function EditStatus() {
-        sales.forEach((element) => { 
-            if(clientSelected.id === element.id ){
-                console.log(element.statusPayment);
-                setClientWithBuy({
-                    id: element.id,
-                    statusPayment: element.statusPayment
-                });
+                    });
+                    return element
+
+                }
+                
             }
         });
-        console.log(clientWithBuy);
-         if (clientWithBuy.statusPayment === 'Pendiente' && clientSelected.status === true
+
+    }, [setClientWithBuy,sales,clientSelected]);
+    
+        console.log(validationSales);
+    function EditStatus() {
+        
+         if (clientWithBuy.statusSale === 'Activo' && clientSelected.status === true
          && clientWithBuy.id === clientSelected.id) {
             toast.current.show({ severity: "error", summary: "Error", detail: "El cliente tiene una venta en proceso", life: 3000 });
             loadClients();
-        } else if (clientSelected.status === true) {
+        } else{
+            if (clientSelected.status === true) {
                 clientSelected.status = false;
-                _clientService.updateClient(clientSelected)
-                .then(() => {
-                    setClientSelected({});
-                    toast.current.show({ severity: "success", summary: "Confirmacion", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
-                })
-                .catch((e) => {
-                    toast.current.show({ severity: "danger", summary: "danger", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                    console.log(e);
-                });
+
             }else if (clientSelected.status === false) {
                 clientSelected.status = true;
-                _clientService.updateClient(clientSelected)
-                .then(() => {
-                    setClientSelected({});
-                    loadClients();
-                    toast.current.show({ severity: "success", summary: "Confirmacion", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
-                })
-                .catch((e) => {
-                    toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                    console.log(e);
-                });
+
             }
+            _clientService.updateClient(clientSelected)
+            .then(() => {
+                setClientSelected({});
+                loadClients();
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
+            });
+        }
+        
           
 
         

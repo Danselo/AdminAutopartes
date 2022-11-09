@@ -13,6 +13,11 @@ import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
+import { ClientService } from "../../service/ClientService";
+import { SaleService } from "../../service/SaleService";
+const _clientService = new ClientService();
+const _saleService = new SaleService();
+
 const _userService = new UserService();
 const _roleService = new RolesService();
 
@@ -28,13 +33,41 @@ export default function Users() {
     // const [userLastname, setUserLastname] = useState("");
     const [userStatus] = useState(true);
     const [users, setUsers] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [sales, setSales] = useState([]);
     const [roles, setRoles] = useState([]);
+
+    const [userWithSales, setUserWithSales] = useState({});
     // const rightContents = (
     //         <Link to={"/pages/CreateUser/CreateUser"}>
     //         <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
     //         </Link>
 
     // );
+    //----- GET SALES FOR VALIDATION AND CLIENTS
+    useEffect(() => {
+        _saleService.getSales()
+            .then((response) => {
+                setSales(response);
+            })
+            .catch((e) => {
+                console.log(e, "Error al traer las ventas");
+            });
+    }, []);
+
+    useEffect(() => {
+        _clientService.getClients()
+            .then((response) => {
+                setClients(response);
+            })
+            .catch((e) => {
+                console.log(e, "Error al traer los clientes");
+            });
+    }, []);
+
+
+
+    //----------- END------
 
     const leftContents = (
         <React.Fragment>
@@ -166,15 +199,49 @@ export default function Users() {
                 console.log(e);
             });
     }
+    useEffect(() => {
+
+            clients.map((element) => { 
+                if(userSelected.id === element.idUser ){
+    
+                    sales.map((element2) => {   
+                        if( element.id === element2.idClient ){
+                            if (element2.statusSale === "Activo") {
+                                setUserWithSales({
+                                    idUser: element.idUser,
+                                    name: element.name,
+                                    statusSale: element2.statusSale
+                                });
+                                return element
+                      
+                        }
+                    }
+                });
+                }
+    
+            });
+
+    }, [setUserWithSales,sales,userSelected,clients]);
+    console.log(userWithSales);
+
     function EditStatus() {
+       
+
+        if (userWithSales.statusSale === 'Activo' && userSelected.status === true
+        && userWithSales.idUser === userSelected.id) {
+           toast.current.show({ severity: "error", summary: "Error", detail: "El usuario tiene una venta en proceso", life: 3000 });
+           loadUsers();
+       }else{
             if (userSelected.status === true){
                 userSelected.status = false;
+                loadUsers();
+
             }else if(userSelected.status === false){
                 userSelected.status = true;
-            }
+                loadUsers();
 
-        console.log(userSelected);
-        _userService
+            }
+            _userService
             .updateUser(userSelected)
             .then(() => {
                 setUserSelected({});
@@ -185,6 +252,10 @@ export default function Users() {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                 console.log(e);
             });
+       }
+         
+
+      
     }
     function getRoles() {
         _roleService.getRoles().then((response) => {

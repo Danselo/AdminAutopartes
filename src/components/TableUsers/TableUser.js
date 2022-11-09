@@ -9,7 +9,6 @@ import { Button } from "primereact/button";
 export const TableUser = ({setUserSelected,users}) => {
     const [globalFilter, setGlobalFilter] = useState(null);
     const [usersSelected, setUsersSelected] = useState([]);
-    console.log(users)
 // console.log(usersSelected)
     useEffect(() => {
         if (usersSelected) {
