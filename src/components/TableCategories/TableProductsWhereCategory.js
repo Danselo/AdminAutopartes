@@ -16,7 +16,7 @@ export const TableProductsWhereCategory = ({ products }) => {
             </div>
             <DataTable 
             value={products} 
-            header="Productos asociados a la categoria" 
+            header="Productos asociados a la categoría" 
             paginator 
             responsiveLayout="scroll" 
             emptyMessage="No se encontraron datos" 

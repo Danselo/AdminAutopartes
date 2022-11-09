@@ -19,7 +19,6 @@ export default function Categories() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [categoryName, setCategoryName] = useState("");
     const [categoryIdSelected, setCategoryIdSelected] = useState("");
     const [categoryNameSelected, setCategoryNameSelected] = useState("");
     const [categories, setCategories] = useState([]);
@@ -30,7 +29,6 @@ export default function Categories() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteCategoryAlert()} disabled={!categoryIdSelected} />
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!categoryIdSelected} />
         </React.Fragment>
     );
@@ -43,7 +41,14 @@ export default function Categories() {
                 disabled={!categorySelected.name}
                 icon={categorySelected.status ? "pi pi-eye-slash" : "pi pi-eye"}
                 onClick={() => {
-                    productsWhereCategory.length !== 0 ? setDisplayDialogStatus(true) : onChangeCategoryStatusDialog(categorySelected);
+                    if (categorySelected.status) {
+                        productsWhereCategory.length !== 0 ? setDisplayDialogStatus(true) : onChangeCategoryStatusDialog(categorySelected);
+                        
+                    } else {
+                         onChangeCategoryStatusDialog(categorySelected);
+
+                        
+                    }
                 }}
             />
         </React.Fragment>
@@ -53,8 +58,8 @@ export default function Categories() {
     };
     const createCategoryAlert = (categoryName, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta categoria?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea agregar esta categoría?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -71,7 +76,7 @@ export default function Categories() {
         }
 
         confirmDialog({
-            message: "¿Esta seguro que desea " + categoryState + " esta categoría?",
+            message: "¿Está seguro que desea " + categoryState + " esta categoría?",
             header: "Cambio de estado de la categoría " + categoryData.name,
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -84,8 +89,8 @@ export default function Categories() {
 
     const editCategoryAlert = (newCategoryName, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta categoria?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea editar esta categoria?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -93,21 +98,11 @@ export default function Categories() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
-    const deleteCategoryAlert = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea eliminar esta Categoria?",
-            header: "Confirmacion",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Eliminar",
-            rejectLabel: "Cancelar",
-            accept: () => deleteCategory(categoryIdSelected),
-            reject: () => setDisplayDialogCreate(true),
-        });
-    };
+ 
     const cancelCreate = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea perder el progreso?",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -157,7 +152,7 @@ export default function Categories() {
         console.log("estado",newState)
         _categoryService.changeStatusOfCategory(categoryData.id, {status: newState}).then((response) => {
             loadCategories();
-            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
             setDisplayDialogStatus(false)
         }).catch((error) => {
             toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
@@ -168,9 +163,9 @@ export default function Categories() {
     function EditCategory(id, newName, form) {
         _categoryService.updateCategory(id, newName)
             .then(() => {
-                setCategoryName(newName);
                 loadCategories();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoría editada exitosamente", life: 3000 });
+                form.reset()
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -181,22 +176,9 @@ export default function Categories() {
         _categoryService
             .createCategory(categoryName)
             .then(() => {
-                setCategoryName("");
                 loadCategories();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-    }
-
-    function deleteCategory(id) {
-        _categoryService
-            .deleteCategory(id)
-            .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
-                loadCategories();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoría creada exitosamente", life: 3000 });
+                form.reset()
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -250,7 +232,7 @@ export default function Categories() {
         }
         if (!data.newCategoryName) {
 
-            errors.newCategoryName = "Debe ingresar un nombre de categoria.";
+            errors.newCategoryName = "Debe ingresar un nombre de categoría.";
         }
         return errors;
     };
@@ -270,7 +252,7 @@ export default function Categories() {
 
         if (!data.categoryName) {
 
-            errors.categoryName = "Debe ingresar un nombre de categoria.";
+            errors.categoryName = "Debe ingresar un nombre de categoría.";
         }
         if (validateExistingName.includes(true)) {
             errors.categoryName = "El nombre " + data.categoryName + " ya existe, ingrese otro nombre";
@@ -315,12 +297,12 @@ export default function Categories() {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h4>Categorias registradas</h4>
+                <h4>Categorías registradas</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear nueva categoria" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Crear categoría" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
@@ -335,18 +317,18 @@ export default function Categories() {
                                             <div className="field ">
                                                 <span className="create-sale-form__span">
                                                     <label htmlFor="categoryName" className={classNames({ "p-error": isFormFieldValid("categoryName") })}>
-                                                        Nombre de categoria*
+                                                        Nombre de categoría*
                                                     </label>
-                                                    <InputText id="categoryName" {...input} autoFocus placeholder="Ingrese el nombre de la categoria" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                    <InputText id="categoryName" {...input} autoFocus placeholder="Ingrese el nombre de la categoría" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 </span>
                                                 {getFormErrorMessage(meta)}
                                             </div>
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className="create-category-form__btns">
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                                    <Button type="submit" label="Crear marca" icon="pi pi-check" />
+                                    <Button type="submit" label="Crear" icon="pi pi-check" />
                                 </div>
                             </form>
                         </>
@@ -354,7 +336,7 @@ export default function Categories() {
                 />
             </Dialog>
 
-            <Dialog header="Editar categoria" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Editar categoría" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }} className="dialog-edit">
                 <Form
                     onSubmit={onSubmitEdit}
                     initialValues={initialValuesEdit}
@@ -370,18 +352,18 @@ export default function Categories() {
                                             <span className="create-sale-form__span">
 
                                                 <label htmlFor="newCategoryName" className={classNames({ "p-error": isFormFieldValid("newCategoryName") })}>
-                                                    Nombre de categoria*
+                                                    Nombre de categoría*
                                                 </label>
                                                 <InputText id="newCategoryName" {...input} autoFocus
-                                                    placeholder="Ingrese el nuevo nombre de la categoria" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                    placeholder="Ingrese el nuevo nombre de la categoría" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 {getFormErrorMessage(meta)}
                                             </span>
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className="create-category-form__btns">
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                                    <Button type="submit" label="Editar marca" icon="pi pi-check" />
+                                    <Button type="submit" label="Editar" icon="pi pi-check" />
                                 </div>
                             </form>
                         </>
@@ -389,8 +371,8 @@ export default function Categories() {
                 />
             </Dialog>
 
-            <Dialog header={"¿Esta seguro que desea " + (categorySelected.status ? "desactivar" : "activar") +" la marca " + categorySelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
-                <p>Los siguientes productos estan asociados a esta categoria, si desactiva la categoria los productos asociados tambien se desactivaran</p>
+            <Dialog header={"¿Está seguro que desea " + (categorySelected.status ? "desactivar" : "activar") +" la categoría " + categorySelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <p>Los siguientes productos estan asociados a esta categoría, si desactiva la categoría los productos asociados tambien se desactivaran</p>
                 <TableProductsWhereCategory className="table-products" products={productsWhereCategory} />
             </Dialog>
 

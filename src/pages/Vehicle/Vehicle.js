@@ -59,7 +59,7 @@ export default function Vehicles() {
     };
     const createVehicleAlert = (form, data) => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta vehículo?",
+            message: "¿Está seguro que desea agregar esta vehículo?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
@@ -77,7 +77,7 @@ export default function Vehicles() {
         }
 
         confirmDialog({
-            message: "¿Esta seguro que desea " + vehicleState + " este vehículo?",
+            message: "¿Está seguro que desea " + vehicleState + " este vehículo?",
             header: "Cambio de estado del vehículo " + vehicleData.id,
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -116,7 +116,7 @@ export default function Vehicles() {
 
     const editVehicleAlert = (form, data) => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta vehículo?",
+            message: "¿Está seguro que desea editar esta vehículo?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
@@ -127,7 +127,7 @@ export default function Vehicles() {
     };
     const cancelCreate = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea perder el progreso?",
+            message: "¿Está seguro que desea perder el progreso?",
             header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -308,7 +308,7 @@ export default function Vehicles() {
             .then(() => {
                 setVehicleSelected({});
                 loadVehicles();
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Vehículo edito exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Vehículo editado exitosamente", life: 3000 });
                 setDisplayDialogEdit(false);
                 form.restart();
             })
@@ -504,7 +504,7 @@ export default function Vehicles() {
                 </div>
             </Dialog>
             <Dialog
-                header={"¿Esta seguro que desea " + (vehicleSelected.status ? "desactivar" : "activar") + " el vehículo " + vehicleSelected.name + "?"}
+                header={"¿Está seguro que desea " + (vehicleSelected.status ? "desactivar" : "activar") + " el vehículo " + vehicleSelected.name + "?"}
                 footer={renderFooterDialogChangeStatus()}
                 visible={displayDialogStatus}
                 onHide={() => setDisplayDialogStatus(false)}
