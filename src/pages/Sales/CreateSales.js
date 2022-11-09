@@ -115,10 +115,12 @@ export default function CreateSales() {
     const statusSale = [
         { name: "Activo", id: "1" },
         { name: "Terminado", id: "0" },
+        { name: "Anulado", id: "2" },
     ];
     const statusPayment = [
         { name: "Pagado", id: "1" },
         { name: "Pendiente", id: "0" },
+        { name: "Anulado", id: "2" },
     ];
     let history = useHistory();
 
@@ -153,7 +155,7 @@ export default function CreateSales() {
                 form.restart();
             })
             .catch(() => {
-                toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
+                toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la venta", life: 3000 });
             });
     };
 
@@ -166,7 +168,7 @@ export default function CreateSales() {
     };
     const create = (form, data) => {
         confirmDialog({
-            message: "¿Esta seguro que desea crear esta compra?",
+            message: "¿Esta seguro que desea crear esta venta?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
