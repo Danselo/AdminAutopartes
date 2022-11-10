@@ -30,20 +30,17 @@ export default function Products() {
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
     const [productName, setProductName] = useState("");
-    const [productDescription, setProductDescription] = useState("");
     const [productReferenceId, setProductReferenceId] = useState("");
-    const [selectedProductCategory, setSelectedProductCategory] = useState("");
-    const [selectedProductBrand, setSelectedProductBrand] = useState("");
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [vehicles, setVehicles] = useState([]);
     const [selectedVehicles, setSelectedVehicles] = useState([]);
     const [selectedVehiclesOfProductEdit, setSelectedVehiclesOfProductEdit] = useState([]);
-
+    
     const onUpload = () => {
         toast.current.show({ severity: "info", summary: "Success", detail: "Archivo cargado" });
-        setDisplayDialogUploadImages(false)
+        setDisplayDialogUploadImages(false);
     };
 
     let arraySelectedVehiclesOfProductEdit = selectedVehiclesOfProductEdit.map((objeto) => {
@@ -88,14 +85,15 @@ export default function Products() {
         });
     };
 
-    const editProductAlert = () => {
+    const editProductAlert = (data, form) => {
         confirmDialog({
-            message: "¿Está seguro que desea editar esta vehiculo?",
+            message: "¿Está seguro que desea editar esta producto?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
-            accept: () => EditProduct(),
+            // accept: () => EditProduct(data, form),
+            accept: () => setDisplayDialogUploadImages(true),
             reject: () => setDisplayDialogEdit(false),
         });
     };
@@ -163,17 +161,13 @@ export default function Products() {
     function onClickDialogEdit() {
         getVehiclesOfProductSelected(productSelected.id);
         getCategories();
+        getBrands();
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = () => {
-        editProductAlert();
+    const onHideDialogEdit = (data, form) => {
+        editProductAlert(data, form);
         setDisplayDialogEdit(false);
-    };
-
-    const onHideDialogCreate = () => {
-        createProductAlert();
-        setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
@@ -191,13 +185,6 @@ export default function Products() {
         setDisplayDialogEdit(false);
     };
 
-    const onProductCategoryChange = (e) => {
-        setSelectedProductCategory(e.value);
-    };
-    const onProductBrandChange = (e) => {
-        setSelectedProductBrand(e.value);
-    };
-
     function getCategories() {
         _categoryService.getCategories().then((response) => {
             setCategories(response);
@@ -211,7 +198,6 @@ export default function Products() {
     }
 
     function getVehiclesOfProductSelected(idProductSelected) {
-        console.log(idProductSelected);
         _productService.getVehiclesOfProductById(idProductSelected).then((response) => {
             let unSelectedVehicles = vehicles.filter((v) => !response.some((v2) => v2.idVehicle === v.id));
             setVehicles(unSelectedVehicles);
@@ -219,7 +205,7 @@ export default function Products() {
         });
     }
 
-    function EditProduct() {
+    function EditProduct(data, form) {
         let id = productSelected.id;
         _productService
             .updateProduct(productSelected)
@@ -240,28 +226,19 @@ export default function Products() {
     }
 
     function CreateProduct(data, form) {
-        
         let productData = {
             id: data.productReferenceId,
             name: data.productName,
             description: data.productDescription,
             idCategory: data.selectedProductCategory.id,
-            idBrand: data.selectedProductBrand.id
+            idBrand: data.selectedProductBrand.id,
+        };
+        console.log(productData);
 
-        }
-        console.log(productData)
-        
         _productService
-            .createProduct(
-                data.productReferenceId,
-                data.productName,
-                data.productDescription,
-                data.selectedProductCategory.id,
-                data.selectedProductBrand.id
-    
-            )
+            .createProduct(data.productReferenceId, data.productName, data.productDescription, data.selectedProductCategory.id, data.selectedProductBrand.id)
             .then(() => {
-                setProductReferenceId(data.productReferenceId)
+                setProductReferenceId(data.productReferenceId);
                 setDisplayDialogUploadImages(true);
                 selectedVehicles.forEach((vehicle) => {
                     _productService
@@ -276,7 +253,7 @@ export default function Products() {
                 setProductName("");
                 loadProducts();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto creado exitosamente", life: 3000 });
-                setDisplayDialogCreate(false)
+                setDisplayDialogCreate(false);
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -370,6 +347,14 @@ export default function Products() {
         selectedProductBrand: "",
         productDescription: "",
     };
+
+    const initialValuesEdit = {
+        productReferenceId: productSelected.id,
+        productName: productSelected.name,
+        selectedProductCategory: productSelected.category?.name,
+        selectedProductBrand: productSelected.brand?.name,
+        productDescription: productSelected.description,
+    };
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
@@ -377,7 +362,54 @@ export default function Products() {
 
     const validate = (data) => {
         let errors = {};
+        let validateExistingId = products.map((product) => {
+            if (product.id === data.productReferenceId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
         if (selectedVehicles.length === 0) {
+            errors.selectedVehicles = "Debe seleccionar al menos un vehiculo al producto.";
+        }
+        if (validateExistingId.includes(true)) {
+            errors.productReferenceId = "El producto con referencia " + data.productReferenceId  + " ya existe, ingrese una referencia diferente";
+        }
+        if (!data.productReferenceId) {
+            errors.productReferenceId = "La referencia del producto es requerido.";
+        }
+        if (!data.productName) {
+            errors.productName = "El nombre del producto es requerido.";
+        }
+
+        if (!data.selectedProductCategory) {
+            errors.selectedProductCategory = "Debe seleccionar una categoría.";
+        }
+
+        if (!data.selectedProductBrand) {
+            errors.selectedProductBrand = "Debe seleccionar una marca.";
+        }
+        if (!data.productDescription) {
+            errors.productDescription = "La descripción del producto es requerido.";
+        }
+
+        return errors;
+    };
+    const validateEdit = (data) => {
+        console.log(data)
+        console.log(productSelected)
+        let errors = {};
+        let validateExistingId = products.map((product) => {
+            if (product.id === data.productReferenceId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if (validateExistingId.includes(true) && data.productReferenceId !== productSelected.id) {
+            errors.productReferenceId = "El producto con referencia " + data.productReferenceId  + " ya existe, ingrese una referencia diferente";
+        }
+        if (selectedVehiclesOfProductEdit.length === 0) {
             errors.selectedVehicles = "Debe seleccionar al menos un vehiculo al producto.";
         }
         if (!data.productReferenceId) {
@@ -400,9 +432,9 @@ export default function Products() {
 
         return errors;
     };
-    const chooseOptions = {label: "Seleccionar imagen", icon: 'pi pi-fw pi-images', className: 'p-button-raised'};
-    const uploadOptions = {label: "Guardar imagen", icon: 'pi pi-fw pi-cloud-upload', className: 'p-button-raised'};
-    const cancelOptions = {label: "Cancelar", icon: 'pi pi-fw pi-times', className: 'p-button-raised'};
+    const chooseOptions = { label: "Seleccionar imagen", icon: "pi pi-fw pi-images", className: "p-button-raised" };
+    const uploadOptions = { label: "Guardar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
+    const cancelOptions = { label: "Cancelar", icon: "pi pi-fw pi-times", className: "p-button-raised" };
     return (
         <div>
             <Toast ref={toast} />
@@ -497,7 +529,7 @@ export default function Products() {
                                     />
 
                                     <h5>Seleccione los vehiculos compatibles con el producto</h5>
-                                    <div className="picklist-vehicles">
+                                    <div className="picklist-products">
                                         <div className="card">
                                             <PickList
                                                 source={vehicles}
@@ -526,7 +558,121 @@ export default function Products() {
                 </div>
             </Dialog>
 
-            <Dialog header="Seleccione la imagen del producto" visible={displayDialogUploadImages} onHide={() => displayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+            <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
+                <div className="create-product-form">
+                    <Form
+                        onSubmit={onHideDialogEdit}
+                        initialValues={initialValuesEdit}
+                        validate={validateEdit}
+                        render={({ handleSubmit }) => (
+                            <>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="create-product-form__grid">
+                                        <Field
+                                            name="productReferenceId"
+                                            render={({ input, meta }) => (
+                                                <div>
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productReferenceId" className={classNames({ "p-error": isFormFieldValid("productReferenceId"), "create-product-form__label": true })}>
+                                                            Referencia*
+                                                        </label>
+                                                        <InputText id="productReferenceId" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Referencia del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="productName"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productName" className={classNames({ "p-error": isFormFieldValid("productName") })}>
+                                                            Nombre*
+                                                        </label>
+                                                        <InputText id="productName" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Nombre del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductCategory"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductCategory" className={classNames({ "p-error": isFormFieldValid("selectedProductCategory") })}>
+                                                            Categoría*
+                                                        </label>
+                                                        <Dropdown id="selectedProductCategory" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={categories} optionLabel="name" optionValue="name"placeholder="Categoria del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductBrand"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductBrand" className={classNames({ "p-error": isFormFieldValid("selectedProductBrand") })}>
+                                                            Marca*
+                                                        </label>
+                                                        <Dropdown id="selectedProductBrand" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={brands} optionLabel="name" optionValue="name" placeholder="Marca del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                    <Field
+                                        name="productDescription"
+                                        render={({ input, meta }) => (
+                                            <div className="create-product-form__InputTextarea">
+                                                <span className="create-product-form__span">
+                                                    <label htmlFor="productDescription" className={classNames({ "p-error": isFormFieldValid("productDescription") })}>
+                                                        Descripción*
+                                                    </label>
+                                                    <InputTextarea id="productDescription" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input create-product-form__inputTextarea": true })} placeholder="Descripción del producto" />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+
+                                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
+                                    <div className="picklist-vehicles">
+                                        <div className="picklist-vehicles">
+                                            <div className="card">
+                                                <PickList
+                                                    source={vehicles}
+                                                    target={selectedVehiclesOfProductEdit}
+                                                    itemTemplate={vehicleTemplateEditForm}
+                                                    targetItemTemplate={vehicleTemplateEditForm}
+                                                    sourceHeader="Vehiculos"
+                                                    targetHeader="Seleccionados"
+                                                    sourceStyle={{ height: "342px" }}
+                                                    targetStyle={{ height: "342px" }}
+                                                    onChange={onChangeEdit}
+                                                    filterBy="name"
+                                                    sourceFilterPlaceholder="Buscar"
+                                                    targetFilterPlaceholder="Buscar"
+                                                />
+                                            </div>
+                                        </div>
+                                        {selectedVehicles.length > 0 || selectedVehiclesOfProductEdit.length > 0 ? <small className="p-success">Vehículo(s) seleccionado(s) exitosamente</small> : <small className="p-error">*Debe seleccionar al menos un vehículo</small>}
+                                    </div>
+                                    <div className="create-product-buttons">
+                                        <Button type="submit" icon="pi pi-check" label="Editar producto" className="mr-2"></Button>
+                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" label="Cancelar"></Button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
+                    />
+                </div>
+            </Dialog>
+            <Dialog header="Editar la imagen del producto" visible={displayDialogUploadImages} onHide={() => displayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
                 <div className="create-product-form">
                     <h5>Seleccione las imagenes del producto</h5>
                     <FileUpload
@@ -535,8 +681,8 @@ export default function Products() {
                         onUpload={onUpload}
                         accept="image/*"
                         maxFileSize={1000000}
-                        chooseOptions={chooseOptions} 
-                        uploadOptions={uploadOptions} 
+                        chooseOptions={chooseOptions}
+                        uploadOptions={uploadOptions}
                         cancelOptions={cancelOptions}
                         // customUpload
                         // uploadHandler={customBase64Uploader}
@@ -547,7 +693,7 @@ export default function Products() {
                 </div>
             </Dialog>
 
-            <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
+            {/* <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
 
@@ -576,7 +722,7 @@ export default function Products() {
                         </div>
                     </div>
                 </div>
-            </Dialog>
+            </Dialog> */}
             <TableProducts className="table-products" products={products} setProductSelected={setProductSelected} />
         </div>
     );
