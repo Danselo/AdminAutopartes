@@ -1,7 +1,22 @@
-.create-category-form{
-    display: flex;
-    flex-direction: column;
+.create-provider-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 40vw;
+    margin: 2rem auto 0 auto;
+    padding-right:  2em ;
+    column-gap: 2rem;
     
+    
+}
+.create-provider-form__input{
+    width: 20rem;
+    margin: .5rem 0 0 0;
+    justify-self: center;
+}
+.create-provider-form__button{
+    display: flex;
+    justify-content: flex-end;
+
 }
 
 .create-category__table{

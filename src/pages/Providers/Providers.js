@@ -355,15 +355,19 @@ export default function Providers() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear un nuevo proveedor" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
+            <Dialog header="Crear un nuevo proveedor" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "55vw" }}>
 
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
                     validate={validate}
                     render={({ handleSubmit }) => (
-                        <form onSubmit={handleSubmit}><div className="create-provider-form">
+                        <form onSubmit={handleSubmit}>
+                            <div className="text-center">
                             <h5>Ingrese los datos del nuevo provedor</h5>
+                            </div>
+                            <div className="create-provider-form">
+                            
                             <Field
                                 name="nit"
                                 render={({ input, meta }) => (
@@ -372,7 +376,7 @@ export default function Providers() {
                                             <label htmlFor="nit" className={classNames({ "p-error": isFormFieldValid("nit") })}>
                                                Nit o indicador*
                                             </label>
-                                            <InputText id="nit" {...input} placeholder="Nit o indicador del provedor" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} tooltip="Si es proveedor internacinal, por favor ingrese un indentificador para este proveedor" />
+                                            <InputText id="nit" {...input} placeholder="Nit o indicador del provedor" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} tooltip="Si es proveedor internacinal, por favor ingrese un indentificador para este proveedor" />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -385,7 +389,7 @@ export default function Providers() {
                                     <div className="field">
                                         <span className="create-sale-form__span">
                                             <label htmlFor="companyName" className={classNames({ "p-error": isFormFieldValid("companyName") })}>Nombre de la empresa*</label>
-                                            <InputText id="companyName" {...input} placeholder="Nombre de la empresa" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            <InputText id="companyName" {...input} placeholder="Nombre de la empresa" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -398,7 +402,7 @@ export default function Providers() {
                                     <div className="field">
                                         <span className="create-sale-form__span">
                                             <label htmlFor="contactName" className={classNames({ "p-error": isFormFieldValid("contactName") })}>Persona de contacto*</label>
-                                            <InputText id="contactName" {...input} placeholder="Persona de contacto" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            <InputText id="contactName" {...input} placeholder="Persona de contacto" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -411,7 +415,7 @@ export default function Providers() {
                                     <div className="field">
                                         <span className="create-sale-form__span">
                                             <label htmlFor="telephone" className={classNames({ "p-error": isFormFieldValid("telephone") })}>Telefono de contacto*</label>
-                                            <InputText id="telephone" {...input} placeholder="Telefono de contacto" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            <InputText id="telephone" {...input} placeholder="Telefono de contacto" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -424,7 +428,7 @@ export default function Providers() {
                                     <div className="field">
                                         <span className="create-sale-form__span">
                                             <label htmlFor="adress" className={classNames({ "p-error": isFormFieldValid("adress") })}>Dirección de la emptresa*</label>
-                                            <InputText id="adress" {...input} placeholder="Direccion de la empresa" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            <InputText id="adress" {...input} placeholder="Direccion de la empresa" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -437,7 +441,7 @@ export default function Providers() {
                                     <div className="field">
                                         <span className="create-sale-form__span">
                                             <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Email contacto*</label>
-                                            <InputText id="email" {...input} placeholder="Email contacto" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            <InputText id="email" {...input} placeholder="Email contacto" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -450,7 +454,7 @@ export default function Providers() {
                                     <div className="field">
                                         <span className="create-sale-form__span">
                                             <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}>País de origen proveedor*</label>
-                                            <InputText id="country" {...input} placeholder="Pais origen proveedor" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                            <InputText id="country" {...input} placeholder="Pais origen proveedor" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-provider-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -458,7 +462,7 @@ export default function Providers() {
                                 )}
                             />
                         </div>
-                            <div>
+                            <div className="create-provider-form__button">
                                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                 <Button label="Crear provedor" icon="pi pi-check" />
                             </div>
