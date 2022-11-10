@@ -70,7 +70,7 @@ export const TableProducts = ({ setProductSelected, products }) => {
         }
         let url = imagesData[rowData.id];
         
-        return <img src={`${config.baseURL}${url}`} onError={(e) => (e.target.src = "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")} alt={rowData.id} className={!classBool ? "product-image" : "info-image"} />;
+        return <img src={`${config.baseURL}${url}`} onError={(e) => (e.target.src =`${config.baseURL}/public/images/no-pictures.png`)} alt={rowData.id} className={!classBool ? "product-image" : "info-image info-image-not-photo"} />;
     };
 
     const actionBodyTemplateDetail = (rowData) => {

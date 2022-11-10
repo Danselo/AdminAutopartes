@@ -69,10 +69,25 @@
 }
 .create-product-form__InputTextarea{
     display: flex;
-    justify-content: flex-start;
-    /* width: 40rem; */
+    /* justify-content: flex-start;
+    /* width: 40rem; 
     align-items: center;
-    margin: 0 0 0 5rem;
+    margin: 0 0 0 5rem; */
+    justify-content: center;
+
+}
+.create-product-form__InputTextarea_span{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
 
 }
 
+.edit-product-form__img{
+    margin: 2rem 0 2rem 0;
+}
+
+.create-product-buttons-form{
+    display: flex;
+    justify-content: flex-end;
+}

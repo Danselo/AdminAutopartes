@@ -18,6 +18,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
 import config from "../../config/config";
+import { ImageProductService } from "../../service/ImageProductService";
+const _imageProductService = new ImageProductService();
 const _categoryService = new CategoryService();
 const _productService = new ProductService();
 const _vehicleService = new VehicleService();
@@ -27,9 +29,10 @@ export default function Products() {
     const [productSelected, setProductSelected] = useState({});
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogUploadImages, setDisplayDialogUploadImages] = useState(false);
+    const [displayDialogEditUploadImages, setDisplayDialogEditUploadImages] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [productName, setProductName] = useState("");
+    // const [productName, setProductName] = useState("");
     const [productReferenceId, setProductReferenceId] = useState("");
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -37,10 +40,14 @@ export default function Products() {
     const [vehicles, setVehicles] = useState([]);
     const [selectedVehicles, setSelectedVehicles] = useState([]);
     const [selectedVehiclesOfProductEdit, setSelectedVehiclesOfProductEdit] = useState([]);
+    const [imagesData, setImagesData] = useState({})
     
     const onUpload = () => {
         toast.current.show({ severity: "info", summary: "Success", detail: "Archivo cargado" });
         setDisplayDialogUploadImages(false);
+        setDisplayDialogEditUploadImages(false)
+        setProductSelected({});
+        loadProducts()
     };
 
     let arraySelectedVehiclesOfProductEdit = selectedVehiclesOfProductEdit.map((objeto) => {
@@ -52,6 +59,17 @@ export default function Products() {
 
         return { idProduct: productSelected.id, idVehicle: objeto.id };
     });
+
+    useEffect(() => {
+        _imageProductService.getImages().then((images) => {
+            let imagesDataAux = {}
+            images.forEach((image) => {
+                imagesDataAux[image.idProduct] = image.url;
+            });
+            setImagesData(imagesDataAux);
+
+        });
+    }, []);
 
     const leftContents = (
         <React.Fragment>
@@ -87,13 +105,13 @@ export default function Products() {
 
     const editProductAlert = (data, form) => {
         confirmDialog({
-            message: "¿Está seguro que desea editar esta producto?",
+            message: "¿Está seguro que desea editar este producto?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
-            // accept: () => EditProduct(data, form),
-            accept: () => setDisplayDialogUploadImages(true),
+            accept: () => EditProduct(data, form),
+            // accept: () => setDisplayDialogUploadImages(true),
             reject: () => setDisplayDialogEdit(false),
         });
     };
@@ -180,10 +198,10 @@ export default function Products() {
         setDisplayDialogCreate(false);
     };
 
-    const onHideDialogCancelEdit = () => {
-        cancelCreate();
-        setDisplayDialogEdit(false);
-    };
+    // const onHideDialogCancelEdit = () => {
+    //     cancelCreate();
+    //     setDisplayDialogEdit(false);
+    // };
 
     function getCategories() {
         _categoryService.getCategories().then((response) => {
@@ -207,15 +225,23 @@ export default function Products() {
 
     function EditProduct(data, form) {
         let id = productSelected.id;
+        let productData = {
+            id: data.productReferenceId,
+            name: data.productName,
+            description: data.productDescription,
+            idCategory: data.selectedProductCategory.id,
+            idBrand: data.selectedProductBrand.id,
+        };
         _productService
-            .updateProduct(productSelected)
+            .updateProduct(productData)
             .then(() => {
                 console.log(productSelected.id);
                 console.log(arraySelectedVehiclesOfProductEdit);
                 _productService.updateVehiclesOfProduct(id, arraySelectedVehiclesOfProductEdit).then(() => {
-                    setProductSelected({});
                     loadProducts();
                     loadVehicles();
+                    setDisplayDialogEditUploadImages(true);
+
                     toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto editado exitosamente", life: 3000 });
                 });
             })
@@ -250,7 +276,7 @@ export default function Products() {
                             console.log("Algo salio mal al agregar un vehículo");
                         });
                 });
-                setProductName("");
+                
                 loadProducts();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto creado exitosamente", life: 3000 });
                 setDisplayDialogCreate(false);
@@ -270,15 +296,15 @@ export default function Products() {
         _vehicleService.getVehicles().then((data) => setVehicles(data));
     };
 
-    const onChangeProductSelectedEditForm = (eventOnChange) => {
-        console.log(eventOnChange.target);
-        const productUpdated = {
-            ...productSelected,
-            [eventOnChange.target.name]: eventOnChange.target.value,
-        };
-        console.log(productUpdated);
-        setProductSelected(productUpdated);
-    };
+    // const onChangeProductSelectedEditForm = (eventOnChange) => {
+    //     console.log(eventOnChange.target);
+    //     const productUpdated = {
+    //         ...productSelected,
+    //         [eventOnChange.target.name]: eventOnChange.target.value,
+    //     };
+    //     console.log(productUpdated);
+    //     setProductSelected(productUpdated);
+    // };
     useEffect(() => {
         _productService.getProducts().then((response) => {
             setProducts(response);
@@ -326,19 +352,26 @@ export default function Products() {
     const renderFooterDialog = () => {
         return (
             <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => displayDialogUploadImages(false)} className="p-button-text" />
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadImages(false)} className="p-button-text" />
+            </div>
+        );
+    };
+    const renderFooterDialogEdit = () => {
+        return (
+            <div>
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogEditUploadImages(false)} className="p-button-text" />
             </div>
         );
     };
 
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar producto" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
-    };
+    // const renderFooterDialogEdit = () => {
+    //     return (
+    //         <div>
+    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+    //             <Button label="Editar producto" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+    //         </div>
+    //     );
+    // };
 
     const initialValues = {
         productReferenceId: "",
@@ -434,7 +467,24 @@ export default function Products() {
     };
     const chooseOptions = { label: "Seleccionar imagen", icon: "pi pi-fw pi-images", className: "p-button-raised" };
     const uploadOptions = { label: "Guardar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
+    const uploadOptionsEdit = { label: "Editar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
     const cancelOptions = { label: "Cancelar", icon: "pi pi-fw pi-times", className: "p-button-raised" };
+
+    const photoBodyTemplate = (rowData, info) => {
+        let classBool;
+        if (!rowData.id ) {
+            return null
+        }
+        if (info) {
+            classBool = false;
+        } else {
+            classBool = true;
+        }
+        let url = imagesData[rowData.id];
+        
+        return <img src={`${config.baseURL}${url}`} onError={(e) => (e.target.src =`${config.baseURL}/public/images/no-pictures.png`)} alt={rowData.id} className={!classBool ? "product-image" : "info-image"} />;
+    };
+    
     return (
         <div>
             <Toast ref={toast} />
@@ -448,6 +498,7 @@ export default function Products() {
             <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
                 <div className="create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
+                    <p>Por favor diligencie todos los campos del formulario</p>
                     <Form
                         onSubmit={createProductAlert}
                         initialValues={initialValues}
@@ -517,7 +568,7 @@ export default function Products() {
                                         name="productDescription"
                                         render={({ input, meta }) => (
                                             <div className="create-product-form__InputTextarea">
-                                                <span className="create-product-form__span">
+                                                <span className="create-product-form__InputTextarea_span">
                                                     <label htmlFor="productDescription" className={classNames({ "p-error": isFormFieldValid("productDescription") })}>
                                                         Descripción*
                                                     </label>
@@ -529,7 +580,7 @@ export default function Products() {
                                     />
 
                                     <h5>Seleccione los vehiculos compatibles con el producto</h5>
-                                    <div className="picklist-products">
+                                    <div className="picklist-vehicles">
                                         <div className="card">
                                             <PickList
                                                 source={vehicles}
@@ -547,9 +598,9 @@ export default function Products() {
                                         </div>
                                         {selectedVehicles.length > 0 ? <small className="p-success">Vehículo(s) seleccionado(s) exitosamente</small> : <small className="p-error">*Debe seleccionar al menos un vehículo</small>}
                                     </div>
-                                    <div className="create-product-buttons">
+                                    <div className="create-product-buttons-form">
+                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" className="p-button-text" label="Cancelar"></Button>
                                         <Button type="submit" icon="pi pi-check" label="Crear producto" className="mr-2"></Button>
-                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" label="Cancelar"></Button>
                                     </div>
                                 </form>
                             </>
@@ -560,6 +611,7 @@ export default function Products() {
 
             <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
                 <div className="create-product-form">
+                    
                     <Form
                         onSubmit={onHideDialogEdit}
                         initialValues={initialValuesEdit}
@@ -576,7 +628,7 @@ export default function Products() {
                                                         <label htmlFor="productReferenceId" className={classNames({ "p-error": isFormFieldValid("productReferenceId"), "create-product-form__label": true })}>
                                                             Referencia*
                                                         </label>
-                                                        <InputText id="productReferenceId" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Referencia del producto" />
+                                                        <InputText disabled id="productReferenceId" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Referencia del producto" />
                                                     </span>
                                                     {getFormErrorMessage(meta)}
                                                 </div>
@@ -629,7 +681,7 @@ export default function Products() {
                                         name="productDescription"
                                         render={({ input, meta }) => (
                                             <div className="create-product-form__InputTextarea">
-                                                <span className="create-product-form__span">
+                                                <span className="create-product-form__InputTextarea_span">
                                                     <label htmlFor="productDescription" className={classNames({ "p-error": isFormFieldValid("productDescription") })}>
                                                         Descripción*
                                                     </label>
@@ -662,9 +714,9 @@ export default function Products() {
                                         </div>
                                         {selectedVehicles.length > 0 || selectedVehiclesOfProductEdit.length > 0 ? <small className="p-success">Vehículo(s) seleccionado(s) exitosamente</small> : <small className="p-error">*Debe seleccionar al menos un vehículo</small>}
                                     </div>
-                                    <div className="create-product-buttons">
-                                        <Button type="submit" icon="pi pi-check" label="Editar producto" className="mr-2"></Button>
-                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" label="Cancelar"></Button>
+                                    <div className="create-product-buttons-form">
+                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" className="p-button-text" label="Cancelar"></Button>
+                                        <Button type="submit" icon="pi pi-check" label="Guardar e ir a editar imagen" className="mr-2"></Button>
                                     </div>
                                 </form>
                             </>
@@ -672,7 +724,7 @@ export default function Products() {
                     />
                 </div>
             </Dialog>
-            <Dialog header="Editar la imagen del producto" visible={displayDialogUploadImages} onHide={() => displayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+            <Dialog header="Seleccionar la imagen del producto" visible={displayDialogUploadImages} onHide={() => setDisplayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
                 <div className="create-product-form">
                     <h5>Seleccione las imagenes del producto</h5>
                     <FileUpload
@@ -692,7 +744,31 @@ export default function Products() {
                     />
                 </div>
             </Dialog>
-
+            <Dialog header="Editar la imagen del producto" visible={displayDialogEditUploadImages} onHide={() => setDisplayDialogEditUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
+                <div className="create-product-form">
+                    <h5>Imagen actual del producto</h5>
+                    <div className="edit-product-form__img">
+                        {photoBodyTemplate(productSelected)}
+                    </div>
+                    <p>Si desea modificar la imagen, seleccione una nueva, por el contrario, cierre este dialogo con normalidad</p>
+                    <FileUpload
+                        name="photo"
+                        url={`${config.baseURL}/imagesProducts/create/${productSelected.id}`}
+                        onUpload={onUpload}
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        chooseOptions={chooseOptions}
+                        uploadOptions={uploadOptionsEdit}
+                        cancelOptions={cancelOptions}
+                        // customUpload
+                        // uploadHandler={customBase64Uploader}
+                        // mode="basic"
+                        // auto={true}
+                        emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
+                    />
+                </div>
+            </Dialog>
+                                        
             {/* <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
