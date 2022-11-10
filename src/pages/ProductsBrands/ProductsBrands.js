@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { TableProductsBrands } from "../../components/TableProductsBrands/TableProductsBrands";
+import { TableProductsOfBrandSelected } from "../../components/TableProductsBrands/TableProductsOfBrandsSelected";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
@@ -14,12 +15,15 @@ const _productsBrandsService = new ProductsBrandsService();
 
 export default function ProductsBrand() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
+    const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
     const [productsBrandName, setProductsBrandsName] = useState("");
     const [newProductsBrandsName, setNewProductsBrandsName] = useState("");
     const [productsbrandsIdSelected, setProductsBrandsIdSelected] = useState("");
     const [productsBrandNameSelected, setProductsBrandsNameSelected] = useState("");
+    const [brandSelected, setBrandSelected] = useState({});
+    const [productsWhereBrand, setProductsWhereBrand] = useState({});
     const [productsbrands, setProductsBrands] = useState([]);
 
     const leftContents = (
@@ -32,11 +36,38 @@ export default function ProductsBrand() {
 
     const rightContents = (
         <React.Fragment>
-            <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
+            <Button
+                label={brandSelected.status ? "Desactivar" : "Activar"}
+                className={brandSelected.status ? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
+                disabled={!brandSelected.name}
+                icon={brandSelected.status ? "pi pi-eye-slash" : "pi pi-eye"}
+                onClick={() => {
+                    productsWhereBrand ? setDisplayDialogStatus(true) : onChangeBrandStatusDialog(brandSelected);
+                }}
+            />
         </React.Fragment>
     );
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
+    };
+    const onChangeBrandStatusDialog = (productBrandData) => {
+        let brandState;
+        if (productBrandData.status === false) {
+            brandState = "activar";
+        } else {
+            brandState = "desactivar";
+        }
+
+        confirmDialog({
+            message: "¿Esta seguro que desea " + brandState + " esta marca?",
+            header: "Cambio de estado de la marca " + productBrandData.name,
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: brandState,
+            rejectLabel: "Cancelar",
+            accept: () => changeBrandStatus(productBrandData),
+            reject,
+        });
     };
     const createProductsBrandsAlert = (productsBrandName, form) => {
         confirmDialog({
@@ -112,23 +143,28 @@ export default function ProductsBrand() {
         cancelCreate();
         setDisplayDialogCreate(false);
     };
-    // const renderFooterDialog = () => {
-    //     return (
-    //         <div>
-    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-    //             <Button label="Crear marca" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-    //         </div>
-    //     );
-    // };
+   
+    function changeBrandStatus(productBrandData) {
+        let newState;
+        console.log(productBrandData.status)
+        if (productBrandData.status === false) {
 
-    // const renderFooterDialogEdit = () => {
-    //     return (
-    //         <div>
-    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-    //             <Button label="Editar marca" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-    //         </div>
-    //     );
-    // };
+            newState = true;
+        } else if (productBrandData.status === true) {
+            newState = false;
+        }
+        console.log("estado",newState)
+        console.log(productBrandData);
+        _productsBrandsService.changeStatusOfBrand(productBrandData.id, {status: newState}).then((response) => {
+            loadProductsBrands();
+            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+            setDisplayDialogStatus(false)
+        }).catch((error) => {
+            toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
+            setDisplayDialogStatus(false)
+        });
+    }
+
     function EditProductsBrands(id, newName, form) {
         _productsBrandsService.updateProductsBrands(id, newName)
             .then(() => {
@@ -167,6 +203,19 @@ export default function ProductsBrand() {
                 console.log(e);
             });
     }
+
+    useEffect(() => {
+        if (brandSelected.id !== undefined) {
+            _productsBrandsService
+                .getProductsWhereBrand(brandSelected.id)
+                .then((response) => {
+                    setProductsWhereBrand(response);
+                })
+                .catch((e) => {
+                    console.log(e, "No se encontraron productos");
+                });
+        }
+    }, [brandSelected]);
 
     const loadProductsBrands = () => {
         _productsBrandsService.getProductsBrands().then((response) => {
@@ -253,7 +302,14 @@ export default function ProductsBrand() {
 
         return isFormFieldValid(meta) ? <small className="p-error">{meta.error}</small> : <small className="p-error"></small>;
     };
-
+    const renderFooterDialog = () => {
+        return (
+            <div>
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                <Button label={brandSelected.status ? "Desactivar" : "Activar"} icon="pi pi-check" onClick={() => changeBrandStatus(brandSelected)} autoFocus />
+            </div>
+        );
+    };
     return (
         <div>
             <Toast ref={toast} />
@@ -333,8 +389,13 @@ export default function ProductsBrand() {
                 />
             </Dialog>
 
+            <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") +" la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <p>Los siguientes productos estan asociados a esta marca</p>                
+                <TableProductsOfBrandSelected className="table-products" products={productsWhereBrand} />
+            </Dialog>
 
-            <TableProductsBrands className="table-products" productsbrands={productsbrands} setProductsBrandsIdSelected={setProductsBrandsIdSelected} setProductsBrandsNameSelected={setProductsBrandsNameSelected} />
+
+            <TableProductsBrands className="table-products" productsbrands={productsbrands} setBrandSelected={setBrandSelected} setProductsBrandsIdSelected={setProductsBrandsIdSelected} setProductsBrandsNameSelected={setProductsBrandsNameSelected} />
         </div>
     );
 }

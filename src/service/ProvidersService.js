@@ -9,7 +9,7 @@ export class ProviderService {
         return axios.get(baseProvidersURL).then(res => res.data);
     }
 
-    createProvider(nit, companyName, contactName, telephone, adress, email, country) {
+    createProvider(nit, companyName, contactName, telephone, adress, email, country, status) {
         return axios
         .post(baseProvidersURL + '/create', {
             nit,
@@ -18,7 +18,8 @@ export class ProviderService {
             telephone, 
             adress,
             email,
-            country
+            country,
+            status
             
           }).then((respuesta)=>{return respuesta.data});
       
