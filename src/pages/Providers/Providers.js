@@ -45,7 +45,7 @@ export default function Providers() {
     const createProviderAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta provedor?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -57,7 +57,7 @@ export default function Providers() {
     const editProviderAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta provedor?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -68,7 +68,7 @@ export default function Providers() {
     const deleteProviderAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea eliminar esta Categoria?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
@@ -79,7 +79,7 @@ export default function Providers() {
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -92,7 +92,7 @@ export default function Providers() {
     const cancelEdit = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No editar",
@@ -158,7 +158,7 @@ export default function Providers() {
             .then(() => {
                 setProviderSelected({});
                 loadProviders();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "proveedor editado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "proveedor editado exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal al editar el proveedor", life: 3000 });
@@ -184,7 +184,7 @@ export default function Providers() {
                 setProviderAdress("");
                 setProviderCountry("");
                 loadProviders();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Proveedor creado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Proveedor creado exitosamente", life: 3000 });
             })
             .catch((e) => {
                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, al crear el proveedor", life: 3000 });
@@ -196,7 +196,7 @@ export default function Providers() {
         _providerService
             .deleteProvider(provider.id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Proveedor eliminado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Proveedor eliminado exitosamente", life: 3000 });
                 loadProviders();
                 setProviderSelected({});
 

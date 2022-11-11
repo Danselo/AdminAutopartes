@@ -132,7 +132,7 @@ export default function Roles() {
     const createRolAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta rol?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -144,7 +144,7 @@ export default function Roles() {
     const editRolAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta rol?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -152,21 +152,11 @@ export default function Roles() {
             reject: () => setDisplayDialogEdit(false),
         });
     };
-    const deleteRolAlert = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea eliminar este rol?",
-            header: "Confirmacion",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Eliminar",
-            rejectLabel: "Cancelar",
-            accept: () => deleteRol(rolSelected),
-            reject: () => setDisplayDialogCreate(true),
-        });
-    };
+
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -257,21 +247,7 @@ export default function Roles() {
             });
         setRolName("");
         loadRoles();
-        toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol creado exitosamente", life: 3000 });
-    }
-
-    function deleteRol(rol) {
-        _rolService
-            .deleteRol(rol.id)
-            .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol eliminado exitosamente", life: 3000 });
-                loadRoles();
-                setRolSelected({});
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
+        toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol creado exitosamente", life: 3000 });
     }
 
     const loadRoles = () => {
@@ -308,7 +284,7 @@ export default function Roles() {
         return (
             <div>
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar rolo" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+                <Button label="Editar rol" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
             </div>
         );
     };

@@ -81,7 +81,7 @@ export default function Users() {
     const createUserAlert = (form, data) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta Usuario?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -93,7 +93,7 @@ export default function Users() {
     const editUserAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta Usuario?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -104,7 +104,7 @@ export default function Users() {
     const editUserStatusAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea cambiar el estado del Usuario?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Cambiar estado",
             rejectLabel: "Cancelar",
@@ -115,7 +115,7 @@ export default function Users() {
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -127,7 +127,7 @@ export default function Users() {
     const cancelEdit = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -192,7 +192,7 @@ export default function Users() {
             .then(() => {
                 setUserSelected({});
                 loadUsers();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Usuario  editado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Usuario  editado exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -246,7 +246,7 @@ export default function Users() {
             .then(() => {
                 setUserSelected({});
                 loadUsers();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "El estado del usuario se cambio exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del usuario se cambio exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -269,7 +269,7 @@ export default function Users() {
             .createUser(data.email, data.password, data.name, data.lastname, userStatus, data.idRol.id)
             .then(() => {
                 loadUsers();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Usuario creado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Usuario creado exitosamente", life: 3000 });
                 form.restart();
             })
             .catch((e) => {
@@ -449,7 +449,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}></label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electronico</label>
+                                                <br />
                                                 <InputText id="email" {...input} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -462,7 +463,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}></label>
+                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}>Contraseña</label>
+                                                <br />
                                                 <Password id="password" {...input} placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
@@ -475,7 +477,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}></label>
+                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}>Confirmar Contraseña</label>
+                                                <br />
                                                 <Password id="confirmPassword" {...input} placeholder="Confirmar Contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
@@ -489,7 +492,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}></label>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>Nombre</label>
+                                                <br />
                                                 <InputText id="name" {...input} placeholder="Digite el Nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -502,7 +506,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}></label>
+                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}>Apellido</label>
+                                                <br />
                                                 <InputText id="lastname" {...input} placeholder="Digite el apellido" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -515,7 +520,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}></label>
+                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}>Rol </label>
+                                                <br />
                                                 <Dropdown id="idRol" {...input}  options={roles} optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -546,7 +552,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}></label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electronico</label>
+                                                <br />
                                                 <InputText id="email" {...input}  onChange={onEditUserSelected} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -559,7 +566,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}></label>
+                                                <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}>Contraseña</label>
+                                                <br />
                                                 <Password id="password" {...input} onChange={onEditUserSelected}  placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
@@ -586,7 +594,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}></label>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>Nombre</label>
+                                                <br />
                                                 <InputText id="name" {...input}  onChange={onEditUserSelected} placeholder="Digite el Nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -599,7 +608,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}></label>
+                                                <label htmlFor="lastname" className={classNames({ "p-error": isFormFieldValid("lastmane") })}>Apellido</label>
+                                                <br />
                                                 <InputText id="lastname" {...input}  onChange={onEditUserSelected} placeholder="Digite el apellido" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
@@ -612,7 +622,8 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}></label>
+                                                <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}>Rol</label>
+                                                <br />
                                                 <Dropdown id="idRol" {...input} options={roles}   optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />

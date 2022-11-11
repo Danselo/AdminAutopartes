@@ -43,7 +43,7 @@ export default function Vehicles() {
     const createVehicleAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta vehiculo?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -55,7 +55,7 @@ export default function Vehicles() {
     const editVehicleAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta vehiculo?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -66,7 +66,7 @@ export default function Vehicles() {
     const deleteVehicleAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea eliminar esta Categoria?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
@@ -77,7 +77,7 @@ export default function Vehicles() {
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -90,7 +90,7 @@ export default function Vehicles() {
     const cancelEdit = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -160,7 +160,7 @@ export default function Vehicles() {
             .then(() => {
                 setVehicleSelected({});
                 loadVehicles();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoria edita exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -181,7 +181,7 @@ export default function Vehicles() {
                 setVehicleModel("");
                 setSelectedVehicleBrand("");
                 loadVehicles();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoria creada exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -193,7 +193,7 @@ export default function Vehicles() {
         _vehicleService
             .deleteVehicle(vehicle.id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria eliminada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoria eliminada exitosamente", life: 3000 });
                 loadVehicles();
                 setVehicleSelected({});
 

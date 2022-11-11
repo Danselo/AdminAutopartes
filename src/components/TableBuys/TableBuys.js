@@ -14,16 +14,11 @@ export const TableBuys = ({ setBuySelected, buys }) => {
     let emptyBuyInfo = {
         createdAt: null,
         datePurchase: null,
-        discountsPercentage: 0,
         id: null,
         idProvider: null,
         invoiceUrl: null,
-        ivaPercentage: 0,
         provider: {},
-        shippingPrice: 0,
         status: true,
-        totalDiscounts: 0,
-        totalIva: 0,
         totalPurchase: 0,
     };
 
@@ -32,6 +27,8 @@ export const TableBuys = ({ setBuySelected, buys }) => {
     const [TableBuysSelected, setTableBuysSelected] = useState([]);
     const [buyInfo, setBuyInfo] = useState(emptyBuyInfo);
     const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
+    const [buysDetail, setBuyDetails] = useState([]);
+    
 
     useEffect(() => {
         if (TableBuysSelected) {
@@ -60,6 +57,11 @@ export const TableBuys = ({ setBuySelected, buys }) => {
         setBuyInfo({ ...info });
         setBuyInfoDialog(true);
     };
+    useEffect(() => {
+        if (buyInfo.id != null) {
+            getBuyDetail(buyInfo.id);
+        }
+    }, [buyInfo]);
 
     useEffect(() => {
         if (buyInfo.id != null) {
@@ -67,7 +69,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
         }
     }, [buyInfo]);
 
-    console.log(productsDetailOfBuy);
+
     
     const infoBuyDialogFooter = (
         <React.Fragment>
@@ -83,6 +85,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
         );
     };
 
+    console.log(buyInfo);
     return (
         <>
             <Dialog visible={buyInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoBuyDialogFooter} onHide={hideDialog}>
@@ -112,24 +115,8 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                             </strong>
                             <p>{buyInfo.totalPurchase}</p>
                         </div>
-                        <div>
-                            <strong>
-                                <p>Precio de envio</p>
-                            </strong>
-                            <p>{buyInfo.shippingPrice}</p>
-                        </div>
-                        <div>
-                            <strong>
-                                <p>Total IVA</p>
-                            </strong>
-                            <p>{buyInfo.totalIva}</p>
-                        </div>
-                        <div>
-                            <strong>
-                                <p>Total descuentos</p>
-                            </strong>
-                            <p>{buyInfo.totalDiscounts}</p>
-                        </div>
+
+
                         <div>
                             <strong>
                                 <p>Factura</p>
@@ -181,6 +168,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                                         <p>Id producto</p>
                                     </strong>
                                     <p>{element.idProduct}</p>
+
                                 </div>
                                 <div className = "dialog-buy-panel-products__detail-item"   >                                <strong><p>Cantidad</p></strong>
                                     
@@ -193,20 +181,8 @@ export const TableBuys = ({ setBuySelected, buys }) => {
 
                                     <p>{element.netPrice}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item">
-                                    <strong>
-                                        <p>Porcentaje IVA</p>
-                                    </strong>
-
-                                    <p>{element.ivaPercentage}</p>
-                                </div>
-                                <div className = "dialog-buy-panel-products__detail-item">
-                                    <strong>
-                                        <p>Porcentaje Descuento</p>
-                                    </strong>
-
-                                    <p>{element.discountsPercentage}</p>
-                                </div>
+                  
+            
                                 <div className = "dialog-buy-panel-products__detail-item">
                                     <strong>
                                         {" "}

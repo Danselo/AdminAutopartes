@@ -12,7 +12,7 @@ import "./sales.css";
 export default function SalesDetails() {
     const toast = useRef(null);
     const accept = () => {
-        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Venta finalizada exitosamente", life: 3000 });
+        toast.current.show({ severity: "info", summary: "Confirmación", detail: "Venta finalizada exitosamente", life: 3000 });
     };
 
     const reject = () => {
@@ -20,7 +20,7 @@ export default function SalesDetails() {
     };
 
     const accept_anular = () => {
-        toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Venta anulada exitosamente", life: 3000 });
+        toast.current.show({ severity: "info", summary: "Confirmación", detail: "Venta anulada exitosamente", life: 3000 });
     };
 
     const reject_anular = () => {
@@ -30,7 +30,7 @@ export default function SalesDetails() {
     const anular_venta = () => {
         confirmDialog({
             message: "¿Esta seguro que desea anular esta venta?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptClassName: "p-button-danger",
             accept: accept_anular,
@@ -41,7 +41,7 @@ export default function SalesDetails() {
     const cambiar_estado = () => {
         confirmDialog({
             message: "¿Esta seguro que desea cambiar el estado de la venta?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptClassName: "p-button-danger",
             accept,

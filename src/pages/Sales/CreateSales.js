@@ -167,7 +167,7 @@ export default function CreateSales() {
     const create = (form, data) => {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta compra?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -179,7 +179,7 @@ export default function CreateSales() {
     const cancelBuy = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "Cancelar compra",

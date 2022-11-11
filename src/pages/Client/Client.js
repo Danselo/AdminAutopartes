@@ -103,7 +103,7 @@ export default function Client() {
     const createClientAlert = (data, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta Cliente?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -115,7 +115,7 @@ export default function Client() {
     const editClientAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta Cliente?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -126,7 +126,7 @@ export default function Client() {
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -185,7 +185,7 @@ export default function Client() {
             .then(() => {
                 setClientSelected({});
                 loadClients();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cliente editado exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -205,7 +205,7 @@ export default function Client() {
             .createClient(selectedClientUser.id, data.name, data.name, data.documentType.name, data.document, data.telephone, data.email, data.country, data.department, data.city, data.neightboorhood, data.adress, data.indications, clientStatus)
             .then(() => {
                 loadClients();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Usuario creado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Usuario creado exitosamente", life: 3000 });
                 form.restart();
             })
             .catch((e) => {
@@ -237,7 +237,7 @@ export default function Client() {
     const editClientStatusAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea cambiar el estado del Cliente?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Cambiar estado",
             rejectLabel: "Cancelar",
@@ -285,7 +285,7 @@ export default function Client() {
             .then(() => {
                 setClientSelected({});
                 loadClients();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -347,7 +347,14 @@ export default function Client() {
 
         if (!data.document) {
             errors.document = "El documento es requerido";
-        }
+        } else
+        clients.forEach((element) => {
+            const clientDocument = element.document;
+
+            if (data.document === clientDocument) {
+                errors.document = "El documento ya existe";
+            }
+        });
         if (!data.email) {
             errors.email = "El email es requerido";
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
@@ -402,7 +409,7 @@ export default function Client() {
         department: clientSelected.department,
         neightboorhood: clientSelected.neightboorhood,
         city: clientSelected.city,
-        adress: clientSelected.address,
+        address: clientSelected.address,
         indications: clientSelected.indications,
     };
 
@@ -488,7 +495,7 @@ export default function Client() {
                 <h3>Gestión de Clientes</h3>
             </div>
             <Toolbar left={leftContents} right={rightContents} />
-            <Dialog header="Crear un nuevo Cliente" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
+            <Dialog header="Crear un nuevo Cliente" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "60vw" }}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
@@ -496,7 +503,9 @@ export default function Client() {
                     render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit}>
                             <div className="create-client-form">
-                                <div className="create-sale-tittle__button">
+                            <div className="form-client-two">
+
+                                <div className="create-client-tittle__button">
                                     <Button
                                         type="button"
                                         icon="pi pi-search"
@@ -522,38 +531,44 @@ export default function Client() {
                                         <Column field="telephone" sortable header="Telefono"></Column>
                                     </DataTable>
                                 </OverlayPanel>
+                                    <Field
+                                        name="documentType"
+                                        render={({ input, meta }) => (
+                                            <div className="field">
+                                                <span>
+                                                    <label htmlFor="documentType" className={classNames({ "p-error": isFormFieldValid("documentType") })}>Tipo Documento</label>
+                                                    <br />
+                                                    <Dropdown value={setClientDocumentType} {...input} options={documentTypeOptions} optionLabel="name" placeholder="Tipo de documento" id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                </span>
+                                                <br />
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+                                    
+                                </div>
+                                <div className="form-client-two">
                                 <Field
-                                    name="documentType"
-                                    render={({ input, meta }) => (
-                                        <div className="field">
-                                            <span>
-                                                <label htmlFor="documentType" className={classNames({ "p-error": isFormFieldValid("documentType") })}></label>
-                                                <Dropdown value={setClientDocumentType} {...input} options={documentTypeOptions} optionLabel="name" placeholder="Tipo de documento" id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
-                                            </span>
-                                            <br />
-                                            {getFormErrorMessage(meta)}
-                                        </div>
-                                    )}
-                                />
-                                <Field
-                                    name="document"
-                                    render={({ input, meta }) => (
-                                        <div className="field">
-                                            <span>
-                                                <label htmlFor="document" className={classNames({ "p-error": isFormFieldValid("document") })}></label>
-                                                <InputText id="document" {...input} placeholder="Digite el documento" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
-                                            </span>
-                                            <br />
-                                            {getFormErrorMessage(meta)}
-                                        </div>
-                                    )}
-                                />
-                                <Field
+                                        name="document"
+                                        render={({ input, meta }) => (
+                                            <div className="field">
+                                                <span>
+                                                    <label htmlFor="document" className={classNames({ "p-error": isFormFieldValid("document") })}>Documento</label>
+                                                    <br />
+                                                    <InputText id="document" {...input} placeholder="Digite el documento" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                </span>
+                                                <br />
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+                                    <Field
                                     name="name"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}></label>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>Nombre</label>
+                                                <br />
                                                 <InputText id="name" {...input} placeholder="Nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -561,25 +576,30 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
-                                    name="lastname"
-                                    render={({ input, meta }) => (
-                                        <div className="field">
-                                            <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("lastname") })}></label>
-                                                <InputText id="lastname" {...input} placeholder="Apellidos" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
-                                            </span>
-                                            <br />
-                                            {getFormErrorMessage(meta)}
-                                        </div>
-                                    )}
-                                />
-                                <Field
+
+                                </div>
+                                <div className="form-client-two">
+                                    <Field
+                                        name="lastname"
+                                        render={({ input, meta }) => (
+                                            <div className="field">
+                                                <span>
+                                                    <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("lastname") })}>Apellido</label>
+                                                    <br />
+                                                    <InputText id="lastname" {...input} placeholder="Apellidos" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                </span>
+                                                <br />
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+                                     <Field
                                     name="telephone"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="telephone" className={classNames({ "p-error": isFormFieldValid("telephone") })}></label>
+                                                <label htmlFor="telephone" className={classNames({ "p-error": isFormFieldValid("telephone") })}>Teléfono</label>
+                                                <br />
                                                 <InputText id="telephone" {...input} placeholder="Telefono" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -587,12 +607,16 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
+                     
+                                </div>
+                                <div className="form-client-two">
                                 <Field
                                     name="adress"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="adress" className={classNames({ "p-error": isFormFieldValid("adress") })}></label>
+                                                <label htmlFor="adress" className={classNames({ "p-error": isFormFieldValid("adress") })}>Dirección</label>
+                                                <br />
                                                 <InputText id="adress" {...input} placeholder="Dirección" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -600,12 +624,13 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                    <Field
                                     name="email"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}></label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electrónico</label>
+                                                <br />
                                                 <InputText id="email" {...input} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -613,12 +638,16 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
+                               
+                                </div>
+                                <div className="form-client-two">
                                 <Field
                                     name="country"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}></label>
+                                                <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}>País</label>
+                                                <br />
                                                 <InputText id="country" {...input} placeholder="Pais" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -626,12 +655,13 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                    <Field
                                     name="department"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="department" className={classNames({ "p-error": isFormFieldValid("department") })}></label>
+                                                <label htmlFor="department" className={classNames({ "p-error": isFormFieldValid("department") })}>Departamento</label>
+                                                <br />
                                                 <InputText id="department" {...input} placeholder="Departamento" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -639,25 +669,30 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
+                               
+                                </div>
+                                <div className="form-client-two">
                                 <Field
                                     name="city"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="city" className={classNames({ "p-error": isFormFieldValid("city") })}></label>
+                                                <label htmlFor="city" className={classNames({ "p-error": isFormFieldValid("city") })}>Ciudad</label>
+                                                <br />
                                                 <InputText id="city" {...input} placeholder="Ciudades" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
                                         </div>
                                     )}
-                                />
+                                /> 
                                 <Field
                                     name="neightboorhood"
                                     render={({ input, meta }) => (
                                         <div className="neightboorhood">
                                             <span>
-                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("neightboorhood") })}></label>
+                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("neightboorhood") })}>Vecindario</label>
+                                                <br />
                                                 <InputText id="neightboorhood" {...input} placeholder="Vecindario" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -665,13 +700,16 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
+                                </div>
+                               
                                 <Field
                                     name="indications"
                                     render={({ input, meta }) => (
                                         <div className="indications">
                                             <span>
-                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("indications") })}></label>
-                                                <InputTextarea id="indications" {...input} placeholder="Indicaciones" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("indications") })}>Indicaciones</label>
+                                                <br />
+                                                <InputTextarea id="indications" {...input} placeholder="Indicaciones" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClientsIndications: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -679,7 +717,7 @@ export default function Client() {
                                     )}
                                 />
                             </div>
-                            <div className="submit-user-create">
+                            <div className="submit-client-create">
                                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                 <Button label="Crear Cliente" icon="pi pi-check" autoFocus />
                             </div>
@@ -687,7 +725,7 @@ export default function Client() {
                     )}
                 />
             </Dialog>
-            <Dialog header="Editar cliente" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog header="Editar cliente" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "60vw" }}>
                 <Form
                     onSubmit={onSubmitEdit}
                     initialValues={initialValuesEdit}
@@ -695,7 +733,9 @@ export default function Client() {
                     render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit}>
                             <div className="create-client-form">
-                                <div className="create-sale-tittle__button">
+                            <div className="form-client-two">
+                                 <div className="create-client-tittle__button">
+                                
                                     <Button
                                         type="button"
                                         icon="pi pi-search"
@@ -726,7 +766,8 @@ export default function Client() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="documentType" className={classNames({ "p-error": isFormFieldValid("documentType") })}></label>
+                                                <label htmlFor="documentType" className={classNames({ "p-error": isFormFieldValid("documentType") })}>Tipo Documento</label>
+                                                <br />
                                                 <Dropdown {...input} options={documentTypeOptions} onChange={onEditClientSelected} optionLabel="name" placeholder="Tipo de documento" id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -734,12 +775,15 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                </div>
+                                <div className="form-client-two">
+                                    <Field
                                     name="document"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="document" className={classNames({ "p-error": isFormFieldValid("document") })}></label>
+                                                <label htmlFor="document" className={classNames({ "p-error": isFormFieldValid("document") })}>Documento</label>
+                                                <br />
                                                 <InputText id="document" {...input} placeholder="Digite el documento" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -752,7 +796,8 @@ export default function Client() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}></label>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>Nombre</label>
+                                                <br />
                                                 <InputText id="name" {...input} placeholder="Nombre" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -760,12 +805,16 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                </div>
+                               
+                                <div className="form-client-two">
+                                     <Field
                                     name="lastname"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("lastname") })}></label>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("lastname") })}>Apellido</label>
+                                                <br />
                                                 <InputText id="lastname" {...input} placeholder="Apellidos" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -778,7 +827,8 @@ export default function Client() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="telephone" className={classNames({ "p-error": isFormFieldValid("telephone") })}></label>
+                                                <label htmlFor="telephone" className={classNames({ "p-error": isFormFieldValid("telephone") })}>Teléfono</label>
+                                                <br />
                                                 <InputText id="telephone" {...input} placeholder="Telefono" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -786,13 +836,16 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
-                                    name="adress"
+                                </div>
+                                <div className="form-client-two">
+                                     <Field
+                                    name="address"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="adress" className={classNames({ "p-error": isFormFieldValid("adress") })}></label>
-                                                <InputText id="adress" {...input} placeholder="Dirección" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <label htmlFor="address" className={classNames({ "p-error": isFormFieldValid("address") })}>Dirección</label>
+                                                <br />
+                                                <InputText id="address" {...input} placeholder="Dirección" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -804,7 +857,8 @@ export default function Client() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}></label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electrónico</label>
+                                                <br />
                                                 <InputText id="email" {...input} placeholder="Correo Electronico" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -812,12 +866,15 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                </div>
+                                <div className="form-client-two">
+                                    <Field
                                     name="country"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}></label>
+                                                <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}>País</label>
+                                                <br />
                                                 <InputText id="country" {...input} placeholder="Pais" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -830,7 +887,8 @@ export default function Client() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="department" className={classNames({ "p-error": isFormFieldValid("department") })}></label>
+                                                <label htmlFor="department" className={classNames({ "p-error": isFormFieldValid("department") })}>Departamento</label>
+                                                <br />
                                                 <InputText id="department" {...input} placeholder="Departamento" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -838,12 +896,15 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                </div>
+                                <div className="form-client-two">
+                                    <Field
                                     name="city"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="city" className={classNames({ "p-error": isFormFieldValid("city") })}></label>
+                                                <label htmlFor="city" className={classNames({ "p-error": isFormFieldValid("city") })}>Ciudad</label>
+                                                <br />
                                                 <InputText id="city" {...input} placeholder="Ciudades" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -856,7 +917,8 @@ export default function Client() {
                                     render={({ input, meta }) => (
                                         <div className="neightboorhood">
                                             <span>
-                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("neightboorhood") })}></label>
+                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("neightboorhood") })}>Vecindario</label>
+                                                <br />
                                                 <InputText id="neightboorhood" {...input} onChange={onEditClientSelected} placeholder="Vecindario" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
@@ -864,13 +926,17 @@ export default function Client() {
                                         </div>
                                     )}
                                 />
+                                </div>
+                                
+                                
                                 <Field
                                     name="indications"
                                     render={({ input, meta }) => (
                                         <div className="indications">
                                             <span>
-                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("indications") })}></label>
-                                                <InputTextarea id="indications" {...input} onChange={onEditClientSelected} placeholder="Indicaciones" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <label htmlFor="neightboorhood" className={classNames({ "p-error": isFormFieldValid("indications") })}>Indicaciones</label>
+                                                <br />
+                                                <InputTextarea id="indications" {...input} onChange={onEditClientSelected} placeholder="Indicaciones" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClientsIndications: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -878,7 +944,7 @@ export default function Client() {
                                     )}
                                 />
                             </div>
-                            <div className="submit-user-create">
+                            <div className="submit-client-create">
                                 <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
                                 <Button label="Editar cliente" icon="pi pi-check" autoFocus />
                             </div>

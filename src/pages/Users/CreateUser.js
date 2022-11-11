@@ -26,7 +26,7 @@ export default function CreateUser() {
     const createUserConfirmation = () => {
         confirmDialog({
             message: "¿Esta seguro que desea crear este producto?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             accept: createUser,
             reject,
@@ -35,7 +35,7 @@ export default function CreateUser() {
     const confirm2 = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             accept: acceptModalConfirmation,
@@ -65,7 +65,7 @@ export default function CreateUser() {
         _userService.createUser(userAdress,userPassword,userName,userLastName,userStatus,selectedRol.id)
         .then((data)=>{
             const lifeTime = 3000;
-            toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario Creado exitosamente", life: lifeTime });
+            toast.current.show({ severity: "info", summary: "Confirmación", detail: "Usuario Creado exitosamente", life: lifeTime });
             setTimeout(() => {
                console.log('Redirigiendo a otra pagina') 
             }, lifeTime);

@@ -56,7 +56,6 @@ export const TableProducts = ({ setProductSelected, products }) => {
             <Column field="name" sortable header="Nombre"></Column>
             <Column field="category.name" sortable header="Categoria"></Column>
             <Column field="amount" className="table-product--column-gray" sortable header="Cantidad en stock"></Column>
-            <Column field="iva" className="table-product--column-gray" header="Iva"></Column>
             <Column field="price" className="table-product--column-gray" sortable header="Precio"></Column>
             <Column field="state" body={statusBodyTemplate} header="Estado"></Column>
         </DataTable>

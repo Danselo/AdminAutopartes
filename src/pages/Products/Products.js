@@ -160,7 +160,7 @@ export default function Products() {
     const createProductAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta vehiculo?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -172,7 +172,7 @@ export default function Products() {
     const editProductAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta vehiculo?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -184,7 +184,7 @@ export default function Products() {
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -227,7 +227,7 @@ export default function Products() {
             id: productData.id, 
             state: newState}).then((e) =>{
                 loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 }); 
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 }); 
             }).catch((error) =>{
                 toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
             })
@@ -311,7 +311,7 @@ export default function Products() {
                     setProductSelected({});
                     loadProducts();
                     loadVehicles();
-                    toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Producto editado exitosamente", life: 3000 });
+                    toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto editado exitosamente", life: 3000 });
                 });
             })
             .catch((e) => {
@@ -336,7 +336,7 @@ export default function Products() {
                 });
                 setProductName("");
                 loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Categoria creada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoria creada exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });

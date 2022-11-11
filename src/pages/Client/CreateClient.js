@@ -26,7 +26,7 @@ export default function CreateClient() {
     const createClientConfirmation = () => {
         confirmDialog({
             message: "¿Esta seguro que desea crear este cliente?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             accept: createClient,
             reject,
@@ -35,7 +35,7 @@ export default function CreateClient() {
     const confirm2 = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             accept: acceptModalConfirmation,
@@ -75,7 +75,7 @@ export default function CreateClient() {
         _clientService.createClient(selectedUser.id, clientName, clientLastName, clientDocumentType, clientDocument, clientTelephone, clientEmail, clientCountry, clientDepartment, clientCity, clientNeightBoordHood, clientAddress, clientIndications)
             .then((data) => {
                 const lifeTime = 3000;
-                toast.current.show({ severity: "info", summary: "Confirmacion", detail: "Usuario Creado exitosamente", life: lifeTime });
+                toast.current.show({ severity: "info", summary: "Confirmación", detail: "Usuario Creado exitosamente", life: lifeTime });
                 setTimeout(() => {
                     console.log('Redirigiendo a otra pagina')
                 }, lifeTime);

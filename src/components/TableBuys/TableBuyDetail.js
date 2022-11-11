@@ -511,7 +511,7 @@ useEffect(() => {
                                 render={({ meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="salePrice">Porcentaje de ganancia</label>
+                                            <label htmlFor="salePrice">Precio de venta</label>
                                             <InputNumber id="salePrice" value={salePrice}  mode="currency" disabled currency="COP" locale="es"  />
 
                                         </span>
@@ -627,7 +627,7 @@ useEffect(() => {
                                 render={({ meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="salePrice">Porcentaje de ganancia</label>
+                                            <label htmlFor="salePrice"> Precio de venta</label>
                                             <InputNumber id="salePrice" value={salePrice}  mode="currency" disabled currency="COP" locale="es"  />
 
                                         </span>
@@ -650,7 +650,7 @@ useEffect(() => {
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: "2rem" }} />
                     {product && (
                         <span>
-                            Are you sure you want to delete <b>{product.name}</b>?
+                            Seguro que quires eliminar el producto agregado <b>{product.name}</b>?
                         </span>
                     )}
                 </div>

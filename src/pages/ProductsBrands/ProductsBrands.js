@@ -41,7 +41,7 @@ export default function ProductsBrand() {
     const createProductsBrandsAlert = (productsBrandName, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta marca de productos?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -53,7 +53,7 @@ export default function ProductsBrand() {
     const editProductsBrandsAlert = (newProductsBrandsName, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta marca de productos?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -64,7 +64,7 @@ export default function ProductsBrand() {
     const deleteProductsBrandsAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea eliminar esta Marca de productos?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
@@ -75,7 +75,7 @@ export default function ProductsBrand() {
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -134,7 +134,7 @@ export default function ProductsBrand() {
             .then(() => {
                 setProductsBrandsName(newName);
                 loadProductsBrands();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca edita exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -147,7 +147,7 @@ export default function ProductsBrand() {
             .then(() => {
                 setProductsBrandsName("");
                 loadProductsBrands();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca creada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca creada exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -159,7 +159,7 @@ export default function ProductsBrand() {
         _productsBrandsService
             .deleteProductsBrands(id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca eliminada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca eliminada exitosamente", life: 3000 });
                 loadProductsBrands();
             })
             .catch((e) => {

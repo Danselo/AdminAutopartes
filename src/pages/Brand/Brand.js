@@ -29,7 +29,7 @@ export default function Brand() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteBrandAlert()} disabled={!brandIdSelected} />
+            {/* <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteBrandAlert()} disabled={!brandIdSelected} /> */}
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
         </React.Fragment>
     );
@@ -71,7 +71,7 @@ export default function Brand() {
     const createBrandAlert = (brandName, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta marca?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -83,7 +83,7 @@ export default function Brand() {
     const editBrandAlert = (newBrandName, form) => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta marca?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -91,21 +91,21 @@ export default function Brand() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
-    const deleteBrandAlert = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea eliminar esta Marca?",
-            header: "Confirmacion",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Eliminar",
-            rejectLabel: "Cancelar",
-            accept: () => deleteBrand(brandIdSelected),
-            reject: () => setDisplayDialogCreate(true),
-        });
-    };
+    // const deleteBrandAlert = () => {
+    //     confirmDialog({
+    //         message: "¿Esta seguro que desea eliminar esta Marca?",
+    //         header: "Confirmación",
+    //         icon: "pi pi-exclamation-triangle",
+    //         acceptLabel: "Eliminar",
+    //         rejectLabel: "Cancelar",
+    //         accept: () => deleteBrand(brandIdSelected),
+    //         reject: () => setDisplayDialogCreate(true),
+    //     });
+    // };
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -155,7 +155,7 @@ export default function Brand() {
         console.log("estado",newState)
         _brandService.changeStatusOfBrand(brandData.id, {status: newState}).then((response) => {
             loadBrands();
-            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
             setDisplayDialogStatus(false)
         }).catch((error) => {
             toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
@@ -169,7 +169,7 @@ export default function Brand() {
             .then(() => {
                 setBrandName(newName);
                 loadBrands();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca edita exitosamente", life: 3000 });
                 form.restart();
             })
             .catch((e) => {
@@ -184,7 +184,7 @@ export default function Brand() {
             .then(() => {
                 setBrandName("");
                 loadBrands();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca creada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca creada exitosamente", life: 3000 });
                 form.restart();
             })
             .catch((e) => {
@@ -197,7 +197,7 @@ export default function Brand() {
         _brandService
             .deleteBrand(id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca eliminada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca eliminada exitosamente", life: 3000 });
                 loadBrands();
             })
             .catch((e) => {
@@ -250,7 +250,7 @@ export default function Brand() {
         let errors = {};
 
         if (!data.brandName) {
-            errors.brandName = "Debe ingresar un nombre de marca creaar.";
+            errors.brandName = "Debe ingresar un nombre de marca crear.";
         }
         if (validateExistingName.includes(true)) {
             errors.brandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
@@ -308,7 +308,7 @@ export default function Brand() {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h4>Marcas registradas</h4>
+                <h4>Marcas de vehículos registradas</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />
