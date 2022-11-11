@@ -463,6 +463,7 @@ export default function Client() {
         if (!data.adress) {
             errors.address = "Debe digitar una dirección";
         }
+        
 
         return errors;
     };

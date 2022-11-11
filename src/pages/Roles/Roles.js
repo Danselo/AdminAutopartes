@@ -11,6 +11,8 @@ import { RolesService } from "../../service/RolesService";
 import { RolesPermissionsService } from "../../service/RolesPermissionsService";
 import { PermissionsService } from "../../service/PermissionsService";
 import { Panel } from "primereact/panel";
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
 
 import { Checkbox } from "primereact/checkbox";
 
@@ -118,7 +120,6 @@ export default function Roles() {
                     name :  element.permissions.name
                     }
                 })
-                console.log(responseMapped);
                 setPermissionsOfRolSelected(responseMapped);
             })
             .catch((e) => {
@@ -129,14 +130,14 @@ export default function Roles() {
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createRolAlert = () => {
+    const createRolAlert = (data) => {
         confirmDialog({
             message: "¿Esta seguro que desea agregar esta rol?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateRol(),
+            accept: () => CreateRol(data),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -181,8 +182,8 @@ export default function Roles() {
         setDisplayDialogEdit(false);
     };
 
-    const onHideDialogCreate = () => {
-        createRolAlert();
+    const onHideDialogCreate = (data) => {
+        createRolAlert(data);
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
@@ -225,15 +226,16 @@ export default function Roles() {
             });
     }
 
-    function CreateRol() {
+    function CreateRol(data) {
         _rolService
-            .createRol(rolName)
+            .createRol(data.name)
             .then((rol) => {
                 permissionSelected.forEach((permissionId) => {
                     _rolesPermissionsService
                         .createRolPermission(rol.id, permissionId)
                         .then((e) => {
                             console.log("Se agrego el permiso exitosamente", e);
+                            loadRoles();
                         })
                         .catch((e) => {
                             console.log("Algo salio mal al crear rol permission", e);
@@ -271,23 +273,23 @@ export default function Roles() {
         });
     }, []);
 
-    const renderFooterDialog = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear rol" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-            </div>
-        );
-    };
+    // const renderFooterDialog = () => {
+    //     return (
+    //         <div>
+    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+    //             <Button label="Crear rol" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+    //         </div>
+    //     );
+    // };
 
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar rol" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
-    };
+    // const renderFooterDialogEdit = () => {
+    //     return (
+    //         <div>
+    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+    //             <Button label="Editar rol" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+    //         </div>
+    //     );
+    // };
     const onPermissionChange = (e) => {
         let selectedPermissions = [...permissionSelected];
 
@@ -320,6 +322,55 @@ export default function Roles() {
 
         setPermissionsOfRolSelected(_selectedPermissions);
     };
+      //------------------------------VALIDATION ----------------
+      const initialValues = {
+        name: "",
+        permissions: null
+    };
+
+    const validate = (data) => {
+        let errors = {};
+
+        if (!data.name) {
+            errors.name = "El nombre es requerido";
+        }
+        if(permissionSelected.length<=0){
+            errors.permissions = "  Debe digitar almenos un permiso"
+        }
+
+
+        return errors;
+    };
+    const onSubmit = (data) => {
+        onHideDialogCreate(data)
+    };
+
+    const initialValuesEdit = {
+        name: rolSelected.name,
+        
+    };
+
+    const validateEdit = (data) => {
+        let errors = {};
+
+        if (!data.name) {
+            errors.name = "El nombre es requerido";
+        }
+        if(permissionsOfRolSelected.length<=0){
+            errors.permissions = "  Debe digitar almenos un permiso"
+        }
+
+
+        return errors;
+    };
+    const onSubmitEdit = (data) => {
+        onHideDialogEdit()
+    };
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
+    //------------------------------------------------------------------------------------------
 
     return (
         <div>
@@ -331,68 +382,154 @@ export default function Roles() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear un nuevo rol" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
-                <div className="create-rol-form">
-                    <div className="create-rol-form--header">
-                        <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
-                        <div className="create-rol-form--input">
-                            <label htmlFor="buyId">Nombre del rol</label>
-                            <InputText value={rolName} onChange={(e) => setRolName(e.target.value)} placeholder="Nombre" className="create-rol-form__input" />
-                        </div>
-                    </div>
-                    <div className="create-rol-form--body">
-                        <div className="create-rol-form--body-text">
-                            <h5 className="text-center">Permisos del rol por modulo</h5>
-                            <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
-                        </div>
-
-                        {permissionsArray.map((element) => (
-                            <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
-                                <div className="">
-                                    {element.permissions.map((info) => (
-                                        <div className="field-radiobutton" key={info.name}>
-                                            <Checkbox inputId={info.id} name="permission" value={info.id} onChange={onPermissionChange} checked={permissionSelected.indexOf(info.id) !== -1} />
-                                            <label htmlFor={info.id}>{info.name}</label>
+            <Dialog header="Crear un nuevo rol" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} >
+            <Form
+                    onSubmit={onSubmit}
+                    initialValues={initialValues}
+                    validate={validate}
+                    render={({ handleSubmit }) => (
+                        <form onSubmit={handleSubmit}>
+                                <div className="create-rol-form">
+                            <div className="create-rol-form--header">
+                                <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
+                                <Field
+                                    name="name"
+                                    render={({ input, meta }) => (
+                                        <div className="field">
+                                            <span>
+                                                <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>Nombre del rol</label>
+                                                <br />
+                                                <InputText id="name" {...input} placeholder="Nombre del rol" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })} />
+                                            </span>
+                                            <br />
+                                            {getFormErrorMessage(meta)}
                                         </div>
-                                    ))}
+                                    )}
+                                />
+                                {/* <div className="create-rol-form--input">
+                                    <label htmlFor="buyId">Nombre del rol</label>
+                                    <InputText value={rolName} onChange={(e) => setRolName(e.target.value)} placeholder="Nombre" className="create-rol-form__input" />
+                                </div> */}
+                            </div>
+                            <div className="create-rol-form--body">
+                                <div className="create-rol-form--body-text">
+                                    <h5 className="text-center">Permisos del rol por modulo</h5>
+                                    <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
                                 </div>
-                            </Panel>
-                        ))}
+                    
+                                {permissionsArray.map((element) => (
+                                    <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
+                                        <div className="">
+                                            {element.permissions.map((info) => (
+                                                <div className="field-radiobutton" key={info.name}>
+                                                                <Field
+                                                                    name="permissions"
+                                                                    render={({ input, meta }) => (
+                                                                        <div className="field">
+                                                                            <span>
+                                                                                <label htmlFor={info.id} className={classNames({ "p-error": isFormFieldValid("permissions") })}>{info.name}</label>
+                                                                                {/* <InputText id="permissions" {...input} placeholder="Nombre del rol" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })} /> */}
+                                                                                <Checkbox inputId={info.id} {...input} name="permission"  value={info.id} onChange={onPermissionChange} checked={permissionSelected.indexOf(info.id) !== -1}  className={classNames({ "p-invalid": isFormFieldValid(meta),checkedPermissionsRol: true  })} />
+
+                                                                            </span>
+                                                                            <br />
+                                                                            {getFormErrorMessage(meta)}
+                                                                        </div>
+                                                                    )}
+                                                                />
+                                                    {/* <Checkbox inputId={info.id} name="permission" value={info.id} onChange={onPermissionChange} checked={permissionSelected.indexOf(info.id) !== -1} /> */}
+                                                    {/* <label htmlFor={info.id}>{info.name}</label> */}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Panel>
+                                ))}
+                            </div>
+                        </div>  
+                        <div className="btn-create-rol">
+                        <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                        <Button label="Crear rol" icon="pi pi-check"  autoFocus />
                     </div>
-                </div>
+                          </form>
+                        
+                    )} />
+                
+              
             </Dialog>
 
-            <Dialog header="Editar rol" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
-                <div className="create-rol-form">
-                    <div className="create-rol-form">
-                        <div className="create-rol-form--header">
-                            <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
-                            <div className="create-rol-form--input">
-                                <label htmlFor="buyId">Nombre del rol</label>
-                                <InputText value={rolSelected.name} onChange={onChangeRolSelectedEditForm} placeholder="Nombre" className="create-rol-form__input" />
-                            </div>
-                        </div>
-                        <div className="create-rol-form--body">
-                            <div className="create-rol-form--body-text">
-                                <h5 className="text-center">Permisos del rol por modulo</h5>
-                                <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
-                            </div>
-
-                            {permissionsArray.map((element) => (
-                                <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
-                                    <div className="">
-                                        {element.permissions.map((permissionObject) => (
-                                            <div className="field-radiobutton" key={permissionObject.name}>
-                                                <Checkbox inputId={permissionObject.id} name="permission" value={permissionObject} onChange={onPermissionChangeEdit} checked={permissionsOfRolSelected.some((item) => item.id === permissionObject.id)} />
-                                                <label htmlFor={permissionObject.id}>{permissionObject.name}</label>
+            <Dialog header="Editar rol" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} >
+            <Form
+                    onSubmit={onSubmitEdit}
+                    initialValues={initialValuesEdit}
+                    validate={validateEdit}
+                    render={({ handleSubmit }) => (
+                        <form onSubmit={handleSubmit}>
+                                 <div className="create-rol-form">
+                                        <div className="create-rol-form">
+                                            <div className="create-rol-form--header">
+                                                <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
+                                                <Field
+                                                name="name"
+                                                render={({ input, meta }) => (
+                                                    <div className="field">
+                                                        <span>
+                                                            <label htmlFor="name" className={classNames({ "p-error": isFormFieldValid("name") })}>Nombre del rol</label>
+                                                            <br />
+                                                            <InputText id="name" {...input} onChange={onChangeRolSelectedEditForm} placeholder="Nombre del rol" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })} />
+                                                        </span>
+                                                        <br />
+                                                        {getFormErrorMessage(meta)}
+                                                    </div>
+                                                )}
+                                            />
+                                                {/* <div className="create-rol-form--input">
+                                                    <label htmlFor="buyId">Nombre del rol</label>
+                                                    <InputText value={rolSelected.name} onChange={onChangeRolSelectedEditForm} placeholder="Nombre" className="create-rol-form__input" />
+                                                </div> */}
                                             </div>
-                                        ))}
+                                            <div className="create-rol-form--body">
+                                                <div className="create-rol-form--body-text">
+                                                    <h5 className="text-center">Permisos del rol por modulo</h5>
+                                                    <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
+                                                </div>
+
+                                                {permissionsArray.map((element) => (
+                                                    <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
+                                                        <div className="">
+                                                            {element.permissions.map((permissionObject) => (
+                                                                <div className="field-radiobutton" key={permissionObject.name}>
+                                                                    <Field
+                                                                    name="permissions"
+                                                                    render={({ input, meta }) => (
+                                                                        <div className="field">
+                                                                            <span>
+                                                                                <label htmlFor={permissionObject.id} className={classNames({ "p-error": isFormFieldValid("permissions") })}>{permissionObject.name}</label>
+                                                                                {/* <InputText id="permissions" {...input} placeholder="Nombre del rol" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })} /> */}
+                                                                                <Checkbox inputId={permissionObject.id} {...input} name="permission"  value={permissionObject} onChange={onPermissionChangeEdit} checked={permissionsOfRolSelected.some((item) => item.id === permissionObject.id)}  className={classNames({ "p-invalid": isFormFieldValid(meta),checkedPermissionsRol: true  })} />
+
+                                                                            </span>
+                                                                            <br />
+                                                                            {getFormErrorMessage(meta)}
+                                                                        </div>
+                                                                    )}
+                                                                />
+                                                                    {/* <Checkbox inputId={permissionObject.id} name="permission" value={permissionObject} onChange={onPermissionChangeEdit} checked={permissionsOfRolSelected.some((item) => item.id === permissionObject.id)} />
+                                                                    <label htmlFor={permissionObject.id}>{permissionObject.name}</label> */}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </Panel>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
-                                </Panel>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                                    <div>
+                                        <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+                                        <Button label="Editar rol" icon="pi pi-check"  autoFocus />
+                                    </div>
+                        </form>
+                    )} />
+                
             </Dialog>
 
             <TableRoles className="table-roles" roles={roles} setRolSelected={setRolSelected} />
