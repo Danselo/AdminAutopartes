@@ -153,10 +153,7 @@ export default function Products() {
             newState = false;
         }
 
-        _productService.changeStatusOfProduct(
-            productData.id,
-            { status: newState }
-        ).then((response) => {
+        _productService.changeStatusOfProduct(productData.id, { status: newState }).then((response) => {
             if (response.data == null) {
                 loadProducts();
                 toast.current.show({ severity: "error", summary: "No procede", detail: "Lo sentimos, pero no puede producto, porque la marca, categoría y/o vehículo asociados a este productos se encuentra desactivados", life: 9000 });
@@ -179,6 +176,7 @@ export default function Products() {
         //         toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
         //     });
     };
+    console.log(selectedVehicles);
     function onClickDialogCreate() {
         getBrands();
         getCategories();
@@ -270,6 +268,20 @@ export default function Products() {
                 setProductReferenceId(data.productReferenceId);
                 setDisplayDialogUploadImages(true);
                 selectedVehicles.forEach((vehicle) => {
+                    if (!vehicle.status) {
+                        _productService
+                            .updateProduct({
+                                id: data.productReferenceId,
+                                state: false,
+                            })
+                            .then((e) => {
+                                loadProducts();
+                                
+                            })
+                            .catch((error) => {
+                                console.log(error)
+                            });
+                    }
                     _productService
                         .addVehicleToProduct(data.productReferenceId, vehicle.id)
                         .then(() => {

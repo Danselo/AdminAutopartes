@@ -24,6 +24,7 @@ export class ProductService {
                 idBrand,
                 name,
                 description,
+                
             })
             .then((response) => {
                 return response.data;

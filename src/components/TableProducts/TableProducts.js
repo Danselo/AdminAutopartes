@@ -45,6 +45,31 @@ export const TableProducts = ({ setProductSelected, products }) => {
             return <span className="product-badge-state-na">NA</span>;
         }
     };
+
+    const statusBodyTemplateCategory = (rowData) => {
+        if (rowData.category.status === true) {
+            return <span className="product-badge-state-active">{rowData.category.name}</span>;
+        }else {
+            return <span className="product-badge-state-inactive">{rowData.category.name}</span>;
+        }
+    };
+    const statusBodyTemplateBrand = (rowData) => {
+        if (rowData.brand.status === true) {
+            return <span className="product-badge-state-active">{rowData.brand.name}</span>;
+        }else {
+            return <span className="product-badge-state-inactive">{rowData.brand.name}</span>;
+        }
+    };
+    const statusBodyTemplateVehicle = (rowData) => {
+        console.log(rowData)
+        if (rowData.vehicles.status === true) {
+            return <span className="product-badge-state-active">ACTIVO</span>;
+        } else if (rowData.vehicles.status === false) {
+            return <span className="product-badge-state-inactive">INACTIVO</span>;
+        } else {
+            return <span className="product-badge-state-na">NA</span>;
+        }
+    };
     const viewVehiclesDetail = (info) => {
         setProductSelectedInfo(info);
         _productService
@@ -89,7 +114,7 @@ export const TableProducts = ({ setProductSelected, products }) => {
     return (
         <>
             <div className="p-inputgroup create-brand__table">
-                <InputText placeholder="Buscar vehiculo" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <InputText placeholder="Buscar producto" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
 
@@ -137,6 +162,7 @@ export const TableProducts = ({ setProductSelected, products }) => {
                     <Column field="vehicles.name" header="Nombre"></Column>
                     <Column field="vehicles.model" header="Modelo"></Column>
                     <Column field="vehicles.brands_vehicles.name" sortable header="Marca"></Column>
+                    <Column field="vehicles.status" body={statusBodyTemplateVehicle} sortable header="Estado del vehículo"></Column>
                 </DataTable>
             </Dialog>
 
@@ -159,8 +185,8 @@ export const TableProducts = ({ setProductSelected, products }) => {
                 <Column field="id" frozen sortable header="Id"></Column>
                 <Column body={photoBodyTemplate} header="Foto"></Column>
                 <Column field="name" sortable header="Nombre"></Column>
-                <Column field="category.name" sortable header="Categoria"></Column>
-                <Column field="brand.name" sortable header="Marca producto"></Column>
+                <Column field="category.name" body={statusBodyTemplateCategory} sortable header="Categoría"></Column>
+                <Column field="brand.name" body={statusBodyTemplateBrand} sortable header="Marca producto"></Column>
                 <Column field="amount" className="table-product--column-gray" sortable header="Cantidad en stock"></Column>
                 <Column field="price" className="table-product--column-gray" sortable header="Precio"></Column>
                 <Column field="state" body={statusBodyTemplate} header="Estado"></Column>
