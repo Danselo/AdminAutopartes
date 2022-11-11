@@ -83,6 +83,10 @@ export class ProductService {
             file: file
         })
     }
+    changeStatusOfProduct(idProduct, status){
+        return axios
+        .put(`${baseProductURL}/update-status-of-product/${idProduct}`, status);
+    }
 
     
 }
