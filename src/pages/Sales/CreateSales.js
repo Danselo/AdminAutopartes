@@ -114,12 +114,11 @@ export default function CreateSales() {
     const statusSale = [
         { name: "Activo", id: "1" },
         { name: "Terminado", id: "0" },
-        { name: "Anulado", id: "2" },
     ];
     const statusPayment = [
         { name: "Pagado", id: "1" },
         { name: "Pendiente", id: "0" },
-        { name: "Anulado", id: "2" },
+
     ];
     let history = useHistory();
 
@@ -144,7 +143,7 @@ export default function CreateSales() {
                             _productService.discountProduct(element.idProduct, element.amount);
                         })
                         .catch((e) => {
-                            toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
+                            toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la venta", life: 3000 });
                         });
                 });
 
@@ -183,7 +182,7 @@ export default function CreateSales() {
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
-            acceptLabel: "Cancelar compra",
+            acceptLabel: "Cancelar venta",
             rejectLabel: "Volver",
             accept,
             reject,
@@ -211,7 +210,7 @@ export default function CreateSales() {
                 <div className="create-sale-header">
                     <div className="create-sale-tittle__button">
                         <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.document : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
-                        {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la compra</small>}
+                        {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la venta</small>}
                     </div>
                     <div className="create-sale-header__card">
                         <h5>Total de la venta</h5>

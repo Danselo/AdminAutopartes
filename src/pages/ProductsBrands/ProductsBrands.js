@@ -29,8 +29,8 @@ export default function ProductsBrand() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteProductsBrandsAlert()} disabled={!productsbrandsIdSelected} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!productsbrandsIdSelected} />
+            {//<Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteProductsBrandsAlert()} disabled={!productsbrandsIdSelected} />}
+            }<Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!productsbrandsIdSelected} />
         </React.Fragment>
     );
 
@@ -71,8 +71,8 @@ export default function ProductsBrand() {
     };
     const createProductsBrandsAlert = (productsBrandName, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta marca de productos?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea agregar esta marca de productos?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -83,8 +83,8 @@ export default function ProductsBrand() {
 
     const editProductsBrandsAlert = (newProductsBrandsName, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta marca de productos?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea editar esta marca de productos?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -94,8 +94,8 @@ export default function ProductsBrand() {
     };
     const deleteProductsBrandsAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea eliminar esta Marca de productos?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea eliminar esta marca de productos?",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Eliminar",
             rejectLabel: "Cancelar",
@@ -105,8 +105,8 @@ export default function ProductsBrand() {
     };
     const cancelCreate = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            message: "¿Está seguro que desea perder el progreso?",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
@@ -143,7 +143,7 @@ export default function ProductsBrand() {
         cancelCreate();
         setDisplayDialogCreate(false);
     };
-   
+
     function changeBrandStatus(productBrandData) {
         let newState;
         console.log(productBrandData.status)
@@ -153,11 +153,11 @@ export default function ProductsBrand() {
         } else if (productBrandData.status === true) {
             newState = false;
         }
-        console.log("estado",newState)
+        console.log("estado", newState)
         console.log(productBrandData);
-        _productsBrandsService.changeStatusOfBrand(productBrandData.id, {status: newState}).then((response) => {
+        _productsBrandsService.changeStatusOfBrand(productBrandData.id, { status: newState }).then((response) => {
             loadProductsBrands();
-            toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Cambio de estado exitoso", life: 3000 });
+            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
             setDisplayDialogStatus(false)
         }).catch((error) => {
             toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
@@ -170,7 +170,7 @@ export default function ProductsBrand() {
             .then(() => {
                 setProductsBrandsName(newName);
                 loadProductsBrands();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca edita exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca edita exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -183,7 +183,7 @@ export default function ProductsBrand() {
             .then(() => {
                 setProductsBrandsName("");
                 loadProductsBrands();
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca creada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca creada exitosamente", life: 3000 });
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -195,7 +195,7 @@ export default function ProductsBrand() {
         _productsBrandsService
             .deleteProductsBrands(id)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Marca eliminada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca eliminada exitosamente", life: 3000 });
                 loadProductsBrands();
             })
             .catch((e) => {
@@ -344,7 +344,7 @@ export default function ProductsBrand() {
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className="create-brand-form__button">
                                     <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                     <Button type="submit" label="Crear marca" icon="pi pi-check" />
                                 </div>
@@ -378,8 +378,8 @@ export default function ProductsBrand() {
                                             </span>
                                         )}
                                     />
-                                  </div>
-                                <div>
+                                </div>
+                                <div className="create-brand-form__button">
                                     {/* <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" /> */}
                                     <Button type="submit" label="Editar marca" icon="pi pi-check" />
                                 </div>
@@ -389,8 +389,8 @@ export default function ProductsBrand() {
                 />
             </Dialog>
 
-            <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") +" la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
-                <p>Los siguientes productos estan asociados a esta marca</p>                
+            <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") + " la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+                <p>Los siguientes productos estan asociados a esta marca</p>
                 <TableProductsOfBrandSelected className="table-products" products={productsWhereBrand} />
             </Dialog>
 
