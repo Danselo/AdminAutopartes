@@ -15,6 +15,7 @@ import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
 import { ClientService } from "../../service/ClientService";
 import { SaleService } from "../../service/SaleService";
+
 const _clientService = new ClientService();
 const _saleService = new SaleService();
 
@@ -38,6 +39,14 @@ export default function Users() {
     const [roles, setRoles] = useState([]);
     const [rolName, setRoleName] = useState("");
     const [userWithSales, setUserWithSales] = useState({});
+    // const refreshPage = ()=>{
+    //     window.location.reload();  }
+    const refreshPage2 = ()=>{
+        setDisplayDialogEdit(false)
+        setUserSelected({});
+        loadUsers();
+      }
+
     // const rightContents = (
     //         <Link to={"/pages/CreateUser/CreateUser"}>
     //         <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
@@ -99,7 +108,7 @@ export default function Users() {
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
             accept: () => EditUser(),
-            reject: () => setDisplayDialogEdit(false),
+            reject: () => refreshPage2(),
         });
     };
     const editUserStatusAlert = () => {
@@ -125,6 +134,8 @@ export default function Users() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
+
+   
     const cancelEdit = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -133,9 +144,10 @@ export default function Users() {
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
             rejectLabel: "Cancelar",
-            accept: () => reject(),
+            accept: () => refreshPage2(),
             reject: () => setDisplayDialogEdit(true),
         });
+
     };
     function onClickDialogCreate() {
         getRoles();
@@ -148,8 +160,8 @@ export default function Users() {
     }
 
     const onHideDialogEdit = () => {
-        editUserAlert();
         setDisplayDialogEdit(false);
+        editUserAlert();
     };
 
     const onHideDialogCreate = (form, data) => {
@@ -161,6 +173,7 @@ export default function Users() {
     };
     const onHideDialogEditX = () => {
         setDisplayDialogEdit(false);
+        refreshPage2();
     };
     const onHideDialogCancel = () => {
         cancelCreate();
@@ -170,6 +183,8 @@ export default function Users() {
     const onHideDialogCancelEdit = () => {
         cancelEdit();
         setDisplayDialogEdit(false);
+
+
     };
 
     // const onUserRolChange = (e) => {
@@ -417,7 +432,7 @@ export default function Users() {
 
     const initialValuesEdit = {
 
-        idRol: rolName,
+        idRol: userSelected.idRol,
         name: userSelected.name,
         lastname: userSelected.lastname,
         email: userSelected.email,
@@ -652,7 +667,7 @@ export default function Users() {
                                 />
                             </div>
                             <div className="submit-user-create">
-                                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+                                <Button label="Cancelar" icon="pi pi-times" type="button" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
                                 <Button label="Editar Usuario" icon="pi pi-check" autoFocus />
                             </div>
                         </form>

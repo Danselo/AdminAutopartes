@@ -21,7 +21,6 @@ export const TableClient = ({setClientSelected,clients}) => {
             setClientSelected(clientsTableSelected)
         }
     }, [clientsTableSelected, setClientSelected])
-    console.log(clientsTableSelected);
     const statusBodyTemplate = (rowData) => {
         if (rowData.status === true) {
             return <span className="role-badge-status-active">ACTIVO</span>;

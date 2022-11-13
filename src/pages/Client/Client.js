@@ -19,6 +19,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import "./createClient.css";
 import { Column } from "primereact/column";
 import { classNames } from "primereact/utils";
+import { InputNumber } from "primereact/inputnumber";
 const _saleService = new SaleService();
 const _userService = new UserService();
 const _clientService = new ClientService();
@@ -47,7 +48,7 @@ export default function Client() {
     const [sales, setSales] = useState([]);
     const [clientWithBuy,setClientWithBuy] = useState({});
     const [clientStatus] = useState(true);
-
+    const [userName, setUserName] = useState("");
     const [globalFilter, setGlobalFilter] = useState(null);
     const isMounted = useRef(false);
     const documentTypeOptions = [
@@ -57,6 +58,11 @@ export default function Client() {
         { name: "Pasaporte", code: "PST" },
         { name: "Root", code: "RT" },
     ];
+    const refreshPage2 = ()=>{
+        setDisplayDialogEdit(false)
+        setClientSelected({});
+        loadClients();
+      }
     useEffect(() => {
         if (isMounted.current && selectedClientUser) {
             op.current.hide();
@@ -85,6 +91,19 @@ export default function Client() {
                 console.log(e, "Error al traer las ventas");
             });
     }, []);
+    useEffect(() => {
+        users.forEach((element) => { 
+            if(clientSelected.idUser === element.id){
+                console.log(clientSelected.idUser);
+                setUserName(element.name)
+
+            }
+        });
+    }, [clientSelected.idUser,setUserName,users]);
+    console.log(selectedClientUser.id);
+
+
+
     // const leftContents = (
     //         <Link to={"/pages/Client/CreateClient"}>
     //         <Button label="Agregar Cliente" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
@@ -120,7 +139,7 @@ export default function Client() {
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
             accept: () => EditClient(),
-            reject: () => setDisplayDialogEdit(false),
+            reject: () => refreshPage2(),
         });
     };
     const cancelCreate = () => {
@@ -131,7 +150,7 @@ export default function Client() {
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
             rejectLabel: "Cancelar",
-            accept: () => reject(),
+            accept: () => refreshPage2(),
             reject: () => setDisplayDialogEdit(true),
         });
     };
@@ -159,6 +178,8 @@ export default function Client() {
     };
     const onHideDialogEditX = () => {
         setDisplayDialogEdit(false);
+        refreshPage2();
+
     };
     const onHideDialogCancel = () => {
         cancelCreate();
@@ -172,14 +193,20 @@ export default function Client() {
 
     const onClientUserChange = (e) => {
         setSelectedClientUser(e.value);
+        console.log(e.value.id);
+        changeIdUserClientEdit(e.value.id);
     };
-
+    function changeIdUserClientEdit(id){
+        clientSelected.idUser = id;
+        
+    }
     function EditClient() {
         console.log(clientSelected);
         _clientService
             .updateClient({
                 ...clientSelected,
                 documentType: clientSelected.documentType.name,
+                idUser: clientSelected.idUser
             })
 
             .then(() => {
@@ -202,7 +229,7 @@ export default function Client() {
         console.log(data);
         console.log(data.documentType.name);
         _clientService
-            .createClient(selectedClientUser.id, data.name, data.name, data.documentType.name, data.document, data.telephone, data.email, data.country, data.department, data.city, data.neightboorhood, data.adress, data.indications, clientStatus)
+            .createClient(selectedClientUser.id, data.name, data.lastname, data.documentType.name, data.document, data.telephone, data.email, data.country, data.department, data.city, data.neightboorhood, data.adress, data.indications, clientStatus)
             .then(() => {
                 loadClients();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Usuario creado exitosamente", life: 3000 });
@@ -266,7 +293,6 @@ export default function Client() {
 
     }, [setClientWithBuy,sales,clientSelected]);
     
-        console.log(validationSales);
     function EditStatus() {
         
          if (clientWithBuy.statusSale === 'Activo' && clientSelected.status === true
@@ -292,7 +318,6 @@ export default function Client() {
                 console.log(e);
             });
         }
-        
           
 
         
@@ -460,7 +485,7 @@ export default function Client() {
         if (!data.city) {
             errors.city = "Debe digitar una ciudad";
         }
-        if (!data.adress) {
+        if (!data.address) {
             errors.address = "Debe digitar una dirección";
         }
         
@@ -482,7 +507,6 @@ export default function Client() {
         // }
         onHideDialogEdit();
     };
-
     //-------------------------------------------------------------------
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
     const getFormErrorMessage = (meta) => {
@@ -525,7 +549,7 @@ export default function Client() {
                                         <Button icon="pi pi-search" className="p-button-primary" />
                                     </div>
 
-                                    <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser} onSelectionChange={onClientUserChange}>
+                                    <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser} onSelectionChange={onClientUserChange} >
                                         <Column field="name" sortable header="Nombre"></Column>
                                         <Column field="lastname" sortable header="Apellido"></Column>
                                         <Column field="document" sortable header="Documento"></Column>
@@ -740,13 +764,14 @@ export default function Client() {
                                     <Button
                                         type="button"
                                         icon="pi pi-search"
-                                        label={selectedClientUser ? selectedClientUser.name : "Seleccione un Usuario"}
+                                        label={clientSelected.idUser ? userName : "Seleccione un Usuario"}
                                         onClick={(e) => op.current.toggle(e)}
                                         aria-haspopup
                                         aria-controls="overlay_panel"
                                         className="select-product-button"
                                         tooltip="Seleccionar un cliente"
                                     />
+
                                 </div>
 
                                 <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: "500px" }} className="overlaypanel-demo">
@@ -755,13 +780,14 @@ export default function Client() {
                                         <Button icon="pi pi-search" className="p-button-primary" />
                                     </div>
 
-                                    <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser} onSelectionChange={onClientUserChange}>
+                                    <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser} onSelectionChange={onClientUserChange}   >
                                         <Column field="name" sortable header="Nombre"></Column>
                                         <Column field="lastname" sortable header="Apellido"></Column>
                                         <Column field="document" sortable header="Documento"></Column>
                                         <Column field="telephone" sortable header="Telefono"></Column>
                                     </DataTable>
                                 </OverlayPanel>
+
                                 <Field
                                     name="documentType"
                                     render={({ input, meta }) => (
@@ -946,7 +972,7 @@ export default function Client() {
                                 />
                             </div>
                             <div className="submit-client-create">
-                                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+                                <Button label="Cancelar" icon="pi pi-times" type="button" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
                                 <Button label="Editar cliente" icon="pi pi-check" autoFocus />
                             </div>
                         </form>

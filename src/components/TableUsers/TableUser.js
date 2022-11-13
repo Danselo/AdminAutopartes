@@ -33,7 +33,14 @@ export const TableUser = ({setUserSelected,users}) => {
                 <InputText placeholder="Buscar usuario" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
-            <DataTable value={users} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={usersSelected} onSelectionChange={(e) => setUsersSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
+            <DataTable value={users} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos"
+             className="table-user" 
+             showGridlines rows={10} 
+             selection={usersSelected} 
+             onSelectionChange={(e) => 
+             setUsersSelected(e.value)} 
+             dataKey="id" 
+             globalFilter={globalFilter}>
             <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
             <Column field="name" sortable header="Nombre"></Column>
