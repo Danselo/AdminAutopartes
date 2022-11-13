@@ -35,7 +35,13 @@ export class RolesService {
                 return response.data;
             });
     }
-
+    updateRol(rol) {
+        const url = `${baseRolURL}/update/${rol.id}`
+         delete rol.id
+         delete rol.createdAt
+         return axios
+             .put(url,rol)
+    }
     
 
 }

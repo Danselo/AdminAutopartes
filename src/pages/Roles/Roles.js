@@ -109,7 +109,6 @@ export default function Roles() {
             setRoles(response);
         });
     }, []);
-
     const getPermissionsOfRolSelected = (idRolSelected) => {
         _rolesPermissionsService
             .getPermissionsOfRolSelected(idRolSelected)
@@ -217,20 +216,46 @@ export default function Roles() {
         // let id = rolSelected.id;
         _rolService
             .updateRol(rolSelected)
-            .then(() => {
-                console.log(rolSelected.id);
+            .then((rol) => {
+                console.log(rol.data.id);
+                console.log(permissionsOfRolSelected);
+                //esto es para que coga todos los ids a la hora de editar los permisos del rol
+                // let arrayPermissionsOfRolSelected = [];
+
+                // for (var i = 0; i < permissionsOfRolSelected.length; i++) {
+                //     let permissions = permissionsOfRolSelected[i].id;
+                //     arrayPermissionsOfRolSelected[i]= permissions
+                // }
+                // console.log(arrayPermissionsOfRolSelected);
+                permissionsOfRolSelected.forEach((id) => {
+                    _rolesPermissionsService
+                        .updateRolPermissions(rol.data.id,id.id)
+                        .then((e) => {
+                            console.log("Se edito el permiso exitosamente", e);
+                        })
+                        .catch((e) => {
+                            console.log("Algo salio mal al crear rol permission", e);
+                        });
+                });
+ 
+
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                 console.log(e);
             });
+            setPermissionSelected("");
+            loadRoles();
+            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol creado exitosamente", life: 3000 });
     }
 
     function CreateRol(data) {
         _rolService
             .createRol(data.name)
             .then((rol) => {
+                console.log(permissionSelected);
                 permissionSelected.forEach((permissionId) => {
+                    console.log(permissionId);
                     _rolesPermissionsService
                         .createRolPermission(rol.id, permissionId)
                         .then((e) => {

@@ -18,7 +18,7 @@ export class RolesPermissionsService {
         return axios
         .delete(`${baseRolesPermissionsURL}/delete/${id}`)
         .then(() => {
-          console.log("Categoria eliminada")
+          console.log("rol eliminada")
         });
 
     }
@@ -28,6 +28,16 @@ export class RolesPermissionsService {
             .post(baseRolesPermissionsURL + "/create", {
                 idRol,
                 idPermissions              
+            })
+            .then((response) => {
+                return response.data;
+            });
+    }
+    updateRolPermissions(idRol,idPermissions){
+        return axios
+            .put(`${baseRolesPermissionsURL}/update/${idRol}`,{
+                idRol,
+                idPermissions
             })
             .then((response) => {
                 return response.data;

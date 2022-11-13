@@ -36,7 +36,7 @@ export default function Users() {
     const [clients, setClients] = useState([]);
     const [sales, setSales] = useState([]);
     const [roles, setRoles] = useState([]);
-
+    const [rolName, setRoleName] = useState("");
     const [userWithSales, setUserWithSales] = useState({});
     // const rightContents = (
     //         <Link to={"/pages/CreateUser/CreateUser"}>
@@ -64,6 +64,7 @@ export default function Users() {
                 console.log(e, "Error al traer los clientes");
             });
     }, []);
+
 
 
 
@@ -295,6 +296,15 @@ export default function Users() {
             setUsers(response);
         });
     }, []);
+    useEffect(() => {
+        roles.forEach((element) => { 
+            if(userSelected.idRol === element.id){
+                console.log(userSelected.idRol);
+                setRoleName(element.name)
+
+            }
+        });
+    }, [userSelected.idRol,setRoleName,roles]);
     const rightContents = (
         <React.Fragment>
             <Button label={userSelected.status ? "Desactivar" : "Activar"} className={ userSelected.status ? "p-button-danger p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between" }  icon="pi pi-eye-slash" onClick={() => editUserStatusAlert()}  disabled={!userSelected.name} />
@@ -359,8 +369,14 @@ export default function Users() {
         //     password : data.password,
         //     rol: data.idRol,
         // }
+
         onHideDialogCreate(form, data);
     };
+    
+    
+
+
+
     //----------------------EDIT VALIDATION --------------------
     const validateEdit = (data) => {
         let errors = {};
@@ -398,8 +414,10 @@ export default function Users() {
 
         return errors;
     };
+
     const initialValuesEdit = {
-        idRol: userSelected.idRol,
+
+        idRol: rolName,
         name: userSelected.name,
         lastname: userSelected.lastname,
         email: userSelected.email,
@@ -420,13 +438,14 @@ export default function Users() {
         //     password : data.password,
         //     rol: data.idRol,
         // }
-        console.log(userSelected.idRol);
+        userSelected.idRol = userSelected.idRol.id;
         onHideDialogEdit();
     };
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
+    console.log(rolName);
     return (
         <div>
             <Toast ref={toast} />
@@ -568,7 +587,7 @@ export default function Users() {
                                             <span>
                                                 <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}>Contraseña</label>
                                                 <br />
-                                                <Password id="password" {...input} onChange={onEditUserSelected}  placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
+                                                <Password id="password" {...input}  onChange={onEditUserSelected}  placeholder="Digite su contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -624,7 +643,7 @@ export default function Users() {
                                             <span>
                                                 <label htmlFor="idRol" className={classNames({ "p-error": isFormFieldValid("idRol") })}>Rol</label>
                                                 <br />
-                                                <Dropdown id="idRol" {...input} options={roles}   optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                                <Dropdown id="idRol" {...input} options={roles} value={userSelected.idRol} place  onChange={onEditUserSelected}  optionLabel="name" placeholder={!userSelected.idRol ?  "Seleccione el Rol" : rolName} className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
