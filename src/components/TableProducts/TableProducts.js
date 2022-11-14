@@ -71,6 +71,7 @@ export const TableProducts = ({ setProductSelected, products }) => {
         }
     };
     const viewVehiclesDetail = (info) => {
+        console.log(info)
         setProductSelectedInfo(info);
         _productService
             .getVehiclesOfProductById(info.id)
@@ -134,12 +135,12 @@ export const TableProducts = ({ setProductSelected, products }) => {
                         </div>
                         <div>
                             <h6>Categoría</h6>
-                            <p>{productSelectedInfo.length > 0 ? productSelectedInfo.category.name : "hola"}</p>
+                            <p>{productSelectedInfo.category?.name}</p>
                         </div>
                         <div>
                             <h6>Marca</h6>
                             {/* <p>{productSelectedInfo.brand.name}</p> */}
-                            <p>hola</p>
+                            <p>{productSelectedInfo.brand?.name}</p>
                         </div>
                         <div>
                             <h6>Precio de venta</h6>
