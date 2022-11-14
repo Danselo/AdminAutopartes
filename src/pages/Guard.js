@@ -10,7 +10,7 @@ export default function Guard({token}) {
     useEffect(() => {
         _authService.getPermissions(token).then((response) =>{
             console.log("response desde el guard", response)
-            localStorage.setItem("permissions", JSON.stringify(response));
+            localStorage.setItem("permissionsAdmin", JSON.stringify(response));
             window.location.replace(`${baseDashboardURL}`)
         }).catch((error) =>{
             console.log("get permissions fallo cuando se llamo desde el admin", error)

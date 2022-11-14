@@ -570,8 +570,8 @@ export default function Products() {
                                                         Descripción*
                                                     </label>
                                                     <InputTextarea id="productDescription" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input create-product-form__inputTextarea": true })} placeholder="Descripción del producto" />
-                                                </span>
                                                 {getFormErrorMessage(meta)}
+                                                </span>
                                             </div>
                                         )}
                                     />
