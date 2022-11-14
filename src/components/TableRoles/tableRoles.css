@@ -29,3 +29,8 @@
     font-weight: bold;
     margin: auto;
 }
+.dialog-buy-panel-roles{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem
+}

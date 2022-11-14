@@ -422,7 +422,6 @@ export default function Client() {
         onHideDialogCreate(data, form);
     };
     //----------------------VALIDATION EDIT --------------------------------
-
     const initialValuesEdit = {
         name: clientSelected.name,
         lastname: clientSelected.lastname,
@@ -459,6 +458,14 @@ export default function Client() {
 
         if (!data.document) {
             errors.document = "El documento es requerido";
+        }else{
+            // clients.forEach((element) => {
+            //     const clientDocument = element.document;
+                
+            //     if (data.document === clientDocument) {
+            //         errors.document = "El documento ya existe";
+            //     }
+            // });
         }
         if (!data.email) {
             errors.email = "El email es requerido";
@@ -512,7 +519,7 @@ export default function Client() {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
-
+console.log(clientSelected.documentType);
     return (
         <div>
             <Toast ref={toast} />
@@ -795,7 +802,7 @@ export default function Client() {
                                             <span>
                                                 <label htmlFor="documentType" className={classNames({ "p-error": isFormFieldValid("documentType") })}>Tipo Documento</label>
                                                 <br />
-                                                <Dropdown {...input} options={documentTypeOptions} onChange={onEditClientSelected} optionLabel="name" placeholder="Tipo de documento" id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <Dropdown {...input} options={documentTypeOptions}  onChange={onEditClientSelected} optionLabel="name" placeholder="Tipo de documento"  id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}

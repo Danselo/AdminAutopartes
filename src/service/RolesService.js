@@ -6,10 +6,10 @@ const baseRolURL = config.baseURL + "/roles"
 export class RolesService {
 
     getRol(id) {
-        return axios.get(`${baseRolURL}/${id}`).then(res => res.datas);
+        return axios.get(`${baseRolURL}/${id}`).then(res => res.data);
     }
     getRolByName(name) {
-        return axios.get(`${baseRolURL}/find-by-name/${name}`).then(res => res.datas);
+        return axios.get(`${baseRolURL}/find-by-name/${name}`).then(res => res.data);
     }
 
     getRoles(){

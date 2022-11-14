@@ -559,7 +559,7 @@ useEffect(() => {
                                                     <InputText placeholder="Buscar Producto" onInput={(e) => setGlobalFilter(e.target.value)} />
                                                     <Button icon="pi pi-search" className="p-button-primary" />
                                                 </div>
-                                                <DataTable id="idProduct" value={products.map((p=>p.id))} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={product.idProduct}  onSelectionChange={onProductSelected}  >
+                                                <DataTable id="idProduct" value={productosFiltrados} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={product}  onSelectionChange={onProductSelected}  >
                                                     <Column field="id" sortable header="Referencia"></Column>
                                                     <Column field="name" sortable header="Nombre"></Column>
                                                     <Column field="brand.name" sortable header="Marca"></Column>

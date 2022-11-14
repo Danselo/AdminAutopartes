@@ -295,7 +295,7 @@ export default function CreatePurchase() {
                 setAddedProductsAtBuy={setAddedProductsAtBuy} setGlobalTotal = {setGlobalTotal} buyDate = {buyDatePurchase} />
 
                 <div className="create-product-buttons">
-                    <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2"></Button>
+                    <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2" disabled={addedProductsAtBuy.length<= 0} ></Button>
                     <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
                 </div>
 
