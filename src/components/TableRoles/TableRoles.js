@@ -102,8 +102,6 @@ export const TableRoles = ({ setRolSelected, roles }) => {
             <Button label="Cerrar" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
         </React.Fragment>
     );
-    console.log(rolInfo);
-    console.log(rolPermissionsInfo);
     
 
     return (
@@ -128,7 +126,7 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                 <Panel header="Informacion de los permisos del rol" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-roles">
                         {Object.values(rolPermissionsInfo).map((element) => (
-                            <div className="dialog-buy-panel-products__detail" key="products_detail_panel">
+                            <div className="dialog-buy-panel-products__detail" key={element.id}>
                                 <div className = "dialog-buy-panel-products__detail-item">
                                     <strong>
                                         <p>Id permiso</p>
@@ -148,12 +146,18 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                                     
                                     <p>{element.idModule}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item"   >                  
-                                  <strong><p>Nombre Modulos</p>
-                                  </strong>
-                                    
-                                    <p>{moduleName}</p>
-                                </div>
+                                <div className = "dialog-buy-panel-products__detail-item"  >                  
+                                                <strong><p>Nombre Modulos</p>
+                                                </strong>
+                                 {modules.map((element2) =>  {
+                                        if(element2.id === element.idModule){
+                                            console.log(element2.name);
+                                            return(
+                                            <p key={element2.id}>{element2.name}</p>
+
+                                         )}
+                                   })}
+                                   </div>
 
                             </div>
                         ))}
