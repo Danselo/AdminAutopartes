@@ -121,6 +121,12 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                             </strong>
                             <p>{rolInfo.name}</p>
                         </div>
+                        <div>
+                            <strong>
+                                <p>Estado del rol</p>
+                            </strong>
+                            <p className={rolInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{rolInfo.status === true ? "Activo" : "Inactivo"}</p>
+                        </div>
                     </div>
                 </Panel>
                 <Panel header="Informacion de los permisos del rol" className="dialog-buy-panel" toggleable>

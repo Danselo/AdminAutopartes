@@ -327,7 +327,7 @@ export default function Client() {
         <React.Fragment>
             <Button
                 label={clientSelected.status ? "Desactivar" : "Activar"}
-                className={clientSelected.status ? "p-button-danger p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
+                className={clientSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
                 icon="pi pi-eye-slash"
                 onClick={() => editClientStatusAlert()}
                 disabled={!clientSelected.name}
@@ -372,14 +372,15 @@ export default function Client() {
 
         if (!data.document) {
             errors.document = "El documento es requerido";
-        } else
-        clients.forEach((element) => {
-            const clientDocument = element.document;
+        }
+        //  else
+        // clients.forEach((element) => {
+        //     const clientDocument = element.document;
 
-            if (data.document === clientDocument) {
-                errors.document = "El documento ya existe";
-            }
-        });
+        //     if (data.document === clientDocument) {
+        //         errors.document = "El documento ya existe";
+        //     }
+        // });
         if (!data.email) {
             errors.email = "El email es requerido";
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {

@@ -211,8 +211,19 @@ export default function Users() {
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Usuario  editado exitosamente", life: 3000 });
             })
             .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
+          
+                users.forEach((element) => {
+                    const userMail = element.email;
+    
+                    if (userSelected.email === userMail) {
+                      toast.current.show({ severity: "warn", summary: "Correo incorrecto", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
+
+                    }
+                    // else{
+                    //     toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                    //     console.log(e);
+                    // }
+                });
             });
     }
     useEffect(() => {
@@ -322,7 +333,7 @@ export default function Users() {
     }, [userSelected.idRol,setRoleName,roles]);
     const rightContents = (
         <React.Fragment>
-            <Button label={userSelected.status ? "Desactivar" : "Activar"} className={ userSelected.status ? "p-button-danger p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between" }  icon="pi pi-eye-slash" onClick={() => editUserStatusAlert()}  disabled={!userSelected.name} />
+            <Button label={userSelected.status ? "Desactivar" : "Activar"} className={ userSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between" }  icon="pi pi-eye-slash" onClick={() => editUserStatusAlert()}  disabled={!userSelected.name} />
         </React.Fragment>
     );
     const initialValues = {

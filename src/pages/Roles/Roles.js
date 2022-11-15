@@ -13,12 +13,14 @@ import { PermissionsService } from "../../service/PermissionsService";
 import { Panel } from "primereact/panel";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
+import { UserService } from "../../service/UserService";
 
 import { Checkbox } from "primereact/checkbox";
 
 const _rolService = new RolesService();
 const _rolesPermissionsService = new RolesPermissionsService();
 const _permissionsService = new PermissionsService();
+const _userService = new UserService();
 
 export default function Roles() {
     const [rolSelected, setRolSelected] = useState({});
@@ -28,6 +30,10 @@ export default function Roles() {
     const [rolName, setRolName] = useState("");
     const [permissions, setPermissions] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [rolStatusWithUser, setRolStatusWithUser] = useState(null);
+
+    
     const [permissionSelected, setPermissionSelected] = useState([]);
     const [permissionsOfRolSelected, setPermissionsOfRolSelected] = useState([]);
 
@@ -91,7 +97,18 @@ export default function Roles() {
             }
         });
     });
-
+    //------ENABLE AND DISABLE CLIENT-------
+    const editRolStatusAlert = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea cambiar el estado del Rol?",
+            header: "Confirmación",
+            icon: "pi pi-exclamation-triangle",
+            acceptLabel: "Cambiar estado",
+            rejectLabel: "Cancelar",
+            accept: () => EditStatus(),
+            reject: () => setDisplayDialogEdit(false),
+        });
+    };
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -100,13 +117,24 @@ export default function Roles() {
     );
     const rightContents = (
         <React.Fragment>
-            <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
+                        <Button
+                label={rolSelected.status ? "Desactivar" : "Activar"}
+                className={rolSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
+                icon="pi pi-eye-slash"
+                onClick={() => editRolStatusAlert()}
+                disabled={!rolSelected.name}
+            />
         </React.Fragment>
     );
 
     useEffect(() => {
         _rolService.getRoles().then((response) => {
             setRoles(response);
+        });
+    }, []);
+    useEffect(() => {
+        _userService.getUsers().then((response) => {
+            setUsers(response);
         });
     }, []);
     const getPermissionsOfRolSelected = (idRolSelected) => {
@@ -211,7 +239,43 @@ export default function Roles() {
                 console.log("Algo salio mal al traer los permisos de la bd", e);
             });
     };
+    useEffect(() => {
 
+            users.map((element) => { 
+                if( element.idRol === rolSelected.id ){
+                    setRolStatusWithUser(false)
+                }
+            });
+    
+    }, [setRolStatusWithUser,users,rolSelected]);
+
+    function EditStatus() {
+
+        if (rolStatusWithUser === false) {
+            toast.current.show({ severity: "error", summary: "Error", detail: "No se puede cambiar el rol ya  que esta asociado a un usuario", life: 3000 });
+            setRolStatusWithUser({})
+       } else{
+                if(rolSelected.status === true){
+                    rolSelected.status = false;
+                }else if (rolSelected.status === false){
+                    rolSelected.status = true;
+                }
+                _rolService.updateRol(rolSelected)
+            .then(() => {
+                setRolSelected({});
+                loadRoles();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del rol se cambio exitosamente", life: 3000 });
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                console.log(e);
+            });
+            setRolStatusWithUser({})
+
+   } 
+      
+
+    }
     function EditRol() {
         // let id = rolSelected.id;
         _rolService

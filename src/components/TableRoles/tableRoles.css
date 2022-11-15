@@ -10,16 +10,31 @@
 }
 
 .role-badge-status-inactive{
-    background-color: rgb(247, 3, 3);
+    background-color: rgb(206, 154, 31);
     width: 100%;
     padding: .5rem;
     border-radius: .5rem;
     color: white;
-    font-weight: 500;
     margin: auto;
     font-size: .8rem;
 }
-
+.role-badge-status-active-details{
+    background-color: rgb(28, 165, 67);
+    width: 20%;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: white;
+    font-size: .8rem;
+}
+.role-badge-status-inactive-details{
+    background-color: rgb(206, 154, 31);
+    width: 20%;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: white;
+    font-weight: 500;
+    font-size: .8rem;
+}
 .role-badge-status-na{
     background-color: rgb(243, 59, 59);
     width: 100%;
