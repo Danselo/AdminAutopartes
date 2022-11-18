@@ -232,6 +232,8 @@ export default function CreateSales() {
                 </OverlayPanel>
             </div>
 
+            
+
             <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
             <Form
                 onSubmit={onSubmit}

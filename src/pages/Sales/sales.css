@@ -1,3 +1,9 @@
 .create-product-buttons{
     margin-top: 1rem;
 }
+
+.create-sale-form__button{
+    display: flex;
+    justify-content: flex-end;
+
+}
