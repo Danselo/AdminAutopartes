@@ -293,6 +293,8 @@ export const TableSales = ({ setSaleSelected, sales }) => {
                 <Column field="statusSale" className="" sortable header="Estado"></Column>
                 <Column field="statusPayment" className="" header="Estado del pago"></Column>
                 <Column field="totalPurchase" className="" header="Total venta"></Column>
+                <Column field="statusPayment" className="" header="Estado de anulación"></Column>
+                <Column field="statusPayment" className="" header="Tipo de venta"></Column>
                 <Column header="Ver detalle de la venta" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
         </>

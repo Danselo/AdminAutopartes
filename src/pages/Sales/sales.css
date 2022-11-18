@@ -7,3 +7,10 @@
     justify-content: flex-end;
 
 }
+
+.create-sale-form__card{
+    
+    display: flex;
+    justify-content: flex-end;
+
+}
