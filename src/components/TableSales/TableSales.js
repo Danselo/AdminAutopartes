@@ -105,8 +105,8 @@ export const TableSales = ({ setSaleSelected, sales }) => {
 
     return (
         <>
-            <Dialog visible={saleInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoSaleDialogFooter} onHide={hideDialog}>
-                <Panel header="Informacion general de la compra" className="dialog-buy-panel" toggleable>
+            <Dialog visible={saleInfoDialog} style={{ width: "60vw" }} header="Detalle de la venta" modal className="p-fluid" footer={infoSaleDialogFooter} onHide={hideDialog}>
+                <Panel header="Informacion general de la venta" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -292,7 +292,7 @@ export const TableSales = ({ setSaleSelected, sales }) => {
                 <Column field="saleDate" sortable header="Fecha de venta"></Column>
                 <Column field="statusSale" className="" sortable header="Estado"></Column>
                 <Column field="statusPayment" className="" header="Estado del pago"></Column>
-                <Column field="totalPurchase" className="" header="Total compra"></Column>
+                <Column field="totalPurchase" className="" header="Total venta"></Column>
                 <Column header="Ver detalle de la venta" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
         </>

@@ -9,7 +9,6 @@ const _buyService = new BuyService();
 
 export default function Buys() {
     const [buys, setBuys] = useState([]);
-    const [buySelected, setBuySelected] = useState({});
 
 
     useEffect(() => {
@@ -26,7 +25,7 @@ export default function Buys() {
             <Link to={"/CreatePurchase"}>
                 <Button label="Crear compra" icon="pi pi-plus-circle" className="p-button-raised p-button-info button-add-product" />
             </Link>           
-            <TableBuys buys={buys} setBuySelected={setBuySelected} className="table-products" />
+            <TableBuys buys={buys} className="table-products" />
         </div>
     );
 }

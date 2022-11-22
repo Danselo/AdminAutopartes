@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import classNames from "classnames";
-import { Route, useLocation } from "react-router-dom";
+import { Route, useLocation, useParams } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
@@ -36,9 +36,12 @@ import Vehicles from "./pages/Vehicle/Vehicle";
 import MyPerfil from "./pages/MyPerfil/Perfil";
 
 import ProductsBrands from "./pages/ProductsBrands/ProductsBrands";
+import Guard from "./pages/Guard";
+import {PermisisonsCheckService} from "./service/PermissionsCheckService"
 
-
+const _permissionsCheckService = new PermisisonsCheckService()
 const App = () => {
+    
     const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
     const [inputStyle, setInputStyle] = useState("outlined");
@@ -210,9 +213,11 @@ const App = () => {
                     label: "Productos",
                     icon: "pi pi-fw pi-box",
                     to: "/Products",
+                    // disabled: !_permissionsCheckService?.userHasPermission(6),
                 },
                 
             ],
+            
         },
         {
             label: "Ventas",
@@ -257,6 +262,11 @@ const App = () => {
         "p-ripple-disabled": ripple === false,
         "layout-theme-light": layoutColorMode === "light",
     });
+    function GuardWrapper() {
+        let { token } = useParams();
+        localStorage.setItem('token',token)
+        return <Guard token={token}/>
+      }
 
     return (
         <div className={wrapperClass} onClick={onWrapperClick}>
@@ -270,6 +280,7 @@ const App = () => {
 
             <div className="layout-main-container">
                 <div className="layout-main">
+                    <Route path="/validation-token/:token" render={() => <GuardWrapper/>} />
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
                     <Route path="/products" exact render={() => <Products />} />
                     <Route path="/Providers" exact render={() => <Providers />} />

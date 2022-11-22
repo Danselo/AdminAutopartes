@@ -93,7 +93,6 @@ export default function CreateSales() {
     };
 
     const onSubmit = (data, form) => {
-        console.log(3434334);
         if (saleClientSelected) {
             setTotalSale(totalSale);
             create(form, data);
@@ -119,6 +118,7 @@ export default function CreateSales() {
     const statusPayment = [
         { name: "Pagado", id: "1" },
         { name: "Pendiente", id: "0" },
+
     ];
     let history = useHistory();
 
@@ -143,7 +143,7 @@ export default function CreateSales() {
                             _productService.discountProduct(element.idProduct, element.amount);
                         })
                         .catch((e) => {
-                            toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la compra", life: 3000 });
+                            toast.current.show({ severity: "warn", summary: "Error", detail: "No se pudieron agregar los productos a la venta", life: 3000 });
                         });
                 });
 
@@ -153,7 +153,7 @@ export default function CreateSales() {
                 form.restart();
             })
             .catch(() => {
-                toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la compra", life: 3000 });
+                toast.current.show({ severity: "warn", summary: "Error", detail: "Algo ha salido mal al crear la venta", life: 3000 });
             });
     };
 
@@ -166,8 +166,8 @@ export default function CreateSales() {
     };
     const create = (form, data) => {
         confirmDialog({
-            message: "¿Esta seguro que desea crear esta compra?",
-            header: "Confirmación",
+            message: "¿Esta seguro que desea crear esta venta?",
+            header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -182,7 +182,7 @@ export default function CreateSales() {
             header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
-            acceptLabel: "Cancelar compra",
+            acceptLabel: "Cancelar venta",
             rejectLabel: "Volver",
             accept,
             reject,
@@ -210,7 +210,7 @@ export default function CreateSales() {
                 <div className="create-sale-header">
                     <div className="create-sale-tittle__button">
                         <Button type="button" icon="pi pi-search" label={saleClientSelected ? saleClientSelected.document : "Seleccione un cliente"} onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="select-product-button" tooltip="Seleccionar un cliente" />
-                        {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la compra</small>}
+                        {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la venta</small>}
                     </div>
                     <div className="create-sale-header__card">
                         <h5>Total de la venta</h5>
@@ -231,6 +231,8 @@ export default function CreateSales() {
                     </DataTable>
                 </OverlayPanel>
             </div>
+
+            
 
             <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
             <Form

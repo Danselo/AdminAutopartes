@@ -2,7 +2,7 @@ import axios from "axios";
 import config from "../config/config";
 
 const baseProductURL = config.baseURL + "/products";
-
+const baseImageProductURL = config.baseURL + "/imagesProducts"
 export class ProductService {
     getProductsSmall() {
         return axios.get("assets/demo/data/products-small.json").then((res) => res.data.data);
@@ -74,6 +74,13 @@ export class ProductService {
             .then((response) => {
                 return response.data;
             });
+    }
+
+    uploadImages(idProduct, file){
+        return axios.post(`${baseImageProductURL}/create`,{
+            idProduct: idProduct,
+            file: file
+        })
     }
 
     

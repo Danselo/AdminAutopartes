@@ -15,6 +15,17 @@ export const TableProviders = ({ setProviderSelected, providers }) => {
         }
     }, [TableProvidersSelected, setProviderSelected]);
 
+    const statusBodyTemplate = (rowData) => {
+        if (rowData.status === true) {
+            return <span className="role-badge-status-active">ACTIVO</span>;
+        }else if(rowData.status === false){
+            return <span className="role-badge-status-inactive">INACTIVO</span>;
+        }else{
+            return <span className="role-badge-status-na">NA</span>; 
+        }
+        
+    }
+
     return (
         <>
             <div className="p-inputgroup create-brand__table">
@@ -39,13 +50,14 @@ export const TableProviders = ({ setProviderSelected, providers }) => {
             >
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" sortable header="Id proveedor"></Column>
-                <Column field="nit" sortable header="Nit"></Column>
+                <Column field="nit" sortable header="Nit o indicador"></Column>
                 <Column field="companyName" sortable header="Nombre empresa"></Column>
                 <Column field="contactName" sortable header="Persona de contacto"></Column>
                 <Column field="telephone" sortable header="Telfono"></Column>
                 <Column field="adress" sortable header="Direccion"></Column>
                 <Column field="email" sortable header="Email"></Column>
                 <Column field="country" sortable header="Pais"></Column>
+                <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
             </DataTable>
         </>
     );

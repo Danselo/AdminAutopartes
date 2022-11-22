@@ -16,11 +16,11 @@ export const TableVehicles = ({ setVehicleSelected, vehicles }) => {
 
     const statusBodyTemplate = (rowData) => {
         if (rowData.status === true) {
-            return <span className="brand-badge-status-active">ACTIVO</span>;
+            return <span className="vehicle-badge-status-active">ACTIVO</span>;
         }else if(rowData.status === false){
-            return <span className="brand-badge-status-inactive">INACTIVO</span>;
+            return <span className="vehicle-badge-status-inactive">INACTIVO</span>;
         }else{
-            return <span className="brand-badge-status-na">NA</span>; 
+            return <span className="vehicle-badge-status-na">NA</span>; 
         }
         
     }
@@ -28,13 +28,13 @@ export const TableVehicles = ({ setVehicleSelected, vehicles }) => {
     return (
         <>
             <div className="p-inputgroup create-brand__table">
-                <InputText placeholder="Buscar vehiculo" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <InputText placeholder="Buscar vehículo" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
 
             <DataTable
                 value={vehicles}
-                header="Vehiculos"
+                header="Vehículos"
                 paginator
                 responsiveLayout="scroll"
                 emptyMessage="No se encontraron datos"
@@ -48,11 +48,11 @@ export const TableVehicles = ({ setVehicleSelected, vehicles }) => {
                 globalFilter={globalFilter}
             >
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
-                <Column field="id" sortable header="Id vehiculo"></Column>
+                <Column field="id" sortable header="Id vehículo"></Column>
                 <Column field="name" sortable header="Nombre"></Column>
                 <Column field="model" sortable header="Modelo"></Column>
                 <Column field="brands_vehicles.name" sortable header="Marca"></Column>
-                <Column field="status" body={statusBodyTemplate} sortable header="Estado"></Column>
+                <Column field="status" body={statusBodyTemplate} header="Estado"></Column>
             </DataTable>
         </>
     );

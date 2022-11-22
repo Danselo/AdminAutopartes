@@ -14,12 +14,12 @@ import { ProductsBrandsService } from "../../service/ProductsBrandsService";
 import { VehicleService } from "../../service/VehicleService";
 import { PickList } from "primereact/picklist";
 import { FileUpload } from "primereact/fileupload";
-import { ProgressBar } from 'primereact/progressbar';
-import { Tag } from 'primereact/tag';
+import { InputTextarea } from "primereact/inputtextarea";
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
 import config from "../../config/config";
-
-const uploadProductImageURL = config.baseURL + "/imagesProducts/create";
-
+import { ImageProductService } from "../../service/ImageProductService";
+const _imageProductService = new ImageProductService();
 const _categoryService = new CategoryService();
 const _productService = new ProductService();
 const _vehicleService = new VehicleService();
@@ -28,105 +28,27 @@ const _productsBrandsService = new ProductsBrandsService();
 export default function Products() {
     const [productSelected, setProductSelected] = useState({});
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
+    const [displayDialogUploadImages, setDisplayDialogUploadImages] = useState(false);
+    const [displayDialogEditUploadImages, setDisplayDialogEditUploadImages] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [productName, setProductName] = useState("");
-    const [productDescription, setProductDescription] = useState("");
+    // const [productName, setProductName] = useState("");
     const [productReferenceId, setProductReferenceId] = useState("");
-    const [selectedProductCategory, setSelectedProductCategory] = useState("");
-    const [selectedProductBrand, setSelectedProductBrand] = useState("");
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [vehicles, setVehicles] = useState([]);
     const [selectedVehicles, setSelectedVehicles] = useState([]);
     const [selectedVehiclesOfProductEdit, setSelectedVehiclesOfProductEdit] = useState([]);
-    const [totalSize, setTotalSize] = useState(0);
-    const fileUploadRef = useRef(null);
-    const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
-    const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
-    const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
-
-    const onTemplateUpload = (e) => {
-        let _totalSize = 0;
-        e.files.forEach((file) => {
-            _totalSize += file.size || 0;
-        });
-
-        setTotalSize(_totalSize);
-        toast.current.show({ severity: "info", summary: "Success", detail: "File Uploaded" });
+    const [imagesData, setImagesData] = useState({})
+    
+    const onUpload = () => {
+        toast.current.show({ severity: "info", summary: "Success", detail: "Archivo cargado" });
+        setDisplayDialogUploadImages(false);
+        setDisplayDialogEditUploadImages(false)
+        setProductSelected({});
+        loadProducts()
     };
-
-    const onTemplateSelect = (e) => {
-        console.log(e)
-        let _totalSize = totalSize;
-        e.files.forEach((file) => {
-            _totalSize += file.size;
-        });
-
-        setTotalSize(_totalSize);
-    };
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    };
-
-    const headerTemplate = (options) => {
-        const { className, chooseButton, uploadButton, cancelButton } = options;
-        const value = totalSize/10000;
-        const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
-
-        return (
-            <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
-                {chooseButton}
-                {uploadButton}
-                {cancelButton}
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
-            </div>
-        );
-    }
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
-        callback();
-    }
-
-    const itemTemplate = (file, props) => {
-        return (
-            <div className="flex align-items-center flex-wrap">
-                <div className="flex align-items-center" style={{width: '40%'}}>
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
-                    <span className="flex flex-column text-left ml-3">
-                        {file.name}
-                        <small>{new Date().toLocaleDateString()}</small>
-                    </span>
-                </div>
-                <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
-            </div>
-        )
-    }
-
-    const emptyTemplate = () => {
-        return (
-            <div className="flex align-items-center flex-column">
-                <i className="pi pi-image mt-3 p-5" style={{'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
-                <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5">Drag and Drop Image Here</span>
-            </div>
-        )
-    }
-
-    const customBase64Uploader = async (event) => {
-        // convert file to base64 encoded
-        const file = event.files[0];
-        const reader = new FileReader();
-        let blob = await fetch(file.objectURL).then(r => r.blob()); //blob:url
-        reader.readAsDataURL(blob);
-        reader.onloadend = function () {
-            const base64data = reader.result;
-            console.log("hola", base64data);
-        }
-    }
-
-
 
     let arraySelectedVehiclesOfProductEdit = selectedVehiclesOfProductEdit.map((objeto) => {
         if (objeto.idVehicle) {
@@ -138,6 +60,17 @@ export default function Products() {
         return { idProduct: productSelected.id, idVehicle: objeto.id };
     });
 
+    useEffect(() => {
+        _imageProductService.getImages().then((images) => {
+            let imagesDataAux = {}
+            images.forEach((image) => {
+                imagesDataAux[image.idProduct] = image.url;
+            });
+            setImagesData(imagesDataAux);
+
+        });
+    }, []);
+
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -145,45 +78,47 @@ export default function Products() {
         </React.Fragment>
     );
     const rightContents = (
-        <React.Fragment>            
-            <Button 
-            label={productSelected.state ? "Desactivar": "Activar"} 
-            className={productSelected.state? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
-            disabled = {!productSelected.name}
-            icon={productSelected.state? "pi pi-eye-slash": "pi pi-eye"} 
-            onClick={() => changeProductStatusDialog(productSelected)} />
+        <React.Fragment>
+            <Button
+                label={productSelected.state ? "Desactivar" : "Activar"}
+                className={productSelected.state ? "p-button-raised p-button-warning dc-space-between" : "p-button-raised p-button-success dc-space-between"}
+                disabled={!productSelected.name}
+                icon={productSelected.state ? "pi pi-eye-slash" : "pi pi-eye"}
+                onClick={() => changeProductStatusDialog(productSelected)}
+            />
         </React.Fragment>
     );
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
-    const createProductAlert = () => {
+    const createProductAlert = (data, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta vehiculo?",
+            message: "¿Está seguro que desea crear este producto?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
-            accept: () => CreateProduct(),
+            accept: () => CreateProduct(data, form),
             reject: () => setDisplayDialogCreate(true),
         });
     };
 
-    const editProductAlert = () => {
+    const editProductAlert = (data, form) => {
         confirmDialog({
-            message: "¿Esta seguro que desea editar esta vehiculo?",
+            message: "¿Está seguro que desea editar este producto?",
             header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
-            accept: () => EditProduct(),
+            accept: () => EditProduct(data, form),
+            // accept: () => setDisplayDialogUploadImages(true),
             reject: () => setDisplayDialogEdit(false),
         });
     };
 
     const cancelCreate = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea perder el progreso?",
+            message: "¿Está seguro que desea perder el progreso?",
             header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -195,15 +130,15 @@ export default function Products() {
     };
 
     const changeProductStatusDialog = (productData) => {
-        let productState
+        let productState;
         if (productData.state === false) {
-            productState = "activar"
-        }else{
-            productState = "desactivar"
+            productState = "activar";
+        } else {
+            productState = "desactivar";
         }
 
         confirmDialog({
-            message: "¿Esta seguro que desea " + productState +" este producto?",
+            message: "¿Está seguro que desea " + productState + " este producto?",
             header: "Cambio de estado del producto " + productData.id,
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
@@ -214,47 +149,43 @@ export default function Products() {
         });
     };
 
-    const changeProductStatus = (productData) =>{
-        let newState
+    const changeProductStatus = (productData) => {
+        let newState;
         if (productData.state === false) {
-            newState = true
-            
-        }else if(productData.state === true){
-            newState = false
+            newState = true;
+        } else if (productData.state === true) {
+            newState = false;
         }
 
-        _productService.updateProduct({
-            id: productData.id, 
-            state: newState}).then((e) =>{
-                loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 }); 
-            }).catch((error) =>{
-                toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
+        _productService
+            .updateProduct({
+                id: productData.id,
+                state: newState,
             })
-
-    }
+            .then((e) => {
+                loadProducts();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
+            })
+            .catch((error) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
+            });
+    };
     function onClickDialogCreate() {
         getBrands();
         getCategories();
         setDisplayDialogCreate(true);
     }
 
-   
-
     function onClickDialogEdit() {
         getVehiclesOfProductSelected(productSelected.id);
         getCategories();
+        getBrands();
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = () => {
-        editProductAlert();
+    const onHideDialogEdit = (data, form) => {
+        editProductAlert(data, form);
         setDisplayDialogEdit(false);
-    };
-
-    const onHideDialogCreate = () => {
-        createProductAlert();
-        setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
@@ -267,17 +198,10 @@ export default function Products() {
         setDisplayDialogCreate(false);
     };
 
-    const onHideDialogCancelEdit = () => {
-        cancelCreate();
-        setDisplayDialogEdit(false);
-    };
-
-    const onProductCategoryChange = (e) => {
-        setSelectedProductCategory(e.value);
-    };
-    const onProductBrandChange = (e) => {
-        setSelectedProductBrand(e.value);
-    };
+    // const onHideDialogCancelEdit = () => {
+    //     cancelCreate();
+    //     setDisplayDialogEdit(false);
+    // };
 
     function getCategories() {
         _categoryService.getCategories().then((response) => {
@@ -292,7 +216,6 @@ export default function Products() {
     }
 
     function getVehiclesOfProductSelected(idProductSelected) {
-        console.log(idProductSelected);
         _productService.getVehiclesOfProductById(idProductSelected).then((response) => {
             let unSelectedVehicles = vehicles.filter((v) => !response.some((v2) => v2.idVehicle === v.id));
             setVehicles(unSelectedVehicles);
@@ -300,17 +223,25 @@ export default function Products() {
         });
     }
 
-    function EditProduct() {
+    function EditProduct(data, form) {
         let id = productSelected.id;
+        let productData = {
+            id: data.productReferenceId,
+            name: data.productName,
+            description: data.productDescription,
+            idCategory: data.selectedProductCategory.id,
+            idBrand: data.selectedProductBrand.id,
+        };
         _productService
-            .updateProduct(productSelected)
+            .updateProduct(productData)
             .then(() => {
                 console.log(productSelected.id);
                 console.log(arraySelectedVehiclesOfProductEdit);
                 _productService.updateVehiclesOfProduct(id, arraySelectedVehiclesOfProductEdit).then(() => {
-                    setProductSelected({});
                     loadProducts();
                     loadVehicles();
+                    setDisplayDialogEditUploadImages(true);
+
                     toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto editado exitosamente", life: 3000 });
                 });
             })
@@ -320,23 +251,35 @@ export default function Products() {
             });
     }
 
-    function CreateProduct() {
+    function CreateProduct(data, form) {
+        let productData = {
+            id: data.productReferenceId,
+            name: data.productName,
+            description: data.productDescription,
+            idCategory: data.selectedProductCategory.id,
+            idBrand: data.selectedProductBrand.id,
+        };
+        console.log(productData);
+
         _productService
-            .createProduct(productReferenceId, productName, productDescription, selectedProductCategory.id, selectedProductBrand.id)
+            .createProduct(data.productReferenceId, data.productName, data.productDescription, data.selectedProductCategory.id, data.selectedProductBrand.id)
             .then(() => {
+                setProductReferenceId(data.productReferenceId);
+                setDisplayDialogUploadImages(true);
                 selectedVehicles.forEach((vehicle) => {
                     _productService
-                        .addVehicleToProduct(productReferenceId, vehicle.id)
+                        .addVehicleToProduct(data.productReferenceId, vehicle.id)
                         .then(() => {
-                            console.log("Se agrego el vehiculo");
+                            console.log("Se agrego el vehículo");
                         })
                         .catch((e) => {
-                            console.log("Algo salio mal al agregar un vehiculo");
+                            console.log("Algo salio mal al agregar un vehículo");
                         });
                 });
-                setProductName("");
+                
                 loadProducts();
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoria creada exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Producto creado exitosamente", life: 3000 });
+                setDisplayDialogCreate(false);
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -353,15 +296,15 @@ export default function Products() {
         _vehicleService.getVehicles().then((data) => setVehicles(data));
     };
 
-    const onChangeProductSelectedEditForm = (eventOnChange) => {
-        console.log(eventOnChange.target);
-        const productUpdated = {
-            ...productSelected,
-            [eventOnChange.target.name]: eventOnChange.target.value,
-        };
-        console.log(productUpdated);
-        setProductSelected(productUpdated);
-    };
+    // const onChangeProductSelectedEditForm = (eventOnChange) => {
+    //     console.log(eventOnChange.target);
+    //     const productUpdated = {
+    //         ...productSelected,
+    //         [eventOnChange.target.name]: eventOnChange.target.value,
+    //     };
+    //     console.log(productUpdated);
+    //     setProductSelected(productUpdated);
+    // };
     useEffect(() => {
         _productService.getProducts().then((response) => {
             setProducts(response);
@@ -409,20 +352,139 @@ export default function Products() {
     const renderFooterDialog = () => {
         return (
             <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear vehiculo" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadImages(false)} className="p-button-text" />
+            </div>
+        );
+    };
+    const renderFooterDialogEdit = () => {
+        return (
+            <div>
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogEditUploadImages(false)} className="p-button-text" />
             </div>
         );
     };
 
-    const renderFooterDialogEdit = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                <Button label="Editar producto" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
-            </div>
-        );
+    // const renderFooterDialogEdit = () => {
+    //     return (
+    //         <div>
+    //             <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
+    //             <Button label="Editar producto" icon="pi pi-check" onClick={() => onHideDialogEdit()} autoFocus />
+    //         </div>
+    //     );
+    // };
+
+    const initialValues = {
+        productReferenceId: "",
+        productName: "",
+        selectedProductCategory: "",
+        selectedProductBrand: "",
+        productDescription: "",
     };
+
+    const initialValuesEdit = {
+        productReferenceId: productSelected.id,
+        productName: productSelected.name,
+        selectedProductCategory: productSelected.category?.name,
+        selectedProductBrand: productSelected.brand?.name,
+        productDescription: productSelected.description,
+    };
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
+
+    const validate = (data) => {
+        let errors = {};
+        let validateExistingId = products.map((product) => {
+            if (product.id === data.productReferenceId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if (selectedVehicles.length === 0) {
+            errors.selectedVehicles = "Debe seleccionar al menos un vehiculo al producto.";
+        }
+        if (validateExistingId.includes(true)) {
+            errors.productReferenceId = "El producto con referencia " + data.productReferenceId  + " ya existe, ingrese una referencia diferente";
+        }
+        if (!data.productReferenceId) {
+            errors.productReferenceId = "La referencia del producto es requerido.";
+        }
+        if (!data.productName) {
+            errors.productName = "El nombre del producto es requerido.";
+        }
+
+        if (!data.selectedProductCategory) {
+            errors.selectedProductCategory = "Debe seleccionar una categoría.";
+        }
+
+        if (!data.selectedProductBrand) {
+            errors.selectedProductBrand = "Debe seleccionar una marca.";
+        }
+        if (!data.productDescription) {
+            errors.productDescription = "La descripción del producto es requerido.";
+        }
+
+        return errors;
+    };
+    const validateEdit = (data) => {
+        console.log(data)
+        console.log(productSelected)
+        let errors = {};
+        let validateExistingId = products.map((product) => {
+            if (product.id === data.productReferenceId) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if (validateExistingId.includes(true) && data.productReferenceId !== productSelected.id) {
+            errors.productReferenceId = "El producto con referencia " + data.productReferenceId  + " ya existe, ingrese una referencia diferente";
+        }
+        if (selectedVehiclesOfProductEdit.length === 0) {
+            errors.selectedVehicles = "Debe seleccionar al menos un vehiculo al producto.";
+        }
+        if (!data.productReferenceId) {
+            errors.productReferenceId = "La referencia del producto es requerido.";
+        }
+        if (!data.productName) {
+            errors.productName = "El nombre del producto es requerido.";
+        }
+
+        if (!data.selectedProductCategory) {
+            errors.selectedProductCategory = "Debe seleccionar una categoría.";
+        }
+
+        if (!data.selectedProductBrand) {
+            errors.selectedProductBrand = "Debe seleccionar una marca.";
+        }
+        if (!data.productDescription) {
+            errors.productDescription = "La descripción del producto es requerido.";
+        }
+
+        return errors;
+    };
+    const chooseOptions = { label: "Seleccionar imagen", icon: "pi pi-fw pi-images", className: "p-button-raised" };
+    const uploadOptions = { label: "Guardar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
+    const uploadOptionsEdit = { label: "Editar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
+    const cancelOptions = { label: "Cancelar", icon: "pi pi-fw pi-times", className: "p-button-raised" };
+
+    const photoBodyTemplate = (rowData, info) => {
+        let classBool;
+        if (!rowData.id ) {
+            return null
+        }
+        if (info) {
+            classBool = false;
+        } else {
+            classBool = true;
+        }
+        let url = imagesData[rowData.id];
+        
+        return <img src={`${config.baseURL}${url}`} onError={(e) => (e.target.src =`${config.baseURL}/public/images/no-pictures.png`)} alt={rowData.id} className={!classBool ? "product-image" : "info-image"} />;
+    };
+    
     return (
         <div>
             <Toast ref={toast} />
@@ -433,56 +495,281 @@ export default function Products() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+            <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
                 <div className="create-product-form">
-                    <FileUpload
-                        ref={fileUploadRef}
-                        name="demo[]"
-                        url= {uploadProductImageURL}
-                        multiple
-                        accept="image/*"
-                        maxFileSize={1000000}
-                        onUpload={onTemplateUpload}
-                        onSelect={onTemplateSelect}
-                        onError={onTemplateClear}
-                        onClear={onTemplateClear}
-                        headerTemplate={headerTemplate}
-                        itemTemplate={itemTemplate}
-                        emptyTemplate={emptyTemplate}
-                        chooseOptions={chooseOptions}
-                        uploadOptions={uploadOptions}
-                        cancelOptions={cancelOptions}
-                        customUpload
-                        uploadHandler={customBase64Uploader}
-                    />
                     <h5>Ingrese los datos del nuevo producto</h5>
-                    <InputText value={productReferenceId} onChange={(e) => setProductReferenceId(e.target.value)} placeholder="Referencia del producto" className="create-product-form__input" />
-                    <InputText value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Nombre del producto" className="create-product-form__input" />
-                    <InputText value={productDescription} onChange={(e) => setProductDescription(e.target.value)} placeholder="Descripcion del producto" className="create-product-form__input" />
-                    <Dropdown value={selectedProductCategory} options={categories} onChange={onProductCategoryChange} optionLabel="name" placeholder="Categoria del producto" className="create-product-form__dropdown" />
-                    <Dropdown value={selectedProductBrand} options={brands} onChange={onProductBrandChange} optionLabel="name" placeholder="Marca del producto" className="create-product-form__dropdown" />
-                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
-                    <div className="picklist-vehicles">
-                        <div className="card">
-                            <PickList
-                                source={vehicles}
-                                target={selectedVehicles}
-                                itemTemplate={vehicleTemplate}
-                                sourceHeader="Vehiculos"
-                                targetHeader="Seleccionados"
-                                sourceStyle={{ height: "342px" }}
-                                targetStyle={{ height: "342px" }}
-                                onChange={onChange}
-                                filterBy="name"
-                                sourceFilterPlaceholder="Buscar"
-                                targetFilterPlaceholder="Buscar"
-                            />
-                        </div>
-                    </div>
+                    <p>Por favor diligencie todos los campos del formulario</p>
+                    <Form
+                        onSubmit={createProductAlert}
+                        initialValues={initialValues}
+                        validate={validate}
+                        render={({ handleSubmit }) => (
+                            <>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="create-product-form__grid">
+                                        <Field
+                                            name="productReferenceId"
+                                            render={({ input, meta }) => (
+                                                <div>
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productReferenceId" className={classNames({ "p-error": isFormFieldValid("productReferenceId"), "create-product-form__label": true })}>
+                                                            Referencia*
+                                                        </label>
+                                                        <InputText id="productReferenceId" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Referencia del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="productName"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productName" className={classNames({ "p-error": isFormFieldValid("productName") })}>
+                                                            Nombre*
+                                                        </label>
+                                                        <InputText id="productName" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Nombre del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductCategory"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductCategory" className={classNames({ "p-error": isFormFieldValid("selectedProductCategory") })}>
+                                                            Categoría*
+                                                        </label>
+                                                        <Dropdown id="selectedProductCategory" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={categories} optionLabel="name" placeholder="Categoria del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductBrand"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductBrand" className={classNames({ "p-error": isFormFieldValid("selectedProductBrand") })}>
+                                                            Marca*
+                                                        </label>
+                                                        <Dropdown id="selectedProductBrand" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={brands} optionLabel="name" placeholder="Marca del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                    <Field
+                                        name="productDescription"
+                                        render={({ input, meta }) => (
+                                            <div className="create-product-form__InputTextarea">
+                                                <span className="create-product-form__InputTextarea_span">
+                                                    <label htmlFor="productDescription" className={classNames({ "p-error": isFormFieldValid("productDescription") })}>
+                                                        Descripción*
+                                                    </label>
+                                                    <InputTextarea id="productDescription" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input create-product-form__inputTextarea": true })} placeholder="Descripción del producto" />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+
+                                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
+                                    <div className="picklist-vehicles">
+                                        <div className="card">
+                                            <PickList
+                                                source={vehicles}
+                                                target={selectedVehicles}
+                                                itemTemplate={vehicleTemplate}
+                                                sourceHeader="Vehiculos"
+                                                targetHeader="Seleccionados"
+                                                sourceStyle={{ height: "342px" }}
+                                                targetStyle={{ height: "342px" }}
+                                                onChange={onChange}
+                                                filterBy="name"
+                                                sourceFilterPlaceholder="Buscar"
+                                                targetFilterPlaceholder="Buscar"
+                                            />
+                                        </div>
+                                        {selectedVehicles.length > 0 ? <small className="p-success">Vehículo(s) seleccionado(s) exitosamente</small> : <small className="p-error">*Debe seleccionar al menos un vehículo</small>}
+                                    </div>
+                                    <div className="create-product-buttons-form">
+                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" className="p-button-text" label="Cancelar"></Button>
+                                        <Button type="submit" icon="pi pi-check" label="Crear producto" className="mr-2"></Button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
+                    />
                 </div>
             </Dialog>
 
-            <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
+            <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
+                <div className="create-product-form">
+                    
+                    <Form
+                        onSubmit={onHideDialogEdit}
+                        initialValues={initialValuesEdit}
+                        validate={validateEdit}
+                        render={({ handleSubmit }) => (
+                            <>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="create-product-form__grid">
+                                        <Field
+                                            name="productReferenceId"
+                                            render={({ input, meta }) => (
+                                                <div>
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productReferenceId" className={classNames({ "p-error": isFormFieldValid("productReferenceId"), "create-product-form__label": true })}>
+                                                            Referencia*
+                                                        </label>
+                                                        <InputText disabled id="productReferenceId" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Referencia del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="productName"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="productName" className={classNames({ "p-error": isFormFieldValid("productName") })}>
+                                                            Nombre*
+                                                        </label>
+                                                        <InputText id="productName" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input": true })} placeholder="Nombre del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductCategory"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductCategory" className={classNames({ "p-error": isFormFieldValid("selectedProductCategory") })}>
+                                                            Categoría*
+                                                        </label>
+                                                        <Dropdown id="selectedProductCategory" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={categories} optionLabel="name" optionValue="name"placeholder="Categoria del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                        <Field
+                                            name="selectedProductBrand"
+                                            render={({ input, meta }) => (
+                                                <div className="">
+                                                    <span className="create-product-form__span">
+                                                        <label htmlFor="selectedProductBrand" className={classNames({ "p-error": isFormFieldValid("selectedProductBrand") })}>
+                                                            Marca*
+                                                        </label>
+                                                        <Dropdown id="selectedProductBrand" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__dropdown": true })} options={brands} optionLabel="name" optionValue="name" placeholder="Marca del producto" />
+                                                    </span>
+                                                    {getFormErrorMessage(meta)}
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                    <Field
+                                        name="productDescription"
+                                        render={({ input, meta }) => (
+                                            <div className="create-product-form__InputTextarea">
+                                                <span className="create-product-form__InputTextarea_span">
+                                                    <label htmlFor="productDescription" className={classNames({ "p-error": isFormFieldValid("productDescription") })}>
+                                                        Descripción*
+                                                    </label>
+                                                    <InputTextarea id="productDescription" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input create-product-form__inputTextarea": true })} placeholder="Descripción del producto" />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+
+                                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
+                                    <div className="picklist-vehicles">
+                                        <div className="picklist-vehicles">
+                                            <div className="card">
+                                                <PickList
+                                                    source={vehicles}
+                                                    target={selectedVehiclesOfProductEdit}
+                                                    itemTemplate={vehicleTemplateEditForm}
+                                                    targetItemTemplate={vehicleTemplateEditForm}
+                                                    sourceHeader="Vehiculos"
+                                                    targetHeader="Seleccionados"
+                                                    sourceStyle={{ height: "342px" }}
+                                                    targetStyle={{ height: "342px" }}
+                                                    onChange={onChangeEdit}
+                                                    filterBy="name"
+                                                    sourceFilterPlaceholder="Buscar"
+                                                    targetFilterPlaceholder="Buscar"
+                                                />
+                                            </div>
+                                        </div>
+                                        {selectedVehicles.length > 0 || selectedVehiclesOfProductEdit.length > 0 ? <small className="p-success">Vehículo(s) seleccionado(s) exitosamente</small> : <small className="p-error">*Debe seleccionar al menos un vehículo</small>}
+                                    </div>
+                                    <div className="create-product-buttons-form">
+                                        <Button onClick={() => onHideDialogCancel()} icon="pi pi-times" className="p-button-text" label="Cancelar"></Button>
+                                        <Button type="submit" icon="pi pi-check" label="Guardar e ir a editar imagen" className="mr-2"></Button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
+                    />
+                </div>
+            </Dialog>
+            <Dialog header="Seleccionar la imagen del producto" visible={displayDialogUploadImages} onHide={() => setDisplayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+                <div className="create-product-form">
+                    <h5>Seleccione las imagenes del producto</h5>
+                    <FileUpload
+                        name="photo"
+                        url={`${config.baseURL}/imagesProducts/create/${productReferenceId}`}
+                        onUpload={onUpload}
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        chooseOptions={chooseOptions}
+                        uploadOptions={uploadOptions}
+                        cancelOptions={cancelOptions}
+                        // customUpload
+                        // uploadHandler={customBase64Uploader}
+                        // mode="basic"
+                        // auto={true}
+                        emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
+                    />
+                </div>
+            </Dialog>
+            <Dialog header="Editar la imagen del producto" visible={displayDialogEditUploadImages} onHide={() => setDisplayDialogEditUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
+                <div className="create-product-form">
+                    <h5>Imagen actual del producto</h5>
+                    <div className="edit-product-form__img">
+                        {photoBodyTemplate(productSelected)}
+                    </div>
+                    <p>Si desea modificar la imagen, seleccione una nueva, por el contrario, cierre este dialogo con normalidad</p>
+                    <FileUpload
+                        name="photo"
+                        url={`${config.baseURL}/imagesProducts/create/${productSelected.id}`}
+                        onUpload={onUpload}
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        chooseOptions={chooseOptions}
+                        uploadOptions={uploadOptionsEdit}
+                        cancelOptions={cancelOptions}
+                        // customUpload
+                        // uploadHandler={customBase64Uploader}
+                        // mode="basic"
+                        // auto={true}
+                        emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
+                    />
+                </div>
+            </Dialog>
+                                        
+            {/* <Dialog header="Editar producto" visible={displayDialogEdit} onHide={() => onHideDialogEditX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
                 <div className="create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
 
@@ -511,8 +798,7 @@ export default function Products() {
                         </div>
                     </div>
                 </div>
-            </Dialog>
-
+            </Dialog> */}
             <TableProducts className="table-products" products={products} setProductSelected={setProductSelected} />
         </div>
     );

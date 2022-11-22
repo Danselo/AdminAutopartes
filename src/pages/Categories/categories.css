@@ -15,3 +15,13 @@
 .dc-space-between{
     margin: 0 1rem 0 0;
 }
+
+.create-category-form__btns{
+    display: flex;
+    justify-content: flex-end;
+    margin: 1rem;
+}
+
+.dialog-edit{
+    border-radius: 3rem;
+}

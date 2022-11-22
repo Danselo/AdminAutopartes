@@ -42,3 +42,52 @@
 .table-product--column-gray{
     background-color: rgba(201, 206, 206, 0.495);
 }
+
+.create-product-form__inputTextarea{
+    height: 15rem;
+    width: 42rem;
+}
+
+.create-product-form__grid{
+    display: grid;
+    grid-template-columns: 20rem 20rem;
+    /* gap: .5rem .5rem; */
+    column-gap: 1.5rem;
+    justify-items: center;
+    justify-content: center;
+}
+
+.create-product-form__span{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    width: 20rem;
+}
+
+.create-product-form__label{
+    display: block;
+}
+.create-product-form__InputTextarea{
+    display: flex;
+    /* justify-content: flex-start;
+    /* width: 40rem; 
+    align-items: center;
+    margin: 0 0 0 5rem; */
+    justify-content: center;
+
+}
+.create-product-form__InputTextarea_span{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+
+}
+
+.edit-product-form__img{
+    margin: 2rem 0 2rem 0;
+}
+
+.create-product-buttons-form{
+    display: flex;
+    justify-content: flex-end;
+}

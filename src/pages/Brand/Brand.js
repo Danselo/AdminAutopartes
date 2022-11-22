@@ -145,7 +145,7 @@ export default function Brand() {
 
     function changeBrandStatus(brandData) {
         let newState;
-        console.log(brandData.status)
+       
         if (brandData.status === false) {
 
             newState = true;

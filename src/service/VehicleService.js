@@ -36,5 +36,14 @@ export class VehicleService {
         return axios
         .delete(`${baseVehicleURL}/delete/${id}`);
     }
+    changeStatusOfVehicle(idVehicle, status){
+        return axios
+        .put(`${baseVehicleURL}/change-status-of-vehicle/${idVehicle}`, status);
+    }
+    getProductsWhereVehicle(idVehicle){
+        return axios.get(`${baseVehicleURL}/get-products-where-vehicle/${idVehicle}`).then(res => res.data).catch((e) =>{
+            console.error(e)
+        })
+    }
 
 }
