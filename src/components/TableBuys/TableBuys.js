@@ -89,7 +89,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
     return (
         <>
             <Dialog visible={buyInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoBuyDialogFooter} onHide={hideDialog}>
-                <Panel header="Informacion general de la compra" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general de la compra" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div className = "">
                             <strong>
@@ -105,7 +105,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Fecha de creacion de la compra</p>
+                                <p>Fecha de creación de la compra</p>
                             </strong>
                             <p>{buyInfo.createdAt}</p>
                         </div>
@@ -131,7 +131,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion del proveedor" className="dialog-buy-panel" toggleable>
+                <Panel header="Información del proveedor" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -159,7 +159,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion de los productos de la compra" className="dialog-buy-panel">
+                <Panel header="Información de los productos de la compra" className="dialog-buy-panel">
                     <div className="dialog-buy-panel-products">
                         {productsDetailOfBuy.map((element) => (
                             <div className="dialog-buy-panel-products__detail" key="products_detail_panel">
@@ -201,6 +201,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                             </div>
                         ))}
                     </div>
+                    <br />
                 </Panel>
             </Dialog>
 

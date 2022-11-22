@@ -664,7 +664,7 @@ console.log(clientSelected.documentType);
                                             <span>
                                                 <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electrónico</label>
                                                 <br />
-                                                <InputText id="email" {...input} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <InputText id="email" {...input} placeholder="Correo Electrónico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -681,7 +681,7 @@ console.log(clientSelected.documentType);
                                             <span>
                                                 <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}>País</label>
                                                 <br />
-                                                <InputText id="country" {...input} placeholder="Pais" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <InputText id="country" {...input} placeholder="País" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -792,7 +792,7 @@ console.log(clientSelected.documentType);
                                         <Column field="name" sortable header="Nombre"></Column>
                                         <Column field="lastname" sortable header="Apellido"></Column>
                                         <Column field="document" sortable header="Documento"></Column>
-                                        <Column field="telephone" sortable header="Telefono"></Column>
+                                        <Column field="telephone" sortable header="Teléfono"></Column>
                                     </DataTable>
                                 </OverlayPanel>
 
@@ -864,7 +864,7 @@ console.log(clientSelected.documentType);
                                             <span>
                                                 <label htmlFor="telephone" className={classNames({ "p-error": isFormFieldValid("telephone") })}>Teléfono</label>
                                                 <br />
-                                                <InputText id="telephone" {...input} placeholder="Telefono" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <InputText id="telephone" {...input} placeholder="Teléfono" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -894,7 +894,7 @@ console.log(clientSelected.documentType);
                                             <span>
                                                 <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electrónico</label>
                                                 <br />
-                                                <InputText id="email" {...input} placeholder="Correo Electronico" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <InputText id="email" {...input} placeholder="Correo Electrónico" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -910,7 +910,7 @@ console.log(clientSelected.documentType);
                                             <span>
                                                 <label htmlFor="country" className={classNames({ "p-error": isFormFieldValid("country") })}>País</label>
                                                 <br />
-                                                <InputText id="country" {...input} placeholder="Pais" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <InputText id="country" {...input} placeholder="País" onChange={onEditClientSelected} className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}

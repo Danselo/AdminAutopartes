@@ -81,6 +81,13 @@ export default function CreatePurchase() {
             history.push("/buys");
         }, 4000);
     }
+    function handleClickRedirectCancel() {
+      
+        toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado, te redireccionaremos al inicio", life: 3000 });
+        setTimeout(() => {
+            history.push("/buys");
+        }, 4000);
+    }
     const createBuy = () => {
         var dateSelected = new Date(buyDatePurchase);
         var formatDate = dateSelected.toISOString().split("T")[0];
@@ -133,7 +140,7 @@ export default function CreatePurchase() {
             acceptClassName: "p-button-danger",
             acceptLabel: "Cancelar compra",
             rejectLabel: "Volver",
-            accept,
+            accept: () => handleClickRedirectCancel(),
             reject,
         });
     };

@@ -380,9 +380,9 @@ export default function Brand() {
             </Dialog>
 
             <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") +" la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
-                <p>Los siguientes vehiculos estan asociados a esta marca</p>
+                <p>Los siguientes vehículos están asociados a esta marca</p>
                 <strong>Nota:</strong>
-                <p>Si hay productos asociados a los vehiculos en pantalla, estos tambien se {brandSelected.status ? "desactivaran" : "activaran"}</p>
+                <p>Si hay productos asociados a los vehículos en pantalla, estos también se {brandSelected.status ? "desactivaran" : "activaran"}</p>
                 <TableVehiclesOfBrandSelected className="table-products" vehicles={vehiclesWhereBrand} />
             </Dialog>
 

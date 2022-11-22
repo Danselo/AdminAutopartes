@@ -54,7 +54,7 @@ export default function Roles() {
             checked: false,
         },
         {
-            name: "Categorias",
+            name: "Categorías",
             permissions: [],
             checked: false,
         },
@@ -69,7 +69,7 @@ export default function Roles() {
             checked: false,
         },
         {
-            name: "Vehiculos",
+            name: "Vehículos",
             permissions: [],
             checked: false,
         },
@@ -150,7 +150,7 @@ export default function Roles() {
                 setPermissionsOfRolSelected(responseMapped);
             })
             .catch((e) => {
-                console.log("Falle aqui", e);
+                console.log("Falle aquí", e);
             });
     };
 
@@ -281,8 +281,6 @@ export default function Roles() {
         _rolService
             .updateRol(rolSelected)
             .then((rol) => {
-                console.log(rol.data.id);
-                console.log(permissionsOfRolSelected);
                 //esto es para que coga todos los ids a la hora de editar los permisos del rol
                 // let arrayPermissionsOfRolSelected = [];
 
@@ -291,8 +289,9 @@ export default function Roles() {
                 //     arrayPermissionsOfRolSelected[i]= permissions
                 // }
                 // console.log(arrayPermissionsOfRolSelected);
-                permissionsOfRolSelected.forEach((id) => {
-                    _rolesPermissionsService
+
+                    permissionsOfRolSelected.map((id)=>{
+                        _rolesPermissionsService
                         .updateRolPermissions(rol.data.id,id.id)
                         .then((e) => {
                             console.log("Se edito el permiso exitosamente", e);
@@ -300,9 +299,9 @@ export default function Roles() {
                         .catch((e) => {
                             console.log("Algo salio mal al crear rol permission", e);
                         });
-                });
- 
-
+                        setPermissionSelected("");
+                        loadRoles();
+                    })
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -312,7 +311,8 @@ export default function Roles() {
             loadRoles();
             toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol creado exitosamente", life: 3000 });
     }
-
+    console.log(permissionSelected);
+    console.log(permissionsOfRolSelected);
     function CreateRol(data) {
         _rolService
             .createRol(data.name)
@@ -404,7 +404,7 @@ export default function Roles() {
 
                 if (selectedPermission.id === e.value.id) {
                     _selectedPermissions.splice(i, 1);
-                    break;
+                    
                 }
             }
         }
@@ -424,7 +424,7 @@ export default function Roles() {
             errors.name = "El nombre es requerido";
         }
         if(permissionSelected.length<=0){
-            errors.permissions = "  Debe digitar almenos un permiso"
+            errors.permissions = "  Debe digitar al menos un permiso"
         }
 
 
@@ -446,7 +446,7 @@ export default function Roles() {
             errors.name = "El nombre es requerido";
         }
         if(permissionsOfRolSelected.length<=0){
-            errors.permissions = "  Debe digitar almenos un permiso"
+            errors.permissions = "  Debe digitar al menos un permiso"
         }
 
 
@@ -503,7 +503,7 @@ export default function Roles() {
                             <div className="create-rol-form--body">
                                 <div className="create-rol-form--body-text">
                                     <h5 className="text-center">Permisos del rol por modulo</h5>
-                                    <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
+                                    <p>A continuación encontrara cada uno de los módulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
                                 </div>
                     
                                 {permissionsArray.map((element) => (
@@ -579,7 +579,7 @@ export default function Roles() {
                                             <div className="create-rol-form--body">
                                                 <div className="create-rol-form--body-text">
                                                     <h5 className="text-center">Permisos del rol por modulo</h5>
-                                                    <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
+                                                    <p>A continuación encontrara cada uno de los módulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
                                                 </div>
 
                                                 {permissionsArray.map((element) => (

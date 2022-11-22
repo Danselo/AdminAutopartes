@@ -66,7 +66,7 @@ export const TableClient = ({setClientSelected,clients}) => {
     return (
         <>        
         <Dialog visible={clientInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoClientDialogFooter} onHide={hideDialog}>
-                <Panel header="Informacion general de la compra" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general de la compra" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -100,13 +100,13 @@ export const TableClient = ({setClientSelected,clients}) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Numero de telefono</p>
+                                <p>Numero de teléfono</p>
                             </strong>
                             <p>{clientInfo.telephone}</p>
                         </div>
                         <div>
                             <strong>
-                                <p>Correo Electronico</p>
+                                <p>Correo Electrónico</p>
                             </strong>
                             <p>{clientInfo.email}</p>
                         </div>

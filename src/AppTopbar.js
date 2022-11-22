@@ -27,8 +27,10 @@ export const AppTopbar = (props) => {
                 </li>
                 <li>
                     <button className="p-link layout-topbar-button" onClick={props.onMobileSubTopbarMenuClick}>
-                        <i className="pi pi-user" />
-                        <span>Perfil</span>
+                        <Link to="/MyPerfil" className="layout-topbar-logo">
+                            <i className="pi pi-user" />
+                            <span>Perfil</span>
+                        </Link>
                     </button>
                 </li>
             </ul>

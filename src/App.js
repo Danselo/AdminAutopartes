@@ -33,6 +33,8 @@ import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurchase";
 import Categories from "./pages/Categories/Categories";
 import Vehicles from "./pages/Vehicle/Vehicle";
+import MyPerfil from "./pages/MyPerfil/Perfil";
+
 import ProductsBrands from "./pages/ProductsBrands/ProductsBrands";
 
 
@@ -285,6 +287,8 @@ const App = () => {
                     <Route path="/Categories" exact render={() => <Categories />} />                  
                     <Route path="/Vehicles" exact render={() => <Vehicles />} />
                     <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} /> 
+                    <Route path="/MyPerfil" exact render={() => <MyPerfil />} /> 
+
               
                 </div>
 

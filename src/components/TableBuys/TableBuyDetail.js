@@ -287,7 +287,7 @@ useEffect(() => {
                 errors.netPrice = "Digite un precio neto";
             }
             if(!data.profitPercentage){
-                errors.profitPercentage = "digite un porciento valido";
+                errors.profitPercentage = "Digite un porciento valido";
             }
     
             return errors;

@@ -39,11 +39,14 @@ export class RolesPermissionsService {
                 idRol,
                 idPermissions
             })
-            .then((response) => {
-                return response.data;
-            });
-    }
 
+    }
+    // updateRolPermissions(idRol) {
+    //     const url = `${baseRolesPermissionsURL}/update/${idRol.id}`
+    //      delete idRol.id
+    //      return axios
+    //          .put(url,idRol)
+    // }
     getPermissionsOfRolSelected(idRol){
         return axios.get(`${baseRolesPermissionsURL}/get-permissions-of-rol/${idRol}`).then((res) => res.data);
 

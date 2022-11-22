@@ -11,7 +11,7 @@ export const TableVehiclesOfBrandSelected = ({ vehicles }) => {
     return (
         <>
             <div className="p-inputgroup create-brand__table">
-                <InputText placeholder="Buscar vehiculo" onInput={(e) => setGlobalFilter(e.target.value)} />
+                <InputText placeholder="Buscar vehículo" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
             <DataTable 
@@ -24,7 +24,7 @@ export const TableVehiclesOfBrandSelected = ({ vehicles }) => {
             showGridlines rows={10}  
             dataKey="id" 
             globalFilter={globalFilter}>
-                <Column field="id" sortable header="Id vehiculo"></Column>
+                <Column field="id" sortable header="Id vehículo"></Column>
                 <Column field="name"  header="Nombre"></Column>
                 <Column field="model"  header="Modelo"></Column>
             </DataTable>

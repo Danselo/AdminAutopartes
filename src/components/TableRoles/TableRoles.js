@@ -155,11 +155,11 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                                 <div className = "dialog-buy-panel-products__detail-item"  >                  
                                                 <strong><p>Nombre Modulos</p>
                                                 </strong>
-                                 {modules.map((element2) =>  {
+                                 {modules.map((element2, index) =>  {
                                         if(element2.id === element.idModule){
                                             console.log(element2.name);
                                             return(
-                                            <p key={element2.id}>{element2.name}</p>
+                                            <p key={index}>{element2.name}</p>
 
                                          )}
                                    })}
