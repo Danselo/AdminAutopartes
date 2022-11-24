@@ -10,7 +10,7 @@ import { BuyService } from "../../service/BuyService";
 
 const _buyService = new BuyService();
 
-export const TableBuys = ({ buys }) => {
+export const TableBuys = ({ setBuySelected,buys }) => {
     let emptyBuyInfo = {
         createdAt: null,
         datePurchase: null,
@@ -29,6 +29,11 @@ export const TableBuys = ({ buys }) => {
     const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
     const [buysDetail, setBuyDetails] = useState([]);
     
+    useEffect(() => {
+        if (TableBuysSelected) {
+            setBuySelected(TableBuysSelected);
+        }
+    }, [TableBuysSelected, setBuySelected]);
 
     const getBuyDetail = (id) => {
         _buyService
@@ -79,7 +84,6 @@ export const TableBuys = ({ buys }) => {
         );
     };
 
-    console.log(buyInfo);
     return (
         <>
             <Dialog visible={buyInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoBuyDialogFooter} onHide={hideDialog}>

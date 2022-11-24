@@ -579,7 +579,7 @@ export default function Products() {
                                         )}
                                     />
 
-                                    <h5>Seleccione los vehiculos compatibles con el producto</h5>
+                                    <h5>Seleccione los vehículos compatibles con el producto</h5>
                                     <div className="picklist-vehicles">
                                         <div className="card">
                                             <PickList

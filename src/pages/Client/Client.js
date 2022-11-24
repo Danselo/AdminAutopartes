@@ -6,7 +6,6 @@ import "./client.css";
 import { Toolbar } from "primereact/toolbar";
 import { UserService } from "../../service/UserService";
 import { SaleService } from "../../service/SaleService";
-
 import { ClientService } from "../../service/ClientService";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Dropdown } from "primereact/dropdown";
