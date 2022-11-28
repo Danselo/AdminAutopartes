@@ -47,8 +47,8 @@ export const TableUser = ({setUserSelected,users}) => {
             <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
             <Column field="lastname" sortable header="Apellido"></Column>
             <Column field="email" sortable header="Email"></Column>
-            <Column field="idRol" sortable header="Rol"></Column>
-            {/* <Column field="roles_users.name" sortable header="Rol"></Column> */}
+            {/* <Column field="idRol" sortable header="Rol"></Column> */}
+            <Column field="roles_users.name" sortable header="Rol"></Column>
 
         </DataTable>
         </>

@@ -3,7 +3,7 @@
     grid-template-columns: 1fr 1fr;
     width: 40vw;
     margin: 1rem auto 0 auto;
-    
+    gap: 1rem;
    
 }
 
@@ -15,4 +15,12 @@
 .create-buy-tittle{
     text-align: center;
     padding: 1em 0;
+}
+.create-buy-form__input_file{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.URL_factura_input{
+    text-align: center;
 }

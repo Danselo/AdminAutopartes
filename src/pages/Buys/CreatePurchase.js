@@ -15,6 +15,9 @@ import TableBuyDetail from "../../components/TableBuys/TableBuyDetail";
 import { useHistory } from "react-router-dom";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
+import { Dialog } from "primereact/dialog";
+import { FileUpload } from "primereact/fileupload";
+import config from "../../config/config";
 
 const _buyService = new BuyService();
 const _providersService = new ProviderService();
@@ -32,12 +35,26 @@ export default function CreatePurchase() {
   }
     const [buyDatePurchase, setBuyDatePurchase] = useState("");
     const [buyTotalPurchase, setBuyTotalPurchase] = useState(0);
+    const [displayDialogUploadFiles, setDisplayDialogUploadFiles] = useState(false);
+    const [buyReferenceId, setBuyReferenceId] = useState("");
+
     // const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState(0);
     const [buyInvoiceUrl, setBuyinvoiceUrl] = useState("");
     const [addedProductsAtBuy, setAddedProductsAtBuy] = useState([]);
     const [globalTotal, setGlobalTotal] = useState(0);
     const [products, setProducts] = useState([]);
     const [buys, setBuys] = useState([]);
+    const chooseOptions = { label: "Seleccionar imagen", icon: "pi pi-fw pi-images", className: "p-button-raised" };
+    const uploadOptions = { label: "Guardar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
+    const cancelOptions = { label: "Cancelar", icon: "pi pi-fw pi-times", className: "p-button-raised" };
+    const onBasicUploadAuto = () => {
+        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded with Auto Mode'});
+    }
+    const onUpload = () => {
+        toast.current.show({ severity: "info", summary: "Success", detail: "Archivo cargado" });
+        setDisplayDialogUploadFiles(false);
+    };
+
     if (addedProductsAtBuy) {
         
     }if (addedProductsAtBuy.length  > 1) {
@@ -94,6 +111,7 @@ export default function CreatePurchase() {
         _buyService
             .createBuy(buyId, buyProviderSelected.id, formatDate, globalTotal,buyInvoiceUrl)
             .then(() => {
+                // setBuyReferenceId(data.productReferenceId);
                 products.forEach((element) => {
                     _buyService
                         .addProductsToPurchase(element.idBuy, element.idProduct, element.amount, element.netPrice, element.profitPercentage, element.salePrice)
@@ -131,7 +149,13 @@ export default function CreatePurchase() {
             reject,
         });
     };
-
+    const renderFooterDialog = () => {
+        return (
+            <div>
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadFiles(false)} className="p-button-text" />
+            </div>
+        );
+    };
     const cancelBuy = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -208,6 +232,7 @@ export default function CreatePurchase() {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
+    console.log(buyInvoiceUrl);
     return (
         <div>
             <Toast ref={toast} />
@@ -279,25 +304,68 @@ export default function CreatePurchase() {
                                     </div>
                                 )}
                             />
-                            <Field
+
+                          
+                        </div>    
+                        <Field
                                 name="URL_factura"
                                 render={({ input, meta }) => (
-                                    <div className="URL_factura">
+                                    <div className="URL_factura_input">
                                         <span>
                                             <label htmlFor="URL_factura" className={classNames({ "p-error": isFormFieldValid("URL_factura") })}>Url Factura</label>
-                                            <InputText id="URL_factura" {...input} onChange={(e) => setBuyinvoiceUrl(e.target.value)} value={buyInvoiceUrl} placeholder="URL factura" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            {/* <InputText id="URL_factura" {...input} onChange={(e) => setBuyinvoiceUrl(e.target.value)} value={buyInvoiceUrl} placeholder="URL factura" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} /> */}
+                                            <div className="create-product-form">
+                                                    <FileUpload
+                                                        name="photo"
+                                                        url={`${config.baseURL}/filesBuys/create/${buyId}`}
+                                                        onUpload={onUpload}
+                                                        maxFileSize={1000000}
+                                                        chooseOptions={chooseOptions}
+                                                        uploadOptions={uploadOptions}
+                                                        cancelOptions={cancelOptions}
+                                                        {...input}
+                                                        onChange={(e) => setBuyinvoiceUrl(e.target.value)} 
+                                                        className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input_file": true })}
+                                                        value={buyInvoiceUrl}
+                                                        // customUpload
+                                                        // uploadHandler={customBase64Uploader}
+                                                        // mode="basic"
+                                                        // auto={true}
+                                                        emptyTemplate={<p className="m-0">Arrastre y suelte la factura pdf</p>}
+                                                    />
+                                                </div>
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
                                     </div>
                                 )}
-                            />
-                        </div>      
+                            />  
                     </form>
                     
                 )}
                 
             />
+                {/* <Dialog header="Seleccionar la imagen del producto" visible={displayDialogUploadFiles} onHide={() => setDisplayDialogUploadFiles(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+                <div className="create-product-form">
+                    <h5>Seleccione las imagenes del producto</h5>
+                    <FileUpload
+                        name="photo"
+                        url={`${config.baseURL}/filesBuys/create/${buyReferenceId}`}
+                        onUpload={onUpload}
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        chooseOptions={chooseOptions}
+                        uploadOptions={uploadOptions}
+                        cancelOptions={cancelOptions}
+                        // customUpload
+                        // uploadHandler={customBase64Uploader}
+                        // mode="basic"
+                        // auto={true}
+                        emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
+                    />
+                </div>
+            </Dialog> */}
+
                 <TableBuyDetail   idBuy={buyId}  buyUrl={buyInvoiceUrl} Provider={buyProviderSelected} 
                 setAddedProductsAtBuy={setAddedProductsAtBuy} setGlobalTotal = {setGlobalTotal} buyDate = {buyDatePurchase} />
 

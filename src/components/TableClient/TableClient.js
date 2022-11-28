@@ -157,7 +157,7 @@ export const TableClient = ({setClientSelected,clients}) => {
              <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
             <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
-            <Column field="idUser" sortable header="Id Usuario"></Column>
+            <Column field="users.name" sortable header="Usuario Asociado"></Column>
             <Column field="name" sortable header="Nombre"></Column>
             <Column field="lastname" sortable header="Apellido"></Column>
             {/* <Column field="documentType" sortable header="Tipo Documento"></Column>

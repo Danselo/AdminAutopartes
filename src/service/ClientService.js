@@ -39,6 +39,7 @@ getClients() {
       updateClient(client) {
         const url = `${baseClientsURL}/update/${client.id}`
          delete client.id
+         delete client.users
          return axios
              .put(url,client)
     }

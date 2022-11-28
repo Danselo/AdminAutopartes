@@ -25,6 +25,7 @@ export class UserService {
         const url = `${baseUserURL}/update/${user.id}`
         delete user.id
         delete user.createdAt
+        delete user.roles_users
          return axios
              .put(url,user)
     }

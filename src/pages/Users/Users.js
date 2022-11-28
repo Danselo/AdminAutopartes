@@ -350,7 +350,17 @@ export default function Users() {
 
         if (!data.idRol) {
             errors.idRol = "Debe asociar un Rol al usuario.";
+        }else{
+            roles.forEach((element) => {
+                if ( data.idRol.id === element.id ) {
+                    if ( element.status === false){
+                        errors.idRol = "seleccione un rol activo"
+
+                    }
+                }
+            });
         }
+        
         if (!data.name) {
             errors.name = "El nombre es requerido";
         }
@@ -409,6 +419,15 @@ export default function Users() {
 
         if (!data.idRol) {
             errors.idRol = "Debe asociar un Rol al usuario.";
+        }else{
+            roles.forEach((element) => {
+                if ( data.idRol.id === element.id ) {
+                    if ( element.status === false){
+                        errors.idRol = "seleccione un rol activo"
+
+                    }
+                }
+            });
         }
         if (!data.name) {
             errors.name = "El nombre es requerido";

@@ -59,8 +59,13 @@ export default function Client() {
     ];
     const refreshPage2 = ()=>{
         setDisplayDialogEdit(false)
+        if(selectedClientUser){
+            window.location.reload(); 
+        }else{
         setClientSelected({});
         loadClients();
+            
+        }
       }
     useEffect(() => {
         if (isMounted.current && selectedClientUser) {
@@ -172,8 +177,11 @@ export default function Client() {
         createClientAlert(data, form);
         setDisplayDialogCreate(false);
     };
+
     const onHideDialogCreateX = () => {
         setDisplayDialogCreate(false);
+        window.location.reload(); 
+        loadClients();
     };
     const onHideDialogEditX = () => {
         setDisplayDialogEdit(false);
@@ -191,9 +199,15 @@ export default function Client() {
     };
 
     const onClientUserChange = (e) => {
-        setSelectedClientUser(e.value);
-        console.log(e.value.id);
-        changeIdUserClientEdit(e.value.id);
+        if(e.value.status === false){
+            toast.current.show({ severity: "info", summary: "Usuario inactivo seleccione otro", life: 3000 });
+
+        }else{
+            setSelectedClientUser(e.value);
+            console.log(e.value.id);
+            changeIdUserClientEdit(e.value.id);
+        }
+
     };
     function changeIdUserClientEdit(id){
         clientSelected.idUser = id;
@@ -214,8 +228,19 @@ export default function Client() {
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cliente editado exitosamente", life: 3000 });
             })
             .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
+                clients.forEach((element) => {
+                    const clientMail = element.email;
+    
+                    if (clientSelected.email === clientMail) {
+                      toast.current.show({ severity: "warn", summary: "Correo incorrecto", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
+
+                    }
+                    // else{
+                    //     toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                    //     console.log(e);
+                    // }
+                });
+                
             });
     }
     function getUsers() {
@@ -471,14 +496,15 @@ export default function Client() {
             errors.email = "El email es requerido";
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
             errors.email = "Email invalido. E.g. example@email.com";
-        } else
-            users.forEach((element) => {
-                const userMail = element.email;
+        } 
+        // else
+        //     users.forEach((element) => {
+        //         const userMail = element.email;
 
-                if (data.email === userMail) {
-                    errors.email = "El correo ya existe";
-                }
-            });
+        //         if (data.email === userMail) {
+        //             errors.email = "El correo ya existe";
+        //         }
+        //     });
 
         if (!data.country) {
             errors.country = "Debe digitar una país";
@@ -519,7 +545,16 @@ export default function Client() {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
-console.log(clientSelected.documentType);
+const statusBodyTemplate = (rowData) => {
+    if (rowData.status === true) {
+        return <span className="role-badge-status-active">ACTIVO</span>;
+    }else if(rowData.status === false){
+        return <span className="role-badge-status-inactive">INACTIVO</span>;
+    }else{
+        return <span className="role-badge-status-na">NA</span>; 
+    }
+    
+}
     return (
         <div>
             <Toast ref={toast} />
@@ -541,7 +576,7 @@ console.log(clientSelected.documentType);
                                     <Button
                                         type="button"
                                         icon="pi pi-search"
-                                        label={selectedClientUser ? selectedClientUser.name : "Seleccione un Usuario"}
+                                        label={selectedClientUser ? selectedClientUser.name : "Seleccione un Usuario" }
                                         onClick={(e) => op.current.toggle(e)}
                                         aria-haspopup
                                         aria-controls="overlay_panel"
@@ -556,11 +591,12 @@ console.log(clientSelected.documentType);
                                         <Button icon="pi pi-search" className="p-button-primary" />
                                     </div>
 
-                                    <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser} onSelectionChange={onClientUserChange} >
+                                    <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser}  onSelectionChange={onClientUserChange} >
                                         <Column field="name" sortable header="Nombre"></Column>
                                         <Column field="lastname" sortable header="Apellido"></Column>
-                                        <Column field="document" sortable header="Documento"></Column>
-                                        <Column field="telephone" sortable header="Telefono"></Column>
+                                        <Column field="email" sortable header="Email"></Column>
+                                         <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
+
                                     </DataTable>
                                 </OverlayPanel>
                                     <Field
@@ -790,8 +826,9 @@ console.log(clientSelected.documentType);
                                     <DataTable id="saleClientId" value={users} globalFilter={globalFilter} selectionMode="single" paginator rows={5} selection={selectedClientUser} onSelectionChange={onClientUserChange}   >
                                         <Column field="name" sortable header="Nombre"></Column>
                                         <Column field="lastname" sortable header="Apellido"></Column>
-                                        <Column field="document" sortable header="Documento"></Column>
-                                        <Column field="telephone" sortable header="Teléfono"></Column>
+                                        <Column field="email" sortable header="Correo"></Column>
+                                        <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
+
                                     </DataTable>
                                 </OverlayPanel>
 
