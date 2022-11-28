@@ -9,14 +9,15 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { Toolbar } from "primereact/toolbar";
 import { RolesService } from "../../service/RolesService";
 import { RolesPermissionsService } from "../../service/RolesPermissionsService";
-import { PermissionsService } from "../../service/PermissionsService";
 import { Panel } from "primereact/panel";
+import { MultiSelect } from "primereact/multiselect";
 
 import { Checkbox } from "primereact/checkbox";
+import { ModulesService } from "../../service/ModulesService";
 
 const _rolService = new RolesService();
 const _rolesPermissionsService = new RolesPermissionsService();
-const _permissionsService = new PermissionsService();
+const _modulesService = new ModulesService();
 
 export default function Roles() {
     const [rolSelected, setRolSelected] = useState({});
@@ -28,6 +29,21 @@ export default function Roles() {
     const [roles, setRoles] = useState([]);
     const [permissionSelected, setPermissionSelected] = useState([]);
     const [permissionsOfRolSelected, setPermissionsOfRolSelected] = useState([]);
+    const [selectedModules, setSelectedModules] = useState(null);
+    const [modules, setModules] = useState([]);
+    console.log(selectedModules);
+
+    useEffect(() => {
+        _modulesService
+            .getModules()
+            .then((response) => {
+                console.log(response);
+                setModules(response);
+            })
+            .catch((error) => {
+                console.log("Algo salio mal al traer los modulos de la bd", error);
+            });
+    }, []);
 
     const permissionsArray = [
         {
@@ -108,16 +124,17 @@ export default function Roles() {
         });
     }, []);
 
-    const getPermissionsOfRolSelected = (idRolSelected) => {
+    const getModulesOfRolSelected = (idRolSelected) => {
         _rolesPermissionsService
-            .getPermissionsOfRolSelected(idRolSelected)
+            .getModulesOfRolSelected(idRolSelected)
             .then((response) => {
-                let responseMapped = response.map((element)=>{ return {
-                    id: element.idPermissions,
-                    idModule: element.permissions.idModule,
-                    name :  element.permissions.name
-                    }
-                })
+                let responseMapped = response.map((element) => {
+                    return {
+                        id: element.idPermissions,
+                        idModule: element.permissions.idModule,
+                        name: element.permissions.name,
+                    };
+                });
                 console.log(responseMapped);
                 setPermissionsOfRolSelected(responseMapped);
             })
@@ -131,7 +148,7 @@ export default function Roles() {
     };
     const createRolAlert = () => {
         confirmDialog({
-            message: "¿Esta seguro que desea agregar esta rol?",
+            message: "¿Esta seguro que desea crear esta rol?",
             header: "Confirmacion",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
@@ -152,17 +169,7 @@ export default function Roles() {
             reject: () => setDisplayDialogEdit(false),
         });
     };
-    const deleteRolAlert = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea eliminar este rol?",
-            header: "Confirmacion",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Eliminar",
-            rejectLabel: "Cancelar",
-            accept: () => deleteRol(rolSelected),
-            reject: () => setDisplayDialogCreate(true),
-        });
-    };
+
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -177,12 +184,12 @@ export default function Roles() {
     };
     function onClickDialogCreate() {
         setDisplayDialogCreate(true);
-        getRolesPermissions();
+        // getRolesPermissions();
     }
 
     function onClickDialogEdit() {
-        getPermissionsOfRolSelected(rolSelected.id);
-        getRolesPermissions();
+        getModulesOfRolSelected(rolSelected.id);
+        // getRolesPermissions();
         setDisplayDialogEdit(true);
     }
 
@@ -211,16 +218,16 @@ export default function Roles() {
         setDisplayDialogEdit(false);
     };
 
-    const getRolesPermissions = () => {
-        _permissionsService
-            .getPermissions()
-            .then((response) => {
-                setPermissions(response);
-            })
-            .catch((e) => {
-                console.log("Algo salio mal al traer los permisos de la bd", e);
-            });
-    };
+    // const getRolesPermissions = () => {
+    //     _permissionsService
+    //         .getModules()
+    //         .then((response) => {
+    //             setPermissions(response);
+    //         })
+    //         .catch((e) => {
+    //             console.log("Algo salio mal al traer los permisos de la bd", e);
+    //         });
+    // };
 
     function EditRol() {
         // let id = rolSelected.id;
@@ -237,41 +244,16 @@ export default function Roles() {
 
     function CreateRol() {
         _rolService
-            .createRol(rolName)
-            .then((rol) => {
-                permissionSelected.forEach((permissionId) => {
-                    _rolesPermissionsService
-                        .createRolPermission(rol.id, permissionId)
-                        .then((e) => {
-                            console.log("Se agrego el permiso exitosamente", e);
-                        })
-                        .catch((e) => {
-                            console.log("Algo salio mal al crear rol permission", e);
-                        });
-                });
+            .createRol(rolName, selectedModules)
+            .then((response) => {
+                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol creado exitosamente", life: 3000 });
             })
-
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal al crear el rol, vuelve a intentarlo", life: 3000 });
                 console.log(e);
             });
         setRolName("");
         loadRoles();
-        toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol creado exitosamente", life: 3000 });
-    }
-
-    function deleteRol(rol) {
-        _rolService
-            .deleteRol(rol.id)
-            .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol eliminado exitosamente", life: 3000 });
-                loadRoles();
-                setRolSelected({});
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
     }
 
     const loadRoles = () => {
@@ -329,8 +311,7 @@ export default function Roles() {
 
         if (e.checked) {
             _selectedPermissions.push(e.value);
-        }
-         else {
+        } else {
             for (let i = 0; i < _selectedPermissions.length; i++) {
                 const selectedPermission = _selectedPermissions[i];
                 console.log(selectedPermission);
@@ -366,22 +347,11 @@ export default function Roles() {
                     </div>
                     <div className="create-rol-form--body">
                         <div className="create-rol-form--body-text">
-                            <h5 className="text-center">Permisos del rol por modulo</h5>
-                            <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
+                            <h5 className="text-center">Acceso por módulo</h5>
+                            <p>A continuacion encontrara cada uno de los modulos del sistema, por favor seleccione los modulos a los que desea darle acceso a este rol</p>
                         </div>
 
-                        {permissionsArray.map((element) => (
-                            <Panel header={element.name} className="create-rol-form--body-panel" key={element.name} toggleable>
-                                <div className="">
-                                    {element.permissions.map((info) => (
-                                        <div className="field-radiobutton" key={info.name}>
-                                            <Checkbox inputId={info.id} name="permission" value={info.id} onChange={onPermissionChange} checked={permissionSelected.indexOf(info.id) !== -1} />
-                                            <label htmlFor={info.id}>{info.name}</label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Panel>
-                        ))}
+                        <MultiSelect value={selectedModules} options={modules} onChange={(e) => setSelectedModules(e.value)} optionLabel="name" placeholder="Seleccione los modulos" display="chip" />
                     </div>
                 </div>
             </Dialog>
