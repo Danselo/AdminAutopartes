@@ -1,33 +1,27 @@
 import axios from "axios";
 import config from "../config/config";
 
-const baseRolesPermissionsURL = config.baseURL + "/rolesPermissions"
+const baseRolesPermissionsURL = config.baseURL + "/rolesPermissions";
 
 export class RolesPermissionsService {
-
     getRolPermission(id) {
-        return axios.get(`${baseRolesPermissionsURL}/${id}`).then(res => res.datas);
+        return axios.get(`${baseRolesPermissionsURL}/${id}`).then((res) => res.datas);
     }
 
-    getRolesPermissions(){
-        return axios.get(baseRolesPermissionsURL).then(res => res.data);
-        
+    getRolesPermissions() {
+        return axios.get(baseRolesPermissionsURL).then((res) => res.data);
     }
-    deleteRol(id){
-        
-        return axios
-        .delete(`${baseRolesPermissionsURL}/delete/${id}`)
-        .then(() => {
-          console.log("rol eliminada")
+    deleteRol(id) {
+        return axios.delete(`${baseRolesPermissionsURL}/delete/${id}`).then(() => {
+            console.log("Categoria eliminada");
         });
-
     }
 
-    createRolPermission(idRol,idPermissions){
+    createRolPermission(idRol, idPermissions) {
         return axios
             .post(baseRolesPermissionsURL + "/create", {
                 idRol,
-                idPermissions              
+                idPermissions,
             })
             .then((response) => {
                 return response.data;
@@ -39,17 +33,8 @@ export class RolesPermissionsService {
                 idRol,
                 idPermissions
             })
-
-    }
-    // updateRolPermissions(idRol) {
-    //     const url = `${baseRolesPermissionsURL}/update/${idRol.id}`
-    //      delete idRol.id
-    //      return axios
-    //          .put(url,idRol)
-    // }
-    getPermissionsOfRolSelected(idRol){
+        }
+    getModulesOfRolSelected(idRol) {
         return axios.get(`${baseRolesPermissionsURL}/get-permissions-of-rol/${idRol}`).then((res) => res.data);
-
     }
-
 }

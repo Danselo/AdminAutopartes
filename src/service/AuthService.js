@@ -6,12 +6,11 @@ import config from "../config/config";
 const baseRolePermissionsURL = config.baseURL + "/roles";
 
 export class AuthService {
+    getModules(token) {
+        let config = {
+            headers: { Authorization: "Bearer " + token },
+        };
 
-    getPermissions(token) {
-        let config ={
-            headers : {'Authorization': 'Bearer ' + token}
-        }
-         
-        return axios.get(`${baseRolePermissionsURL}/permissions`,config).then((res) => res.data);
+        return axios.get(`${baseRolePermissionsURL}/permissions`, config).then((res) => res.data);
     }
 }
