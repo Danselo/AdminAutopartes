@@ -359,6 +359,7 @@ export default function Products() {
         return (
             <div>
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadImages(false)} className="p-button-text" />
+                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadImages(false)} className="p-button-text" />
             </div>
         );
     };

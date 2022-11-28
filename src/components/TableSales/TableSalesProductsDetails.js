@@ -128,7 +128,7 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
         setAddedProducts(_AddedProducts);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
-        toast.current.show({ severity: "success", summary: "Successful", detail: "Product Deleted", life: 3000 });
+        toast.current.show({ severity: "success", summary: "Confirmación", detail: "Se a eliminado el producto ", life: 3000 });
     };
 
     const findIndexById = (id) => {
@@ -173,8 +173,8 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
 
     const deleteProductDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProductDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteProduct} />
+            <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProductDialog} />
+            <Button label="Eliminar" icon="pi pi-check" className="p-button-text" onClick={deleteProduct} />
         </React.Fragment>
     );
     const onSubmit = (data, form) => {
@@ -242,7 +242,7 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
             <div className="card">
                 <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
-                <DataTable value={AddedProducts} selection={selectedProducts} onSelectionChange={(e) => setSelectedProducts(e.value)} dataKey="id" paginator rows={10} header="Productos agregados a la compra" responsiveLayout="scroll">
+                <DataTable value={AddedProducts} selection={selectedProducts} onSelectionChange={(e) => setSelectedProducts(e.value)} dataKey="id" paginator rows={10} header="Productos agregados a la venta" responsiveLayout="scroll">
                     <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} exportable={false}></Column>
                     <Column field="idProduct" header="Referencia producto" sortable></Column>
                     <Column field="amount" header="Cantidad"></Column>
@@ -334,12 +334,12 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
                 />
             </Dialog>
 
-            <Dialog visible={deleteProductDialog} style={{ width: "450px" }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+            <Dialog visible={deleteProductDialog} style={{ width: "450px" }} header="Confirmación" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: "2rem" }} />
                     {product && (
                         <span>
-                            Seguro que deseas eliminar este producto? <b>{product.name}</b>?
+                            Seguro que deseas eliminar este producto? <b>{product.name}</b>
                         </span>
                     )}
                 </div>
