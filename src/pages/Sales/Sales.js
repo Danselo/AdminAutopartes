@@ -53,7 +53,7 @@ export default function Sales() {
 
         <div>
             <div className="text-center">
-                <h3>Gestión de ventas</h3>
+                <h4>Gestión de ventas</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents} />
 

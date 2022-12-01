@@ -39,7 +39,6 @@ export default function CreatePurchase() {
     const [buyReferenceId, setBuyReferenceId] = useState("");
 
     // const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState(0);
-    const [buyInvoiceUrl, setBuyinvoiceUrl] = useState("");
     const [addedProductsAtBuy, setAddedProductsAtBuy] = useState([]);
     const [globalTotal, setGlobalTotal] = useState(0);
     const [products, setProducts] = useState([]);
@@ -109,7 +108,7 @@ export default function CreatePurchase() {
         var dateSelected = new Date(buyDatePurchase);
         var formatDate = dateSelected.toISOString().split("T")[0];
         _buyService
-            .createBuy(buyId, buyProviderSelected.id, formatDate, globalTotal,buyInvoiceUrl)
+            .createBuy(buyId, buyProviderSelected.id, formatDate, globalTotal)
             .then(() => {
                 // setBuyReferenceId(data.productReferenceId);
                 products.forEach((element) => {
@@ -173,7 +172,6 @@ export default function CreatePurchase() {
         idBuy: buyId,
         providerId: buyProviderSelected.id,
         Data: buyDatePurchase,
-        URL_factura: buyInvoiceUrl,
         buyTotalPurchase: buyTotalPurchase
     };
 
@@ -197,9 +195,7 @@ export default function CreatePurchase() {
         if(!data.Data){
             errors.Data = "este campo es requerido";
         }
-        if (!data.URL_factura) {
-            errors.URL_factura = "Este campo es requedio";
-        }
+
 
         buys.forEach((element) => {
             const buyId = element.id;
@@ -232,7 +228,6 @@ export default function CreatePurchase() {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
-    console.log(buyInvoiceUrl);
     return (
         <div>
             <Toast ref={toast} />
@@ -307,39 +302,6 @@ export default function CreatePurchase() {
 
                           
                         </div>    
-                        <Field
-                                name="URL_factura"
-                                render={({ input, meta }) => (
-                                    <div className="URL_factura_input">
-                                        <span>
-                                            <label htmlFor="URL_factura" className={classNames({ "p-error": isFormFieldValid("URL_factura") })}>Url Factura</label>
-                                            {/* <InputText id="URL_factura" {...input} onChange={(e) => setBuyinvoiceUrl(e.target.value)} value={buyInvoiceUrl} placeholder="URL factura" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} /> */}
-                                            <div className="create-product-form">
-                                                    <FileUpload
-                                                        name="photo"
-                                                        url={`${config.baseURL}/filesBuys/create/${buyId}`}
-                                                        onUpload={onUpload}
-                                                        maxFileSize={1000000}
-                                                        chooseOptions={chooseOptions}
-                                                        uploadOptions={uploadOptions}
-                                                        cancelOptions={cancelOptions}
-                                                        {...input}
-                                                        onChange={(e) => setBuyinvoiceUrl(e.target.value)} 
-                                                        className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input_file": true })}
-                                                        value={buyInvoiceUrl}
-                                                        // customUpload
-                                                        // uploadHandler={customBase64Uploader}
-                                                        // mode="basic"
-                                                        // auto={true}
-                                                        emptyTemplate={<p className="m-0">Arrastre y suelte la factura pdf</p>}
-                                                    />
-                                                </div>
-                                        </span>
-                                        <br />
-                                        {getFormErrorMessage(meta)}
-                                    </div>
-                                )}
-                            />  
                     </form>
                     
                 )}
@@ -366,7 +328,7 @@ export default function CreatePurchase() {
                 </div>
             </Dialog> */}
 
-                <TableBuyDetail   idBuy={buyId}  buyUrl={buyInvoiceUrl} Provider={buyProviderSelected} 
+                <TableBuyDetail   idBuy={buyId}  Provider={buyProviderSelected} 
                 setAddedProductsAtBuy={setAddedProductsAtBuy} setGlobalTotal = {setGlobalTotal} buyDate = {buyDatePurchase} />
 
                 <div className="create-product-buttons">

@@ -17,14 +17,13 @@ export class BuyService {
         });
     }
    
-    createBuy(id, idProvider, datePurchase, totalPurchase, invoiceUrl) {
+    createBuy(id, idProvider, datePurchase, totalPurchase) {
         return axios
             .post(baseBuyURL + "/create", {
                 id,
                 idProvider,
                 datePurchase,
                 totalPurchase,
-                invoiceUrl,
             })
             .then((response) => {
                 return response.data;

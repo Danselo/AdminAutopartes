@@ -16,7 +16,6 @@ export const TableBuys = ({ setBuySelected,buys }) => {
         datePurchase: null,
         id: null,
         idProvider: null,
-        invoiceUrl: null,
         provider: {},
         status: true,
         totalPurchase: 0,
@@ -115,12 +114,7 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                         </div>
 
 
-                        <div>
-                            <strong>
-                                <p>Factura</p>
-                            </strong>
-                            <p>{buyInfo.invoiceUrl}</p>
-                        </div>
+        
                         <div>
                             <strong>
                                 <p>Estado de la compra</p>
@@ -229,7 +223,6 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                 <Column field="provider.companyName" header="Id proveedor"></Column>
                 <Column field="datePurchase" sortable header="Fecha de compra"></Column>
                 <Column field="totalPurchase" className="table-product--column-gray" header="Total compra"></Column>
-                <Column field="invoiceUrl" className="" header="Factura"></Column>
                 <Column header="Ver detalle de compra" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
         </>

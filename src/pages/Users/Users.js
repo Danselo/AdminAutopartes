@@ -496,7 +496,7 @@ export default function Users() {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h3>Gestión de Usuarios</h3>
+                <h4>Gestión de usuarios</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents}/>
             <Dialog header="Crear un nuevo Usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
@@ -507,15 +507,15 @@ export default function Users() {
                     render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit}>
                             <div className="create-user-form">
-                                <h5>Ingrese los datos del Usuario</h5>
+                                <h5>Ingrese los datos del usuario</h5>
                                 <Field
                                     name="email"
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electronico</label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo electrónico</label>
                                                 <br />
-                                                <InputText id="email" {...input} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                                <InputText id="email" {...input} placeholder="Correo electrónico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -541,9 +541,9 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}>Confirmar Contraseña</label>
+                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}>Confirmar contraseña</label>
                                                 <br />
-                                                <Password id="confirmPassword" {...input} placeholder="Confirmar Contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
+                                                <Password id="confirmPassword" {...input} placeholder="Confirmar contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -616,7 +616,7 @@ export default function Users() {
                                     render={({ input, meta }) => (
                                         <div className="field">
                                             <span>
-                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo Electronico</label>
+                                                <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo electrónico</label>
                                                 <br />
                                                 <InputText id="email" {...input}  onChange={onEditUserSelected} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>

@@ -559,7 +559,7 @@ const statusBodyTemplate = (rowData) => {
         <div>
             <Toast ref={toast} />
             <div className="tittle-client">
-                <h3>Gestión de Clientes</h3>
+                <h4>Gestión de clientes</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents} />
             <Dialog header="Crear un nuevo Cliente" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "60vw" }}>

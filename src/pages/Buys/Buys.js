@@ -148,7 +148,7 @@ export default function Buys() {
     return (
         <div>
             <div className="text-center">
-                <h3>Gestión de compras</h3>
+                <h4>Gestión de compras</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents}/>
             <Dialog header="Anular compra" visible={displayDialogStatus} onHide={() => onHideDialogStatusX()} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>

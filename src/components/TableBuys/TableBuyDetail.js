@@ -22,7 +22,7 @@ import { InputText } from "primereact/inputtext";
 const _productService = new ProductService();
 const _buyService = new BuyService();
 
-export default function TableBuyDetail({idBuy, setAddedProductsAtBuy, setGlobalTotal, buyUrl ,Provider, buyDate }) {
+export default function TableBuyDetail({idBuy, setAddedProductsAtBuy, setGlobalTotal ,Provider, buyDate }) {
     
     
     let emptyProduct = {
@@ -84,7 +84,7 @@ export default function TableBuyDetail({idBuy, setAddedProductsAtBuy, setGlobalT
     useEffect(() => {
         let total = 0;
         for(let product of AddedProducts) {
-            total += product.netPrice;
+            total += product.netPrice * product.amount ;
         }
         setTotalBuy(total)
         return formatCurrency(total);
@@ -225,7 +225,7 @@ useEffect(() => {
         
         return (
             <React.Fragment>
-                <Button label="Agregar producto" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} disabled={!idBuy || !Provider.id || !buyDate || !buyUrl || idBuy <= 1 || idBuy === buyRepeat}  />
+                <Button label="Agregar producto" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} disabled={!idBuy || !Provider.id || !buyDate || idBuy <= 1 || idBuy === buyRepeat}  />
             </React.Fragment>
         );
     };
@@ -287,7 +287,7 @@ useEffect(() => {
                 errors.netPrice = "Digite un precio neto";
             }
             if(!data.profitPercentage){
-                errors.profitPercentage = "Digite un porciento valido";
+                errors.profitPercentage = "Digite un porcentaje valido";
             }
     
             return errors;
@@ -329,7 +329,7 @@ useEffect(() => {
                 errors.netPrice = "Digite un precio neto";
             }
             if(!data.profitPercentage){
-                errors.profitPercentage = "digite un porciento valido";
+                errors.profitPercentage = "Digite un porcentaje valido";
             }
     
             return errors;
@@ -650,7 +650,7 @@ useEffect(() => {
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: "2rem" }} />
                     {product && (
                         <span>
-                            Seguro que quires eliminar el producto agregado <b>{product.name}</b>?
+                            Seguro que quieres eliminar el producto agregado <b>{product.name}</b>?
                         </span>
                     )}
                 </div>
