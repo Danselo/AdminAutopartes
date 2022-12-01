@@ -276,10 +276,9 @@ export default function Products() {
                             })
                             .then((e) => {
                                 loadProducts();
-                                
                             })
                             .catch((error) => {
-                                console.log(error)
+                                console.log(error);
                             });
                     }
                     _productService
@@ -358,7 +357,6 @@ export default function Products() {
     const renderFooterDialog = () => {
         return (
             <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadImages(false)} className="p-button-text" />
                 <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadImages(false)} className="p-button-text" />
             </div>
         );
@@ -571,7 +569,7 @@ export default function Products() {
                                                         Descripción*
                                                     </label>
                                                     <InputTextarea id="productDescription" {...input} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-product-form__input create-product-form__inputTextarea": true })} placeholder="Descripción del producto" />
-                                                {getFormErrorMessage(meta)}
+                                                    {getFormErrorMessage(meta)}
                                                 </span>
                                             </div>
                                         )}
@@ -731,7 +729,7 @@ export default function Products() {
             </Dialog>
             <Dialog header="Seleccionar la imagen del producto" visible={displayDialogUploadImages} onHide={() => setDisplayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
                 <div className="create-product-form">
-                    <h5>Seleccione las imagenes del producto</h5>
+                    <h5>Seleccione la imagen del producto</h5>
                     <FileUpload
                         name="photo"
                         url={`${config.baseURL}/imagesProducts/create/${productReferenceId}`}
@@ -741,11 +739,7 @@ export default function Products() {
                         chooseOptions={chooseOptions}
                         uploadOptions={uploadOptions}
                         cancelOptions={cancelOptions}
-                        // customUpload
-                        // uploadHandler={customBase64Uploader}
-                        // mode="basic"
-                        // auto={true}
-                        emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
+                        emptyTemplate={<p className="m-0">Arrastre y suelte la imagen.</p>}
                     />
                 </div>
             </Dialog>
