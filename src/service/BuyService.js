@@ -29,14 +29,16 @@ export class BuyService {
                 return response.data;
             });
     }
-    updateBuy(id, name, description, idCategory) {
-        return axios.put(`${baseBuyURL}/update/${id}`, {
-            name,
-            description,
-            idCategory,
-        });
-    }
+    updateBuy(buy) {
+        const url = `${baseBuyURL}/update/${buy.id}`
+        delete buy.id
+        delete buy.provider
+        delete buy.createdAt
 
+         return axios
+             .put(url,buy)
+    }
+    
     deleteBuy(id) {
         return axios.delete(`${baseBuyURL}/delete/${id}`);
     }

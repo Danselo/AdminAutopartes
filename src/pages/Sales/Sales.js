@@ -7,6 +7,8 @@ import { SaleService } from "../../service/SaleService";
 import { Dialog } from "primereact/dialog";
 import { Toolbar } from "primereact/toolbar";
 
+
+
 const _saleService = new SaleService();
 
 export default function Sales() {

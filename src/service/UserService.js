@@ -2,6 +2,7 @@ import axios from "axios";
 const baseURL = "http://localhost:5000";
 const baseUserURL = baseURL + "/users";
 export class UserService {
+
     getUser(id) {
         return axios.get(`${baseUserURL}/${id}`).then((res) => res.data);
     }
@@ -20,7 +21,6 @@ export class UserService {
             
             })
     }
-
     updateUser(user) {
         const url = `${baseUserURL}/update/${user.id}`
         delete user.id
@@ -28,5 +28,11 @@ export class UserService {
         delete user.roles_users
          return axios
              .put(url,user)
+    }
+    async getRealPassword(password,realPassword) {
+        return axios.post(baseUserURL + '/post-real-password',{
+            password,
+            realPassword
+        })
     }
 }
