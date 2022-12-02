@@ -369,7 +369,7 @@ export default function Roles() {
                         <div className="create-rol-form--body">
                             <div className="create-rol-form--body-text">
                                 <h5 className="text-center">Permisos del rol por modulo</h5>
-                                <p>A continuacion encontrara cada uno de los modulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
+                                <p>A continuación encontrara cada uno de los módulos del sistema con sus respectivos permisos disponibles, por favor seleccione cada uno de los permisos que desea asociar a este rol</p>
                             </div>
 
                             {permissionsArray.map((element) => (

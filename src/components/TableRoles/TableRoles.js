@@ -70,30 +70,26 @@ export const TableRoles = ({ setRolSelected, roles }) => {
     };
     const viewRolDetail = (info) => {
         console.log(info);
-        _rolService
-            .getRol(info.id)
-            .then((response) => {
-                setRolInfo(response);
-                setRolInfoDialog(true);
-            })
-            .catch((e) => {
-                console.error("Error al traer a info del cliente", e);
-            });
-         _rolesPermissionsService
-            .getPermissionsOfRolSelected(info.id)
-            .then((response) => {
-                let responseMapped = response.map((element) => {
-                    return {
-                        id: element.idPermissions,
-                        idModule: element.permissions.idModule,
-                        name: element.permissions.name,
-                    };
+        setRolInfo(info);
+        setRolInfoDialog(true);
+        console.log(rolInfo);
+            _rolesPermissionsService.getModulesOfRolSelected(info.id)
+                .then((response) => {
+                    let responseMapped = response.map((element) => {
+                        console.log(element);
+                        return {
+                                id: element.modules.id,
+                                description: element.modules.description,
+                                name: element.modules.name,
+
+                        };
+                    });
+                    setRolPermissionsInfo(responseMapped);
+                })
+                .catch((e) => {
+                    console.log("Falle aqui", e);
                 });
-                setRolPermissionsInfo(responseMapped);
-            })
-            .catch((e) => {
-                console.log("Falle aqui", e);
-            });
+       
     };
 
 
@@ -129,41 +125,31 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion de los permisos del rol" className="dialog-buy-panel" toggleable>
+                <Panel header="Información de los permisos del rol" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-roles">
                         {Object.values(rolPermissionsInfo).map((element) => (
                             <div className="dialog-buy-panel-products__detail" key={element.id}>
-                                <div className = "dialog-buy-panel-products__detail-item">
-                                    <strong>
-                                        <p>Id permiso</p>
-                                    </strong>
-                                    <p>{element.id}</p>
-
-                                </div>
+                            
                                 <div className = "dialog-buy-panel-products__detail-item"   >                  
-                                  <strong><p>Nombre del permiso</p>
+                                <strong className="title_buy_detail">
+                                    Id Modulo
                                   </strong>
                                     
+                                    <p>{element.id}</p>
+                                </div>
+                                <div className = "dialog-buy-panel-products__detail-item"   >                  
+                                  <strong className="title_buy_detail">
+                                    Nombre Modulo
+                                  </strong>
                                     <p>{element.name}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item"   >                  
-                                  <strong><p>id Modulo</p>
-                                  </strong>
-                                    
-                                    <p>{element.idModule}</p>
-                                </div>
-                                <div className = "dialog-buy-panel-products__detail-item"  >                  
-                                                <strong><p>Nombre Modulos</p>
-                                                </strong>
-                                 {modules.map((element2, index) =>  {
-                                        if(element2.id === element.idModule){
-                                            console.log(element2.name);
-                                            return(
-                                            <p key={index}>{element2.name}</p>
 
-                                         )}
-                                   })}
-                                   </div>
+                                <div className = "dialog-buy-panel-products__detail-item"   >                  
+                                  <strong className="title_buy_detail">
+                                    Descripción
+                                  </strong>
+                                    <p>{element.description}</p>
+                                </div>
 
                             </div>
                         ))}

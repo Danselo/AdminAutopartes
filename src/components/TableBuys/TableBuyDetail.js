@@ -396,12 +396,11 @@ useEffect(() => {
                 <DataTable 
                 value={AddedProducts} 
                 selection={selectedProducts} 
-                onSelectionChange={(e) => setSelectedProducts(e.value)} dataKey="id" 
+                 dataKey="id" 
                 paginator 
                 rows={10} 
                 footerColumnGroup={footerGroup}
                 header="Productos agregados a la compra" responsiveLayout="scroll">
-                    <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} exportable={false}></Column>
                     <Column field="idBuy" header="id_compra" hidden></Column>
                     <Column field="idProduct" header="Referencia producto" sortable></Column>
                     <Column field="amount" header="Cantidad"></Column>
@@ -521,8 +520,8 @@ useEffect(() => {
                                 )}
                             />
                         <div className="button-table-buy-detail">
-                            <Button label="Cancelar" icon="pi pi-times" className="p-button-text"  onClick={() => hideDialog()}/>
-                            <Button label="Guardar" icon="pi pi-check" className="p-button-text"  />    
+                            <Button label="Cancelar" icon="pi pi-times" className="p-button-text" type="button" onClick={() => hideDialog()}/>
+                            <Button label="Guardar" icon="pi pi-check" className="p-button-text" type="submit"  />    
                         </div>
                     </form>
 
@@ -637,8 +636,8 @@ useEffect(() => {
                                 )}
                             />
                         <div className="button-table-buy-detail">
-                            <Button label="Cancelar" icon="pi pi-times" className="p-button-text"  onClick={() => hideDialogEdit()}/>
-                            <Button label="Guardar" icon="pi pi-check" className="p-button-text"  />    
+                            <Button label="Cancelar" icon="pi pi-times" className="p-button-text" type="button" onClick={() => hideDialogEdit()}/>
+                            <Button label="Guardar" icon="pi pi-check" className="p-button-text" type="submit" />    
                         </div>
                     </form>
 

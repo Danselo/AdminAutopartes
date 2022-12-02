@@ -47,5 +47,11 @@
 .dialog-buy-panel-roles{
     display: flex;
     flex-direction: column;
-    gap: 1.5rem
+    gap: 1.5rem;
 }
+.dialog-buy-panel-products__detail{
+    margin: 1rem;
+}
+.title_buy_detail{
+}
+

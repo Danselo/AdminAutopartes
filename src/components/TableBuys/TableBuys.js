@@ -112,6 +112,12 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                             </strong>
                             <p>{buyInfo.totalPurchase}</p>
                         </div>
+                        <div>
+                            <strong>
+                                <p>Estado</p>
+                            </strong>
+                            <p>{buyInfo.totalPurchase}</p>
+                        </div>
 
 
         
@@ -119,7 +125,8 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                             <strong>
                                 <p>Estado de la compra</p>
                             </strong>
-                            <p>{buyInfo.status}</p>
+                            <p className={buyInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{buyInfo.status === true ? "Activo" : "Anulado"}</p>
+                            
                         </div>
                     </div>
                 </Panel>
@@ -145,7 +152,7 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Telefono de contacto</p>
+                                <p>Teléfono de contacto</p>
                             </strong>
                             <p>{buyInfo.provider.telephone}</p>
                         </div>
