@@ -308,7 +308,7 @@ export default function Brand() {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h4>Marcas de vehículos registradas</h4>
+                <h4>Marcas de vehículos registrados</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />

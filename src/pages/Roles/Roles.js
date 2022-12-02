@@ -11,6 +11,8 @@ import { RolesService } from "../../service/RolesService";
 import { RolesPermissionsService } from "../../service/RolesPermissionsService";
 import { Panel } from "primereact/panel";
 import { MultiSelect } from "primereact/multiselect";
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
 
 import { Checkbox } from "primereact/checkbox";
 import { ModulesService } from "../../service/ModulesService";
@@ -29,7 +31,7 @@ export default function Roles() {
     const [roles, setRoles] = useState([]);
     const [permissionSelected, setPermissionSelected] = useState([]);
     const [permissionsOfRolSelected, setPermissionsOfRolSelected] = useState([]);
-    const [selectedModules, setSelectedModules] = useState(null);
+    const [selectedModules, setSelectedModules] = useState([]);
     const [modules, setModules] = useState([]);
     console.log(selectedModules);
 
@@ -150,6 +152,7 @@ export default function Roles() {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta rol?",
             header: "Confirmacion",
+            onHide:cancelCreateRol(),
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -169,16 +172,20 @@ export default function Roles() {
             reject: () => setDisplayDialogEdit(false),
         });
     };
-
+    const cancelCreateRol = () => {
+        setDisplayDialogCreate(false)
+        setSelectedModules([])
+    };
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
             header: "Confirmacion",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
+            onHide:cancelCreateRol(),
             acceptLabel: "No crear",
             rejectLabel: "Cancelar",
-            accept: () => reject(),
+            accept: () => cancelCreateRol(),
             reject: () => setDisplayDialogCreate(true),
         });
     };
@@ -203,6 +210,7 @@ export default function Roles() {
         setDisplayDialogCreate(false);
     };
     const onHideDialogCreateX = () => {
+        setSelectedModules([]);
         setDisplayDialogCreate(false);
     };
     const onHideDialogEditX = () => {
@@ -210,6 +218,7 @@ export default function Roles() {
     };
     const onHideDialogCancel = () => {
         cancelCreate();
+        
         setDisplayDialogCreate(false);
     };
 
@@ -217,7 +226,7 @@ export default function Roles() {
         cancelCreate();
         setDisplayDialogEdit(false);
     };
-
+    console.log(selectedModules);
     // const getRolesPermissions = () => {
     //     _permissionsService
     //         .getModules()
@@ -247,6 +256,9 @@ export default function Roles() {
             .createRol(rolName, selectedModules)
             .then((response) => {
                 toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol creado exitosamente", life: 3000 });
+                loadRoles();
+                setSelectedModules([])
+
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal al crear el rol, vuelve a intentarlo", life: 3000 });
@@ -277,14 +289,6 @@ export default function Roles() {
         });
     }, []);
 
-    const renderFooterDialog = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
-                <Button label="Crear rol" icon="pi pi-check" onClick={() => onHideDialogCreate()} autoFocus />
-            </div>
-        );
-    };
 
     const renderFooterDialogEdit = () => {
         return (
@@ -325,7 +329,39 @@ export default function Roles() {
 
         setPermissionsOfRolSelected(_selectedPermissions);
     };
+//------------------Validation Create Roles --------------------------------
 
+
+ //------------------------------VALIDATION ----------------
+    const initialValues = {
+        modulesPermissions: selectedModules,
+        nameRol: rolName
+    };
+
+    const validate = (data) => {
+        let errors = {};
+
+        if(!data.modulesPermissions) {
+            errors.modulesPermissions = "No hay ningún permiso debes asociar almenos uno";
+        }else if(data.modulesPermissions.length <=0){
+            errors.modulesPermissions = "No hay ningún permiso debes asociar al menos uno";
+            
+        }
+        if(!data.nameRol) {
+            errors.nameRol = "Debes ingresar el nombre del rol";
+        }
+        return errors;
+    };
+    const onSubmit = (data, form) => {
+        onHideDialogCreate()
+    };
+
+
+//----------------------------------------------------------------
+const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+const getFormErrorMessage = (meta) => {
+    return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+};
     return (
         <div>
             <Toast ref={toast} />
@@ -336,23 +372,75 @@ export default function Roles() {
 
             <Toolbar left={leftContents} right={rightContents} />
 
-            <Dialog header="Crear un nuevo rol" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
+            <Dialog header="Crear un nuevo rol" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} >
                 <div className="create-rol-form">
-                    <div className="create-rol-form--header">
-                        <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
-                        <div className="create-rol-form--input">
-                            <label htmlFor="buyId">Nombre del rol</label>
-                            <InputText value={rolName} onChange={(e) => setRolName(e.target.value)} placeholder="Nombre" className="create-rol-form__input" />
-                        </div>
-                    </div>
-                    <div className="create-rol-form--body">
-                        <div className="create-rol-form--body-text">
-                            <h5 className="text-center">Acceso por módulo</h5>
-                            <p>A continuacion encontrara cada uno de los modulos del sistema, por favor seleccione los modulos a los que desea darle acceso a este rol</p>
-                        </div>
+              
+                        <Form
+                            onSubmit={onSubmit}
+                            initialValues={initialValues}
+                            validate={validate}
+                            render={({ handleSubmit }) => (
+                            <form onSubmit={handleSubmit}>
+                                      <div className="create-rol-form--header">
+                                        <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
+                                        <div className="create-rol-form--input">
+                                            <Field
+                                                name="nameRol"
+                                                render={({ input, meta }) => (
+                                                    <div className="field">
+                                                        <span>
+                                                            <label htmlFor="nameRol" className={classNames({ "p-error": isFormFieldValid("nameRol") })}>Nombre del rol</label>
+                                                            <br />
+                                                            <InputText value={rolName}
+                                                             {...input} 
+                                                             onChange={(e) => setRolName(e.target.value)} 
+                                                             placeholder="Digite el documento" 
+                                                             className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })}  />
 
-                        <MultiSelect value={selectedModules} options={modules} onChange={(e) => setSelectedModules(e.value)} optionLabel="name" placeholder="Seleccione los modulos" display="chip" />
-                    </div>
+                                                            </span>
+                                                            <br />
+                                                            {getFormErrorMessage(meta)}
+                                                        </div>
+                                                    )}
+                                                />
+                                        </div>
+                                    </div>
+                                <div className="create-rol-form--body multiselect_modules_roles">
+                                    <div className="create-rol-form--body-text">
+                                        <h5 className="text-center">Acceso por módulo</h5>
+                                        <p>A continuación encontrara cada uno de los módulos del sistema, por favor seleccione los módulos a los que desea darle acceso a este rol</p>
+                                    </div>
+                                    <Field
+                                        name="modulesPermissions"
+                                        render={({ input, meta }) => (
+                                            <div className="field">
+                                                <span>
+                                                    <label htmlFor="modulesPermissions" className={classNames({ "p-error": isFormFieldValid("modulesPermissions") })}>Módulos</label>
+                                                    <br />
+                                                    <MultiSelect value={selectedModules} {...input} 
+                                                    options={modules} 
+                                                    onChange={(e) => setSelectedModules(e.value)} 
+                                                    optionLabel="name" 
+                                                    placeholder="Seleccione los módulos" 
+                                                    display="chip" 
+                                                    className={classNames({ "p-invalid": isFormFieldValid(meta), multiselect_modules_roles_options: true })}
+                                                     />
+
+                                                </span>
+                                                <br />
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+                                </div>
+                         <div>
+                            <Button label="Cancelar" icon="pi pi-times" type="button" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                            <Button label="Crear rol" icon="pi pi-check" type="submit" autoFocus />
+                        </div>
+                            </form>
+                        )} />
+
+
                 </div>
             </Dialog>
 
