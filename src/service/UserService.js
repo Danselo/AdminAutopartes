@@ -26,6 +26,7 @@ export class UserService {
         delete user.id
         delete user.createdAt
         delete user.roles_users
+        delete user.recoveryToken
          return axios
              .put(url,user)
     }

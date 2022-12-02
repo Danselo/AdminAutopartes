@@ -169,7 +169,8 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                                     <p>{element.idProduct}</p>
 
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item"   >                                <strong><p>Cantidad</p></strong>
+                                <div className = "dialog-buy-panel-products__detail-item"   >                            
+                                    <strong><p>Cantidad</p></strong>
                                     
                                     <p>{element.amount}</p>
                                 </div>

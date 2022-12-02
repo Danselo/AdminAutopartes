@@ -7,20 +7,25 @@ import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Dialog } from "primereact/dialog";
 import { ClientService } from "../../service/ClientService";
+import { UserService } from "../../service/UserService";
+
 
 const _clientService = new ClientService();
+const _userService = new UserService();
 
 export const TableClient = ({setClientSelected,clients}) => {
     const [globalFilter, setGlobalFilter] = useState(null);
     const [clientsTableSelected, setClientsSelected] = useState([]);
     const [clientInfoDialog, setClientInfoDialog] = useState(false);
     const [clientInfo, setClientInfo] = useState({});
+    const [clientUserInfo, setClientUserInfo] = useState({})
   
     useEffect(() => {   
         if (clientsTableSelected) {
             setClientSelected(clientsTableSelected)
         }
     }, [clientsTableSelected, setClientSelected])
+
     const statusBodyTemplate = (rowData) => {
         if (rowData.status === true) {
             return <span className="role-badge-status-active">ACTIVO</span>;
@@ -52,7 +57,6 @@ export const TableClient = ({setClientSelected,clients}) => {
 
 
     const viewClientDetail = (info) => {
-        console.log(info);
         _clientService
             .getClient(info.id)
             .then((response) => {
@@ -62,11 +66,18 @@ export const TableClient = ({setClientSelected,clients}) => {
             .catch((e) => {
                 console.error("Error al traer a info del cliente", e);
             });
+            _userService.getUser(info.idUser)
+            .then((response) => {
+                setClientUserInfo(response);
+            })
+            .catch((error) => {
+                console.log("Algo salio mal al traer el usuario ", error);
+            });
     };
     return (
         <>        
         <Dialog visible={clientInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoClientDialogFooter} onHide={hideDialog}>
-                <Panel header="Información general de la compra" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general de el cliente" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -148,6 +159,36 @@ export const TableClient = ({setClientSelected,clients}) => {
                         </div>
                     </div>
                 </Panel>
+                <Panel header="Información general de el usuario asociado" className="dialog-buy-panel" toggleable>
+                    <div className="dialog-buy-panel-detail">
+                        <div>
+                            <strong>
+                                <p>Id Usuario</p>
+                            </strong>
+                            <p>{clientUserInfo.id}</p>
+                        </div>
+                        <div>
+                            <strong>
+                                <p>Nombre usuario</p>
+                            </strong>
+                            <p>{clientUserInfo.name}</p>
+                        </div>
+                        <div>
+                            <strong>
+                                <p>Apellido Usuario </p>
+                            </strong>
+                            <p>{clientUserInfo.lastname}</p>
+                        </div>
+                        <div>
+                            <strong>
+                                <p>Estado del usuario </p>
+                            </strong>
+                            <p className={clientInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{clientUserInfo.status === true ? "Activo" : "Inactivo"}</p>
+
+                        </div>
+                        
+                    </div>
+                </Panel>
             </Dialog>
                 <div className="p-inputgroup create-brand__table">
                 <InputText placeholder="Buscar Cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
@@ -157,9 +198,9 @@ export const TableClient = ({setClientSelected,clients}) => {
              <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
             <Column field="id" sortable header="Id"></Column>
             <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
-            <Column field="users.name" sortable header="Usuario Asociado"></Column>
             <Column field="name" sortable header="Nombre"></Column>
             <Column field="lastname" sortable header="Apellido"></Column>
+            <Column field="users.name" sortable header="Usuario Asociado"></Column>
             {/* <Column field="documentType" sortable header="Tipo Documento"></Column>
             <Column field="document" sortable header="Documento"></Column>
             <Column field="telephone" sortable header="Telefono"></Column>

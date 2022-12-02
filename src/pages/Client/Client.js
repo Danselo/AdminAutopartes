@@ -104,7 +104,6 @@ export default function Client() {
             }
         });
     }, [clientSelected.idUser,setUserName,users]);
-    console.log(selectedClientUser.id);
 
 
 
