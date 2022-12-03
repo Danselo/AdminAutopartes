@@ -447,15 +447,13 @@ export default function Users() {
         });
 
         if (!data.email) {
-            errors.email = "El email es requerdo";
+            errors.email = "El email es requerido";
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
             errors.email = "Email invalido. E.g. example@email.com";
         }
         
 
-        if (!data.password) {
-            errors.password = "Debe digitar una contraseña";
-        }
+    
 
         return errors;
     };
@@ -466,7 +464,7 @@ export default function Users() {
         name: userSelected.name,
         lastname: userSelected.lastname,
         email: userSelected.email,
-        password: userSelected.password,
+        // password: userSelected.password,
         // confirmPassword: "",
         
     };
@@ -625,7 +623,7 @@ export default function Users() {
                                         </div>
                                     )}
                                 />
-                                <Field
+                                {/* <Field
                                     name="password"
                                     render={({ input, meta }) => (
                                         <div className="field">
@@ -638,20 +636,8 @@ export default function Users() {
                                             {getFormErrorMessage(meta)}
                                         </div>
                                     )}
-                                />
-                                {/* <Field
-                                    name="confirmPassword"
-                                    render={({ input, meta }) => (
-                                        <div className="field">
-                                            <span>
-                                                <label htmlFor="confirmPassword" className={classNames({ "p-error": isFormFieldValid("confirmPassword") })}></label>
-                                                <Password id="confirmPassword" {...input} placeholder="Confirmar Contraseña" className={classNames({ "p-invalid": isFormFieldValid(meta), passwordUsers: true })} toggleMask />
-                                            </span>
-                                            <br />
-                                            {getFormErrorMessage(meta)}
-                                        </div>
-                                    )}
                                 /> */}
+
 
                                 <Field
                                     name="name"
