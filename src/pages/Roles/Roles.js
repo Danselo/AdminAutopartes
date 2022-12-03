@@ -14,8 +14,12 @@ import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
 
 import { ModulesService } from "../../service/ModulesService";
+import { UserService } from "../../service/UserService";
+import { info } from "sass";
 
 const _rolService = new RolesService();
+const _userService = new UserService();
+
 const _rolesPermissionsService = new RolesPermissionsService();
 const _modulesService = new ModulesService();
 
@@ -26,6 +30,9 @@ export default function Roles() {
     const toast = useRef(null);
     const [rolName, setRolName] = useState("");
     const [roles, setRoles] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [rolSelectedWithUser, setRolSelectedWithUser] = useState();
+
     const [permissionSelected, setPermissionSelected] = useState([]);
     const [selectedModules, setSelectedModules] = useState([]);
     const [modules, setModules] = useState([]);
@@ -45,8 +52,18 @@ export default function Roles() {
     }, []);
 
  
-
-
+    const editRolStatusAlert = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea cambiar el estado del Rol?",
+            header: "Confirmación",
+            icon: "pi pi-exclamation-triangle",
+            onHide:cancelEditRol(),
+            acceptLabel: "Cambiar estado",
+            rejectLabel: "Cancelar",
+            accept: () => EditStatus(),
+            reject: () => cancelEditRol(),
+        });
+    }
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
@@ -55,13 +72,20 @@ export default function Roles() {
     );
     const rightContents = (
         <React.Fragment>
-            <Button label="Desactivar" className="p-button-raised p-button-warning dc-space-between" icon="pi pi-eye-slash" onClick={() => onClickDialogCreate()} />
+            <Button label={rolSelected.status ? "Desactivar" : "Activar"} className={ rolSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between" }  icon="pi pi-eye-slash" onClick={() => editRolStatusAlert()}  disabled={!rolSelected.name} />
+
         </React.Fragment>
     );
 
     useEffect(() => {
         _rolService.getRoles().then((response) => {
             setRoles(response);
+        });
+    }, []);
+
+    useEffect(() => {
+        _userService.getUsers().then((response) => {
+            setUsers(response);
         });
     }, []);
 
@@ -195,6 +219,77 @@ export default function Roles() {
     //             console.log("Algo salio mal al traer los permisos de la bd", e);
     //         });
     // };
+    useEffect(() => {
+
+        users.map((element)=>{
+            if(rolSelected.id === element.idRol){
+
+                if(element.idRol === rolSelected.id && rolSelected.status === true){
+                    console.log(`id ${rolSelected.id} idROlUser : ${element.idRol}` );
+                    setRolSelectedWithUser(true)
+                }
+                
+            }
+
+
+    })
+
+}, [setRolSelectedWithUser,users,rolSelected]);
+    
+    function EditStatus() {
+
+            if(rolSelectedWithUser){
+                toast.current.show({ severity: "error", summary: "Error", detail: "El rol esta asociado a un usuario", life: 3000 });
+                setRolSelectedWithUser(null);
+            }else if(rolSelected.status == false){
+                rolSelected.status = true;
+
+                    _rolService
+                    .updateStatus(rolSelected)
+                    .then(() => {
+                        setRolSelected({});
+                        setRolSelectedWithUser(null);
+                        loadRoles();
+                        toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del rol se cambio exitosamente", life: 3000 });
+                    })
+                    .catch((e) => {
+                        toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                        console.log(e);
+                        setRolSelectedWithUser(null);
+                        setRolSelected({});
+                        loadRoles();
+
+
+                    });
+
+            }else if (rolSelected.status === true && rolSelectedWithUser !== true){
+                rolSelected.status = false;
+
+                _rolService
+                .updateStatus(rolSelected)
+                .then(() => {
+                    setRolSelected({});
+                    setRolSelectedWithUser(null);
+                    loadRoles();
+                    toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del rol se cambio exitosamente", life: 3000 });
+                })
+                .catch((e) => {
+                    toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                    console.log(e);
+                    setRolSelectedWithUser(null);
+                    setRolSelected({});
+                    loadRoles();
+
+
+                });
+
+            }
+    
+        
+    }
+
+
+      
 
     function EditRol() {
         // let id = rolSelected.id;

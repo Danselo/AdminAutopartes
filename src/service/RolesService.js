@@ -41,4 +41,11 @@ export class RolesService {
                 return response.data;
             });
     }
+    updateStatus(rol) {
+        const url = `${baseRolURL}/updateStatus/${rol.id}`
+        delete rol.id;
+        delete rol.createdAt;
+         return axios
+             .put(url,rol)
+    }
 }
