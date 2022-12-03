@@ -43,29 +43,7 @@ export default function Roles() {
                 console.log("Algo salio mal al traer los modulos de la bd", error);
             });
     }, []);
-    useEffect(() => {
-        if(rolSelected) {
-            _rolesPermissionsService.getModulesOfRolSelected(rolSelected.id)
-            .then((response) => {
-                let responseMapped = response.map((element) => {
-                    return {
-                            
-                            id: element.modules.id,
-                            name: element.modules.name,
-                            description: element.modules.description
 
-
-                    };
-                });
-                setModulesOfRol(responseMapped);
-            })
-            .catch((e) => {
-                console.log("Falle aqui", e);
-            });
-        }
-       
-    }, [rolSelected,setModulesOfRol]);
-    console.log(modulesOfRol);
  
 
 
@@ -160,6 +138,23 @@ export default function Roles() {
     function onClickDialogEdit() {
         // getModulesOfRolSelected(rolSelected.id);
         // getRolesPermissions();
+        _rolesPermissionsService.getModulesOfRolSelected(rolSelected.id)
+            .then((response) => {
+                let responseMapped = response.map((element) => {
+                    return {
+                            
+                            id: element.modules.id,
+                            name: element.modules.name,
+                            description: element.modules.description
+
+
+                    };
+                });
+                setModulesOfRol(responseMapped);
+            })
+            .catch((e) => {
+                console.log("Falle aqui", e);
+            });
         setDisplayDialogEdit(true);
     }
 
