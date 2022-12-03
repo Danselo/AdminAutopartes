@@ -88,7 +88,7 @@ export default function Brand() {
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
             accept: () => EditBrand(brandIdSelected, newBrandName, form),
-            reject: () => setDisplayDialogCreate(true),
+            reject: () => setDisplayDialogEdit(true),
         });
     };
     // const deleteBrandAlert = () => {
@@ -112,6 +112,22 @@ export default function Brand() {
             rejectLabel: "Cancelar",
             accept: () => reject(),
             reject: () => setDisplayDialogCreate(true),
+        });
+    };
+const confirmCancel = () =>{
+        setDisplayDialogEdit(false);
+        reject();
+    }
+    const cancelEdit = () => {
+        confirmDialog({
+            message: "¿Esta seguro que desea perder el progreso?",
+            header: "Confirmación",
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            acceptLabel: "No crear",
+            rejectLabel: "Cancelar",
+            accept: () => confirmCancel(),
+            reject: () => setDisplayDialogEdit(true),
         });
     };
     function onClickDialogCreate() {
@@ -142,6 +158,11 @@ export default function Brand() {
         cancelCreate();
         setDisplayDialogCreate(false);
     };
+    const onHideDialogEditBrand = () => {
+        cancelEdit();
+        setDisplayDialogCreate(false);
+    };
+
 
     function changeBrandStatus(brandData) {
         let newState;
@@ -193,18 +214,7 @@ export default function Brand() {
             });
     }
 
-    function deleteBrand(id) {
-        _brandService
-            .deleteBrand(id)
-            .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca eliminada exitosamente", life: 3000 });
-                loadBrands();
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-    }
+
 
     useEffect(() => {
         if (brandSelected.id !== undefined) {
@@ -338,7 +348,7 @@ export default function Brand() {
                                     />
                                 </div>
                                 <div className="create-brand-buttons">
-                                    <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                    <Button label="Cancelar" icon="pi pi-times"  type="button" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                     <Button type="submit" label="Crear marca" icon="pi pi-check" />
                                 </div>
                             </form>
@@ -370,7 +380,7 @@ export default function Brand() {
                                     />
                                 </div>
                                 <div>
-                                    <Button label="Cancelar" icon="pi pi-times" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                    <Button label="Cancelar" icon="pi pi-times" type="button" onClick={() => onHideDialogEditBrand()} className="p-button-text" />
                                     <Button type="submit" label="Editar marca" icon="pi pi-check" />
                                 </div>
                             </form>
@@ -382,7 +392,11 @@ export default function Brand() {
             <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") +" la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
                 <p>Los siguientes vehículos están asociados a esta marca</p>
                 <strong>Nota:</strong>
-                <p>Si hay productos asociados a los vehículos en pantalla, estos también se {brandSelected.status ? "desactivaran" : "activaran"}</p>
+                
+                <p><strong>-Si vas a desactivar la marca, el vehículo se desactivara</strong>  </p>
+                <p><strong>-Si vas a activar la marca el vehículo seguirá desactivado</strong>  </p>
+
+                
                 <TableVehiclesOfBrandSelected className="table-products" vehicles={vehiclesWhereBrand} />
             </Dialog>
 

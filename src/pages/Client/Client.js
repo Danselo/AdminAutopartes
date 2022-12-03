@@ -139,6 +139,7 @@ export default function Client() {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta Cliente?",
             header: "Confirmación",
+            onHide: ()=> refreshPage2(),
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -150,6 +151,7 @@ export default function Client() {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
             header: "Confirmación",
+            onHide: ()=> refreshPage2(),
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "No crear",
