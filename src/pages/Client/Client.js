@@ -27,6 +27,8 @@ export default function Client() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const [validationSales, setValidationSales] = useState([]);
+    const [documentTypeName, setDocumentTypeName] = useState("");
+
     const toast = useRef(null);
     const op = useRef(null);
     // const [clientName, setClientName] = useState("");
@@ -98,7 +100,6 @@ export default function Client() {
     useEffect(() => {
         users.forEach((element) => { 
             if(clientSelected.idUser === element.id){
-                console.log(clientSelected.idUser);
                 setUserName(element.name)
 
             }
@@ -165,8 +166,9 @@ export default function Client() {
     function onClickDialogEdit() {
         getUsers();
         setDisplayDialogEdit(true);
-    }
+        setDocumentTypeName(clientSelected.documentType);
 
+    }
     const onHideDialogEdit = () => {
         editClientAlert();
         setDisplayDialogEdit(false);
@@ -284,17 +286,17 @@ export default function Client() {
         });
     }, []);
     //------ENABLE AND DISABLE CLIENT-------
-    const editClientStatusAlert = () => {
-        confirmDialog({
-            message: "¿Esta seguro que desea cambiar el estado del Cliente?",
-            header: "Confirmación",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Cambiar estado",
-            rejectLabel: "Cancelar",
-            accept: () => EditStatus(),
-            reject: () => setDisplayDialogEdit(false),
-        });
-    };
+    // const editClientStatusAlert = () => {
+    //     confirmDialog({
+    //         message: "¿Esta seguro que desea cambiar el estado del Cliente?",
+    //         header: "Confirmación",
+    //         icon: "pi pi-exclamation-triangle",
+    //         acceptLabel: "Cambiar estado",
+    //         rejectLabel: "Cancelar",
+    //         accept: () => EditStatus(),
+    //         reject: () => setDisplayDialogEdit(false),
+    //     });
+    // };
     useEffect(() => {
         loadClients();
         sales.map((element) => { 
@@ -316,47 +318,47 @@ export default function Client() {
 
     }, [setClientWithBuy,sales,clientSelected]);
     
-    function EditStatus() {
+    // function EditStatus() {
         
-         if (clientWithBuy.statusSale === 'Activo' && clientSelected.status === true
-         && clientWithBuy.id === clientSelected.id) {
-            toast.current.show({ severity: "error", summary: "Error", detail: "El cliente tiene una venta en proceso", life: 3000 });
-            loadClients();
-        } else{
-            if (clientSelected.status === true) {
-                clientSelected.status = false;
+    //      if (clientWithBuy.statusSale === 'Activo' && clientSelected.status === true
+    //      && clientWithBuy.id === clientSelected.id) {
+    //         toast.current.show({ severity: "error", summary: "Error", detail: "El cliente tiene una venta en proceso", life: 3000 });
+    //         loadClients();
+    //     } else{
+    //         if (clientSelected.status === true) {
+    //             clientSelected.status = false;
 
-            }else if (clientSelected.status === false) {
-                clientSelected.status = true;
+    //         }else if (clientSelected.status === false) {
+    //             clientSelected.status = true;
 
-            }
-            _clientService.updateClient(clientSelected)
-            .then(() => {
-                setClientSelected({});
-                loadClients();
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-        }
+    //         }
+    //         _clientService.updateClient(clientSelected)
+    //         .then(() => {
+    //             setClientSelected({});
+    //             loadClients();
+    //             toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del cliente se cambio exitosamente", life: 3000 });
+    //         })
+    //         .catch((e) => {
+    //             toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+    //             console.log(e);
+    //         });
+    //     }
           
 
         
-    }
+    // }
 
-    const rightContents = (
-        <React.Fragment>
-            <Button
-                label={clientSelected.status ? "Desactivar" : "Activar"}
-                className={clientSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
-                icon="pi pi-eye-slash"
-                onClick={() => editClientStatusAlert()}
-                disabled={!clientSelected.name}
-            />
-        </React.Fragment>
-    );
+    // const rightContents = (
+    //     <React.Fragment>
+    //         <Button
+    //             label={clientSelected.status ? "Desactivar" : "Activar"}
+    //             className={clientSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
+    //             icon="pi pi-eye-slash"
+    //             onClick={() => editClientStatusAlert()}
+    //             disabled={!clientSelected.name}
+    //         />
+    //     </React.Fragment>
+    // );
 
     //------------------------------VALIDATION ----------------
     const initialValues = {
@@ -560,7 +562,7 @@ const statusBodyTemplate = (rowData) => {
             <div className="tittle-client">
                 <h4>Gestión de clientes</h4>
             </div>
-            <Toolbar left={leftContents} right={rightContents} />
+            <Toolbar left={leftContents}  />
             <Dialog header="Crear un nuevo Cliente" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "60vw" }}>
                 <Form
                     onSubmit={onSubmit}
@@ -838,7 +840,7 @@ const statusBodyTemplate = (rowData) => {
                                             <span>
                                                 <label htmlFor="documentType" className={classNames({ "p-error": isFormFieldValid("documentType") })}>Tipo Documento</label>
                                                 <br />
-                                                <Dropdown {...input} options={documentTypeOptions}  onChange={onEditClientSelected} optionLabel="name" placeholder="Tipo de documento"  id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
+                                                <Dropdown {...input} options={documentTypeOptions}  onChange={onEditClientSelected} optionLabel="name" placeholder={documentTypeName ? documentTypeName : "Tipo de documento"}  id="documentType" className={classNames({ "p-invalid": isFormFieldValid(meta), inputClients: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
