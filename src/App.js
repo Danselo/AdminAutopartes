@@ -439,6 +439,8 @@ const App = () => {
                     {/* <Route path="/Categories" exact render={() => <Categories />} /> */}
                     {/* <Route path="/Vehicles" exact render={() => <Vehicles />} /> */}
                     {/* <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} /> */}
+                    <Route path="/MyPerfil" exact render={() => <MyPerfil />} />
+
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />

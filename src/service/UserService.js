@@ -36,4 +36,10 @@ export class UserService {
             realPassword
         })
     }
+    async getPreviousUser(token) {
+        let config = {
+          headers: { Authorization: "Bearer " + token },
+        };
+        return axios.get(`${baseUserURL}/get-previous-user`, config);
+      }
 }

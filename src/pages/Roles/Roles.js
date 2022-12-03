@@ -47,7 +47,7 @@ export default function Roles() {
                 setModules(response);
             })
             .catch((error) => {
-                console.log("Algo salio mal al traer los modulos de la bd", error);
+                console.log("Algo salio mal al traer los módulos de la bd", error);
             });
     }, []);
 
@@ -177,7 +177,7 @@ export default function Roles() {
                 setModulesOfRol(responseMapped);
             })
             .catch((e) => {
-                console.log("Falle aqui", e);
+                console.log("Falle aquí", e);
             });
         setDisplayDialogEdit(true);
     }
@@ -296,7 +296,7 @@ export default function Roles() {
         _rolService
             .updateRol(rolSelected.id ,rolSelected.name, modulesOfRol)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol Editado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol Editado exitosamente", life: 3000 });
                 loadRoles();
                 setRolSelected([])
             })
@@ -310,7 +310,7 @@ export default function Roles() {
         _rolService
             .createRol(rolName, selectedModules)
             .then((response) => {
-                toast.current.show({ severity: "success", summary: "Confirmacion", detail: "Rol creado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol creado exitosamente", life: 3000 });
                 loadRoles();
                 setSelectedModules([])
 
@@ -359,7 +359,7 @@ export default function Roles() {
         let errors = {};
 
         if(!data.modulesPermissions) {
-            errors.modulesPermissions = "No hay ningún permiso debes asociar almenos uno";
+            errors.modulesPermissions = "No hay ningún permiso debes asociar al menos uno";
         }else if(data.modulesPermissions.length <=0){
             errors.modulesPermissions = "No hay ningún permiso debes asociar al menos uno";
             
