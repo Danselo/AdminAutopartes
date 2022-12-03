@@ -35,7 +35,7 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                 setModules(response);
             })
             .catch((e) => {
-                console.log(e, "Error al traer los usuarios");
+                console.log(e, "Error al traer los módulos");
             });
     }, []);
 
@@ -69,14 +69,11 @@ export const TableRoles = ({ setRolSelected, roles }) => {
         );
     };
     const viewRolDetail = (info) => {
-        console.log(info);
         setRolInfo(info);
         setRolInfoDialog(true);
-        console.log(rolInfo);
             _rolesPermissionsService.getModulesOfRolSelected(info.id)
                 .then((response) => {
                     let responseMapped = response.map((element) => {
-                        console.log(element);
                         return {
                                 id: element.modules.id,
                                 description: element.modules.description,

@@ -30,4 +30,15 @@ export class RolesService {
                 return response.data;
             });
     }
+    
+    updateRol(id, name, selectedModules) {
+        return axios
+            .put(baseRolURL + `/update/${id}`, {
+                name,
+                selectedModules,
+            })
+            .then((response) => {
+                return response.data;
+            });
+    }
 }
