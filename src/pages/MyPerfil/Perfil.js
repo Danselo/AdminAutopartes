@@ -104,7 +104,7 @@ export default function MyPerfil() {
     const validateEdit = (data) => {
         let errors = {};
         if (!data.password) {
-            errors.password = "Debe digitar una contraseña";
+            errors.password = "Debe digitar su contraseña actual";
         }
         if (!data.newPassword) {
             errors.newPassword = "Este campo es requerido";
@@ -264,7 +264,7 @@ export default function MyPerfil() {
 
                                     <div className="submit-user-create">
                                         <Button label="Cancelar" icon="pi pi-times" type="button" onClick={() => onHideDialogCancelEdit()} className="p-button-text" />
-                                        <Button label="Editar Usuario" icon="pi pi-check" autoFocus />
+                                        <Button label="Editar Contraseña" icon="pi pi-check" autoFocus />
                                     </div>
                                 </form>
                             )}

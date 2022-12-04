@@ -176,7 +176,7 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" frozen header="Id rol"></Column>
                 <Column field="name" header="Nombre del rol"></Column>
-                <Column field="createdAt" className="table-rol--column-gray" sortable header="Fecha de creacion"></Column>
+                <Column field="createdAt" className="table-rol--column-gray" sortable header="Fecha de creación"></Column>
                 <Column field="status" body={statusBodyTemplate} header="Estado"></Column>
                 <Column field="permissions" header="Ver permisos" body={actionBodyTemplate}></Column>
             </DataTable>

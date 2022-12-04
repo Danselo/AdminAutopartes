@@ -217,8 +217,11 @@ export default function Users() {
     
                     if (userSelected.email === userMail) {
                       toast.current.show({ severity: "warn", summary: "Correo incorrecto", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
-
+                      setUserSelected({});
+                      loadUsers();
                     }
+                    setUserSelected({});
+                loadUsers();
                     // else{
                     //     toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                     //     console.log(e);
@@ -278,6 +281,8 @@ export default function Users() {
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
                 console.log(e);
+                setUserSelected({});
+                loadUsers();
             });
        }
          
@@ -497,7 +502,7 @@ export default function Users() {
                 <h4>Gestión de usuarios</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents}/>
-            <Dialog header="Crear un nuevo Usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
+            <Dialog header="Crear un nuevo usuario" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "40vw" }}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}
@@ -608,7 +613,7 @@ export default function Users() {
                     render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit}>
                             <div className="create-user-form">
-                                <h5>Ingrese los nuevos datos del Usuario</h5>
+                                <h5>Ingrese los nuevos datos del usuario</h5>
                                 <Field
                                     name="email"
                                     render={({ input, meta }) => (
@@ -616,7 +621,7 @@ export default function Users() {
                                             <span>
                                                 <label htmlFor="email" className={classNames({ "p-error": isFormFieldValid("email") })}>Correo electrónico</label>
                                                 <br />
-                                                <InputText id="email" {...input}  onChange={onEditUserSelected} placeholder="Correo Electronico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                                <InputText id="email" {...input}  onChange={onEditUserSelected} placeholder="Correo electrónico" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}

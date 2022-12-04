@@ -415,7 +415,7 @@ const getFormErrorMessage = (meta) => {
             <Toast ref={toast} />
             <div></div>
             <div className="text-center">
-                <h4>Modulo de roles</h4>
+                <h4>Lista de roles registrados</h4>
             </div>
 
             <Toolbar left={leftContents} right={rightContents} />

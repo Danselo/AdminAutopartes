@@ -76,7 +76,7 @@ export const TableClient = ({setClientSelected,clients}) => {
     };
     return (
         <>        
-        <Dialog visible={clientInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoClientDialogFooter} onHide={hideDialog}>
+        <Dialog visible={clientInfoDialog} style={{ width: "60vw" }} header="Detalle de el cliente" modal className="p-fluid" footer={infoClientDialogFooter} onHide={hideDialog}>
                 <Panel header="Información general de el cliente" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>

@@ -176,7 +176,7 @@ useEffect(() => {
         setAddedProducts(_AddedProducts);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
-        toast.current.show({ severity: "success", summary: "Successful", detail: "Product Deleted", life: 3000 });
+        toast.current.show({ severity: "success", summary: "Producto eliminado", detail: "Se ha eliminado el producto", life: 3000 });
     };
 
     const findIndexById = (id) => {
@@ -251,7 +251,7 @@ useEffect(() => {
     const deleteProductDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProductDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteProduct} />
+            <Button label="Si" icon="pi pi-check" className="p-button-text" onClick={deleteProduct} />
         </React.Fragment>
     );
     let footerGroup = <ColumnGroup>
