@@ -4,33 +4,115 @@ import { Chart } from "primereact/chart";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ProductService } from "../service/ProductService";
-
 import { Dropdown } from "primereact/dropdown";
+import { DashboardService } from "./../service/DashboardService";
+import { ImageProductService } from "../service/ImageProductService";
+import { Calendar } from "primereact/calendar";
+import { locale, addLocale } from "primereact/api";
 
-const lineData = {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
-    datasets: [
-        {
-            label: "Ingresos mensuales",
-            data: [28, 48, 40, 19, 86, 27, 90],
-            fill: false,
-            backgroundColor: "#00bb7e",
-            borderColor: "#00bb7e",
-            tension: 0.4,
-        },
-    ],
-};
+import config from "../config/config";
+addLocale("es", {
+    firstDayOfWeek: 1,
+    dayNames: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
+    dayNamesShort: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
+    dayNamesMin: ["D", "L", "M", "X", "J", "V", "S"],
+    monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+    today: "Hoy",
+    clear: "Limpiar",
+});
+
+locale("es");
+const _dashboardService = new DashboardService();
+const _imageProductService = new ImageProductService();
 
 const Dashboard = (props) => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [selectedYear, setSelectedYear] = useState(null);
-
-    const [products, setProducts] = useState(null);
-    // const menu1 = useRef(null);
-    // const menu2 = useRef(null);
+    const [topTenMostSelled, setTopTenMostSelled] = useState([]);
+    const [topTenLessSold, setTopTenLessSold] = useState([]);
+    const [dailySales, setDailySales] = useState([]);
+    const [imagesData, setImagesData] = useState({});
+    const currentDate = new Date();
+    const [topTenDate, setTopTenDate] = useState(currentDate);
+    const [topTenLessDate, setTopTenLessDate] = useState(currentDate);
+    const [dailyDate, setDailyDate] = useState(currentDate);
+    const [monthlyIncomeDate, setMonthlyIncomeDate] = useState(null);
     const [lineOptions] = useState(null);
+    const [monthlyIncome, setMonthlyIncome] = useState([]);
 
+    let monthlyIncomeArray = monthlyIncome.map((response) => {
+        return response.total_per_month;
+    });
+    let labelsMonthlyIncomeArray = monthlyIncome.map((response) => {
+        const month = response.month;
+        return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][month - 1];
+    });
+    const lineData = {
+        // labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+        labels: labelsMonthlyIncomeArray,
+        datasets: [
+            {
+                label: "Ingresos mensuales",
+                data: monthlyIncomeArray,
+                fill: false,
+                backgroundColor: "#00bb7e",
+                borderColor: "#00bb7e",
+                tension: 0.4,
+            },
+        ],
+    };
+    const basicData = {
+        labels: dailySales.map((response) => {
+            return response.sale_date;
+        }),
+        datasets: [
+            {
+                label: "Ingresos diarios",
+                backgroundColor: "#42A5F5",
+                data: dailySales.map((response) => {
+                    return response.total_per_day;
+                }),
+            },
+        ],
+    };
+
+    useEffect(() => {
+        _dashboardService
+            .getTopTenMostSelledProducts(topTenDate)
+            .then((response) => {
+                setTopTenMostSelled(response[0]);
+            })
+            .catch((error) => {
+                console.log("Ocurrio un error al traer los productos mas vendidos", error);
+            });
+        _dashboardService
+            .getTopTenLessSoldProducts(topTenLessDate)
+            .then((response) => {
+                setTopTenLessSold(response[0]);
+            })
+            .catch((error) => {
+                console.log("Ocurrio un error al traer los productos menos vendidos", error);
+            });
+        const getMonthlyIncomeParam = monthlyIncomeDate || currentDate;
+        _dashboardService
+            .getMonthlyIncome(getMonthlyIncomeParam)
+            .then((response) => {
+                setMonthlyIncome(response[0]);
+            })
+            .catch((error) => {
+                console.log("Ocurrio un error al traer los ingresos mensuales", error);
+            });
+        _dashboardService
+            .getDailySales(dailyDate)
+            .then((response) => {
+                setDailySales(response[0]);
+            })
+            .catch((error) => {
+                console.log("Ocurrio un error al traer las ventas", error);
+            });
+    }, [topTenDate, topTenLessDate, monthlyIncomeDate, dailyDate]);
     const days = [
         { name: "Lunes", code: "L" },
         { name: "Martes", code: "M" },
@@ -40,82 +122,10 @@ const Dashboard = (props) => {
         { name: "Sabado", code: "S" },
         { name: "Domingo", code: "D" },
     ];
-    const months = [
-        { name: "Enero", code: "EN" },
-        { name: "Febrero", code: "FE" },
-        { name: "Marzo", code: "MAR" },
-        { name: "Abril", code: "ABR" },
-        { name: "Mayo", code: "MAY" },
-        { name: "Junio", code: "JUN" },
-        { name: "Julio", code: "JUL" },
-        { name: "Agosto", code: "AGO" },
-        { name: "Septiembre", code: "SEP" },
-        { name: "Octube", code: "OCT" },
-        { name: "Noviembre", code: "NOV" },
-        { name: "Diciembre", code: "DIC" },
-    ];
-    const years = [
-        { name: "2018", code: "NY" },
-        { name: "2019", code: "RM" },
-        { name: "2020", code: "LDN" },
-        { name: "2021", code: "IST" },
-        { name: "2022", code: "PRS" },
-        { name: "2023", code: "PRS" },
-    ];
 
     const onDayChange = (e) => {
         setSelectedDay(e.value);
     };
-    const onMonthChange = (e) => {
-        setSelectedMonth(e.value);
-    };
-    const onYearChange = (e) => {
-        setSelectedYear(e.value);
-    };
-
-    useEffect(() => {
-        const productService = new ProductService();
-        productService.getProductsSmall().then((data) => setProducts(data));
-    }, []);
-
-    const formatCurrency = (value) => {
-        return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
-    };
-
-    const [stackedData] = useState({
-        labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio"],
-        datasets: [
-            {
-                type: "bar",
-                label: "Producto 1",
-                backgroundColor: "#42A5F5",
-                data: [50, 25, 12, 48, 90, 76, 42],
-            },
-            {
-                type: "bar",
-                label: "Producto 2",
-                backgroundColor: "#66BB6A",
-                data: [21, 84, 24, 75, 37, 65, 34],
-            },
-            {
-                type: "bar",
-                label: "Producto 3",
-                backgroundColor: "#FFA726",
-                data: [41, 52, 24, 74, 23, 21, 32],
-            },
-        ],
-    });
-
-    const [basicData] = useState({
-        labels: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"],
-        datasets: [
-            {
-                label: "Ingresos diarios",
-                backgroundColor: "#42A5F5",
-                data: [65, 59, 80, 81, 56, 55, 40],
-            },
-        ],
-    });
 
     const getLightTheme = () => {
         let basicOptions = {
@@ -188,9 +198,32 @@ const Dashboard = (props) => {
             stackedOptions,
         };
     };
+    useEffect(() => {
+        _imageProductService.getImages().then((images) => {
+            let imagesDataAux = {};
+            images.forEach((image) => {
+                imagesDataAux[image.idProduct] = image.url;
+            });
+            setImagesData(imagesDataAux);
+        });
+    }, []);
+    const photoBodyTemplate = (rowData, info) => {
+        let classBool;
+        if (!rowData.id) {
+            return null;
+        }
+        if (info) {
+            classBool = false;
+        } else {
+            classBool = true;
+        }
+        let url = imagesData[rowData.id];
 
-    const { basicOptions, stackedOptions } = getLightTheme();
+        return <img src={`${config.baseURL}${url}`} onError={(e) => (e.target.src = `${config.baseURL}/public/images/no-pictures.png`)} alt={rowData.id} className={!classBool ? "product-image" : "info-image info-image-not-photo"} />;
+    };
 
+    const { basicOptions } = getLightTheme();
+    const [date10, setDate10] = useState(null);
     return (
         <div className="grid">
             <div className="col-12 lg:col-6 xl:col-3">
@@ -212,52 +245,44 @@ const Dashboard = (props) => {
 
             <div className="col-12 xl:col-6">
                 <div className="card">
-                    <h5>Productos mas vendidos</h5>
-                    <div>
-                        <Dropdown value={selectedMonth} options={months} onChange={onMonthChange} optionLabel="name" placeholder="Mes" />
-                        <Dropdown value={selectedYear} options={years} onChange={onYearChange} optionLabel="name" placeholder="Año" />
+                    <h5>Top 10 de los productos mas vendidos</h5>
+                    <div className="field col-12 md:col-4">
+                        <Calendar id="monthpicker" value={topTenDate} placeholder="Seleccione un mes" locale="es" onChange={(e) => setTopTenDate(e.value)} view="month" dateFormat="mm/yy" />
                     </div>
-                    <DataTable value={products} rows={5} paginator responsiveLayout="scroll">
-                        <Column header="Imagen" body={(data) => <img className="shadow-2" src={`assets/demo/images/product/${data.image}`} alt={data.image} width="50" />} />
-                        <Column field="name" header="Nombre" sortable style={{ width: "35%" }} />
-                        <Column field="price" header="Precio" sortable style={{ width: "35%" }} body={(data) => formatCurrency(data.price)} />
-                        <Column
-                            header="View"
-                            style={{ width: "15%" }}
-                            body={() => (
-                                <>
-                                    <Button icon="pi pi-search" type="button" className="p-button-text" />
-                                </>
-                            )}
-                        />
+                    <DataTable emptyMessage="No se encontraron productos" value={topTenMostSelled} rows={10} responsiveLayout="scroll">
+                        <Column body={photoBodyTemplate} header="Foto" style={{ width: "35%" }}></Column>
+                        <Column field="name" header="Nombre" style={{ width: "35%" }} />
+                        <Column field="price" header="Precio" style={{ width: "35%" }} />
+                        <Column field="sold_units" header="Unidades vendidas" style={{ width: "15%" }} />
                     </DataTable>
                 </div>
                 <div className="card">
-                    <h5>Productos menos vendidos</h5>
-                    <div>
-                        <Dropdown value={selectedMonth} options={months} onChange={onMonthChange} optionLabel="name" placeholder="Mes" />
-                        <Dropdown value={selectedYear} options={years} onChange={onYearChange} optionLabel="name" placeholder="Año" />
+                    <h5>Top 10 de los productos menos vendidos</h5>
+                    <div className="field col-12 md:col-4">
+                        <Calendar id="monthpicker" value={topTenLessDate} placeholder="Seleccione un mes" locale="es" onChange={(e) => setTopTenLessDate(e.value)} view="month" dateFormat="mm/yy" />
                     </div>
-                    <Chart type="bar" data={stackedData} options={stackedOptions} />
+                    <DataTable value={topTenLessSold} rows={10} responsiveLayout="scroll" emptyMessage="No se encontraron productos">
+                        <Column body={photoBodyTemplate} header="Foto" style={{ width: "35%" }}></Column>
+                        <Column field="name" header="Nombre" style={{ width: "35%" }} />
+                        <Column field="price" header="Precio" style={{ width: "35%" }} />
+                        <Column field="sold_units" header="Unidades vendidas" style={{ width: "15%" }} />
+                    </DataTable>
                 </div>
             </div>
 
             <div className="col-12 xl:col-6">
                 <div className="card">
-                    <h5>Ingresos mensuales</h5>
-                    <div>
-                        <Dropdown value={selectedMonth} options={months} onChange={onMonthChange} optionLabel="name" placeholder="Mes" />
-                        <Dropdown value={selectedYear} options={years} onChange={onYearChange} optionLabel="name" placeholder="Año" />
+                    <h5>Ingresos mensuales por año</h5>
+                    <div className="field col-12 md:col-4">
+                        <Calendar id="yearpicker" value={monthlyIncomeDate} onChange={(e) => setMonthlyIncomeDate(e.value)} view="year" dateFormat="yy" />
                     </div>
 
-                    <Chart type="line" data={lineData} options={lineOptions} />
+                    <Chart type="bar" data={lineData} options={lineOptions} />
                 </div>
                 <div className="card">
                     <h5>Ventas diarias</h5>
                     <div>
-                        <Dropdown value={selectedDay} options={days} onChange={onDayChange} optionLabel="name" placeholder="Dia" />
-                        <Dropdown value={selectedMonth} options={months} onChange={onMonthChange} optionLabel="name" placeholder="Mes" />
-                        <Dropdown value={selectedYear} options={years} onChange={onYearChange} optionLabel="name" placeholder="Año" />
+                        <Calendar id="basic" value={dailyDate} onChange={(e) => setDailyDate(e.value)} />
                     </div>
                     <Chart type="bar" data={basicData} options={basicOptions} />
                 </div>

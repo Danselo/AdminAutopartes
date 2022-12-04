@@ -17,9 +17,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
     _authService
         .verifyToken(token)
-        .then((response) => {
-            console.log("logueado");
-        })
+        .then((response) => {})
         .catch((error) => {
             window.location.replace(`${baseStoreURL}`);
         });
