@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "primereact/button";
+import "./dashboard-s.css";
 import { Chart } from "primereact/chart";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { ProductService } from "../service/ProductService";
-import { Dropdown } from "primereact/dropdown";
 import { DashboardService } from "./../service/DashboardService";
 import { ImageProductService } from "../service/ImageProductService";
 import { Calendar } from "primereact/calendar";
 import { locale, addLocale } from "primereact/api";
-
 import config from "../config/config";
+
 addLocale("es", {
     firstDayOfWeek: 1,
     dayNames: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
@@ -27,9 +25,6 @@ const _dashboardService = new DashboardService();
 const _imageProductService = new ImageProductService();
 
 const Dashboard = (props) => {
-    const [selectedDay, setSelectedDay] = useState(null);
-    const [selectedMonth, setSelectedMonth] = useState(null);
-    const [selectedYear, setSelectedYear] = useState(null);
     const [topTenMostSelled, setTopTenMostSelled] = useState([]);
     const [topTenLessSold, setTopTenLessSold] = useState([]);
     const [dailySales, setDailySales] = useState([]);
@@ -38,9 +33,11 @@ const Dashboard = (props) => {
     const [topTenDate, setTopTenDate] = useState(currentDate);
     const [topTenLessDate, setTopTenLessDate] = useState(currentDate);
     const [dailyDate, setDailyDate] = useState(currentDate);
+    const [usersPerDayDate, setUsersPerDayDate] = useState(currentDate);
     const [monthlyIncomeDate, setMonthlyIncomeDate] = useState(null);
     const [lineOptions] = useState(null);
     const [monthlyIncome, setMonthlyIncome] = useState([]);
+    const [registeredUsersPerDay, setRegisteredUsersPerDay] = useState([]);
 
     let monthlyIncomeArray = monthlyIncome.map((response) => {
         return response.total_per_month;
@@ -50,7 +47,6 @@ const Dashboard = (props) => {
         return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][month - 1];
     });
     const lineData = {
-        // labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
         labels: labelsMonthlyIncomeArray,
         datasets: [
             {
@@ -112,20 +108,15 @@ const Dashboard = (props) => {
             .catch((error) => {
                 console.log("Ocurrio un error al traer las ventas", error);
             });
-    }, [topTenDate, topTenLessDate, monthlyIncomeDate, dailyDate]);
-    const days = [
-        { name: "Lunes", code: "L" },
-        { name: "Martes", code: "M" },
-        { name: "Miercoles", code: "W" },
-        { name: "Jueves", code: "J" },
-        { name: "Viernes", code: "V" },
-        { name: "Sabado", code: "S" },
-        { name: "Domingo", code: "D" },
-    ];
-
-    const onDayChange = (e) => {
-        setSelectedDay(e.value);
-    };
+        _dashboardService
+            .getRegisteredUsersPerDay(usersPerDayDate)
+            .then((response) => {
+                setRegisteredUsersPerDay(response[0]);
+            })
+            .catch((error) => {
+                console.log("Ocurrio un error al traer los usuarios regitrados por dia", error);
+            });
+    }, [topTenDate, topTenLessDate, monthlyIncomeDate, dailyDate, usersPerDayDate]);
 
     const getLightTheme = () => {
         let basicOptions = {
@@ -223,17 +214,17 @@ const Dashboard = (props) => {
     };
 
     const { basicOptions } = getLightTheme();
-    const [date10, setDate10] = useState(null);
     return (
         <div className="grid">
             <div className="col-12 lg:col-6 xl:col-3">
                 <div className="card mb-0">
-                    <div className="flex justify-content-between mb-3">
-                        <div>
-                            <span className="block text-500 font-medium mb-3">Usuarios registrados</span>
-                            <Dropdown value={selectedDay} options={days} onChange={onDayChange} optionLabel="name" placeholder="Dia" />
+                    <span className="">Usuarios registrados</span>
+                    <div className="dashboard-user-per-day">
+                        <Calendar id="basic" value={usersPerDayDate} onChange={(e) => setUsersPerDayDate(e.value)} />
 
-                            <div className="text-900 font-medium text-xl">12</div>
+                        <div className="text-900 font-medium text-xl dashboard-user-per-day-icons">
+                            <i className="pi pi-user" style={{ fontSize: "1em" }}></i>
+                            <div className="dashboard-user-per-day-icons__number">{registeredUsersPerDay[0]?.users_amount}</div>
                         </div>
                     </div>
                 </div>
@@ -245,7 +236,7 @@ const Dashboard = (props) => {
 
             <div className="col-12 xl:col-6">
                 <div className="card">
-                    <h5>Top 10 de los productos mas vendidos</h5>
+                    <h5>Top 10 de los productos más vendidos</h5>
                     <div className="field col-12 md:col-4">
                         <Calendar id="monthpicker" value={topTenDate} placeholder="Seleccione un mes" locale="es" onChange={(e) => setTopTenDate(e.value)} view="month" dateFormat="mm/yy" />
                     </div>
@@ -280,7 +271,7 @@ const Dashboard = (props) => {
                     <Chart type="bar" data={lineData} options={lineOptions} />
                 </div>
                 <div className="card">
-                    <h5>Ventas diarias</h5>
+                    <h5>Ventas diarias en los últimos siete días de la fecha seleccionada</h5>
                     <div>
                         <Calendar id="basic" value={dailyDate} onChange={(e) => setDailyDate(e.value)} />
                     </div>

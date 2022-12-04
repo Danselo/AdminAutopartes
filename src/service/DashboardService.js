@@ -33,4 +33,12 @@ export class DashboardService {
             })
             .then((res) => res.data);
     }
+
+    getRegisteredUsersPerDay(usersDate) {
+        return axios
+            .post(`${baseDashboardURL}/registered-users-per-day`, {
+                usersDate: usersDate,
+            })
+            .then((res) => res.data);
+    }
 }
