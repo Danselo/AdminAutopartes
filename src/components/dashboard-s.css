@@ -1,0 +1,14 @@
+.dashboard-user-per-day-icons{
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 0 0 0;
+    
+}
+
+.dashboard-user-per-day{
+    display: flex;
+    flex-direction: column;
+}
+.dashboard-user-per-day-icons__number{
+    margin: 0 0 0 1rem;
+}

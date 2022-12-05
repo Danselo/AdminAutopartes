@@ -1,7 +1,6 @@
 import axios from "axios";
 import config from "../config/config";
 
-// const baseAuthURL = config.baseURL +'/auth'
 // const baseAdminURL = config.adminURL+ '/#/validation-token'
 const baseRolePermissionsURL = config.baseURL + "/roles";
 const baseAuthURL = config.baseURL + "/auth";
@@ -24,4 +23,12 @@ export class AuthService {
           newPassword,
         }, config);
       }
+
+    verifyToken(token) {
+        return axios
+            .post(`${baseAuthURL}/verify-token`, {
+                token,
+            })
+            .then((res) => res.data);
+    }
 }

@@ -161,7 +161,7 @@ const App = () => {
             ],
         },
         {
-            label: "Configuracion",
+            label: "Configuración",
             items: [
                 {
                     label: "Roles",
@@ -192,19 +192,19 @@ const App = () => {
             label: "Productos",
             items: [
                 {
-                    label: "Categorias",
+                    label: "Categorías",
                     icon: "pi pi-fw pi-book",
                     to: "/Categories",
                     disabled: !_permissionsCheckService?.userHasPermission(4),
                 },
                 {
-                    label: "Marcas vehiculos",
+                    label: "Marcas vehículos",
                     icon: "pi pi-fw pi-car",
                     to: "/Brand",
                     disabled: !_permissionsCheckService?.userHasPermission(5),
                 },
                 {
-                    label: "Vehiculos",
+                    label: "Vehículos",
                     icon: "pi pi-fw pi-car",
                     to: "/Vehicles",
                     disabled: !_permissionsCheckService?.userHasPermission(6),
@@ -242,7 +242,7 @@ const App = () => {
         },
 
         {
-            label: "Gestion de Usuarios",
+            label: "Gestión de Usuarios",
             items: [
                 {
                     label: "Usuarios",
