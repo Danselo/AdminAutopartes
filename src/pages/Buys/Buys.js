@@ -123,7 +123,7 @@ export default function Buys() {
         .updateBuy(buySelected)
         .then(() => {
 
-            toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del usuario se cambio exitosamente", life: 3000 });
+            toast.current.show({ severity: "success", summary: "Anulado!", detail: "La compra se anulo exitosamente", life: 3000 });
             refreshPage2();
         })
         .catch((e) => {
@@ -198,8 +198,9 @@ export default function Buys() {
         })
         .catch((error) => {
         //   setDisplayDialogStatusPassword(false);
-            setDisplayDialogStatus(false);
-          setVisibleFalse(true);
+        toast.current.show({ severity: "error", summary: "ACCESO DENEGADO", detail: "La contraseña de administrador no es la correcta", life: 3000 });
+        refreshPage2()
+            
   
         });
     };
