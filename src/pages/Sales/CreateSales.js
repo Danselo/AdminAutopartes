@@ -18,7 +18,6 @@ import { OverlayPanel } from "primereact/overlaypanel";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
-
 const _saleService = new SaleService();
 const _clientService = new ClientService();
 const _productService = new ProductService();
@@ -118,7 +117,6 @@ export default function CreateSales() {
     const statusPayment = [
         { name: "Pagado", id: "1" },
         { name: "Pendiente", id: "0" },
-
     ];
     let history = useHistory();
 
@@ -132,8 +130,9 @@ export default function CreateSales() {
     const createSale = (form, data) => {
         var dateSelected = new Date(data.saleDate);
         var formatDate = dateSelected.toISOString().split("T")[0];
+        const typeSale = false;
         _saleService
-            .createSale(saleClientSelected.id, formatDate, data.statusSale.name, data.statusPayment.name, totalSale)
+            .createSale(saleClientSelected.id, formatDate, data.statusSale.name, data.statusPayment.name, totalSale, typeSale)
             .then((responseCreateSale) => {
                 products.forEach((element) => {
                     _saleService
@@ -167,7 +166,7 @@ export default function CreateSales() {
     const create = (form, data) => {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta venta?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Crear",
             rejectLabel: "Cancelar",
@@ -179,7 +178,7 @@ export default function CreateSales() {
     const cancelBuy = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
-            header: "Confirmacion",
+            header: "Confirmación",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-danger",
             acceptLabel: "Cancelar venta",
@@ -213,8 +212,7 @@ export default function CreateSales() {
                         {saleClientSelected ? <small className="p-success">Cliente asociado</small> : <small className="p-error">*Debe asociar un cliente a la venta</small>}
                     </div>
                     <div className="create-sale-header__card">
-                        <h5>Total de la venta</h5>
-                        $ {totalSale}
+                        <h5>Total de la venta</h5>$ {totalSale}
                     </div>
                 </div>
 
@@ -231,8 +229,6 @@ export default function CreateSales() {
                     </DataTable>
                 </OverlayPanel>
             </div>
-
-            
 
             <TableSalesProductsDetail setAddedProductsAtSale={setAddedProductsAtSale} />
             <Form

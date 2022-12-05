@@ -7,6 +7,7 @@ import { Panel } from "primereact/panel";
 import { Dialog } from "primereact/dialog";
 import { SaleService } from "../../service/SaleService";
 import { ClientService } from "../../service/ClientService";
+import "./tableSales.css";
 
 const _saleService = new SaleService();
 const _clientService = new ClientService();
@@ -102,11 +103,41 @@ export const TableSales = ({ setSaleSelected, sales }) => {
             </React.Fragment>
         );
     };
+    const statusSaleTemplate = (rowData) => {
+        if (rowData.statusSale === "Terminado") {
+            return <span className="product-badge-state-active">TERMINADO</span>;
+        } else if (rowData.statusSale === "Activo") {
+            return <span className="product-badge-state-inactive">ACTIVO</span>;
+        } else if (rowData.statusSale === "Anulada") {
+            return <span className="sale-badge-cancel">ANULADO</span>;
+        } else {
+            return <span className="product-badge-state-na">NA</span>;
+        }
+    };
+    const statusPaymentTemplate = (rowData) => {
+        if (rowData.statusPayment === "Pagado") {
+            return <span className="product-badge-state-active">PAGADO</span>;
+        } else if (rowData.statusPayment === "Pendiente") {
+            return <span className="product-badge-state-inactive">PENDIENTE</span>;
+        } else {
+            return <span className="product-badge-state-na">NA</span>;
+        }
+    };
+
+    const saleTypeTemplate = (rowData) => {
+        if (rowData.typeSale === false) {
+            return <span className="sale-badge-sale">VENTA</span>;
+        } else if (rowData.typeSale === true) {
+            return <span className="sale-badge-order">PEDIDO</span>;
+        } else {
+            return <span className="product-badge-state-na">NA</span>;
+        }
+    };
 
     return (
         <>
             <Dialog visible={saleInfoDialog} style={{ width: "60vw" }} header="Detalle de la venta" modal className="p-fluid" footer={infoSaleDialogFooter} onHide={hideDialog}>
-                <Panel header="Informacion general de la venta" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general de la venta" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -140,7 +171,7 @@ export const TableSales = ({ setSaleSelected, sales }) => {
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion de los productos de la venta" className="dialog-buy-panel">
+                <Panel header="Información de los productos de la venta" className="dialog-buy-panel">
                     <div className="dialog-sale-panel-products">
                         {productsDetailOfSale.map((element) => (
                             <div className="dialog-buy-panel-products__detail" key={element.idProduct}>
@@ -170,9 +201,9 @@ export const TableSales = ({ setSaleSelected, sales }) => {
                 </Panel>
             </Dialog>
 
-            <Dialog visible={saleClientInfoDialog} style={{ width: "60vw" }} header={"Informacion general del cliente " + clientInfo.name} modal className="p-fluid" footer={infoSaleClientDialogFooter} onHide={hideDialogClientInfo}>
+            <Dialog visible={saleClientInfoDialog} style={{ width: "60vw" }} header={"Información general del cliente " + clientInfo.name} modal className="p-fluid" footer={infoSaleClientDialogFooter} onHide={hideDialogClientInfo}>
                 {console.log(clientInfo)}
-                <Panel header="Informacion general del cliente" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general del cliente" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -230,7 +261,7 @@ export const TableSales = ({ setSaleSelected, sales }) => {
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion de envio" className="dialog-buy-panel" toggleable>
+                <Panel header="Información de envio" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -288,13 +319,12 @@ export const TableSales = ({ setSaleSelected, sales }) => {
             >
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" frozen={true} sortable header="Id"></Column>
-                <Column body={actionBodyTemplateClientDetail} header="Informacion del cliente"></Column>
+                <column body={actionBodyTemplateClientDetail} header="Información del cliente"></column>
                 <Column field="saleDate" sortable header="Fecha de venta"></Column>
-                <Column field="statusSale" className="" sortable header="Estado"></Column>
-                <Column field="statusPayment" className="" header="Estado del pago"></Column>
+                <Column field="statusSale" sortable body={statusSaleTemplate} header="Estado"></Column>
+                <Column field="statusPayment" body={statusPaymentTemplate} header="Estado del pago"></Column>
                 <Column field="totalPurchase" className="" header="Total venta"></Column>
-                <Column field="statusPayment" className="" header="Estado de anulación"></Column>
-                <Column field="statusPayment" className="" header="Tipo de venta"></Column>
+                <Column field="typeSale" body={saleTypeTemplate} header="Tipo de venta"></Column>
                 <Column header="Ver detalle de la venta" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
         </>

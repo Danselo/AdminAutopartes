@@ -9,8 +9,28 @@
 }
 
 .create-sale-form__card{
-    
-    display: flex;
-    justify-content: flex-end;
+height: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 
+
+}
+.p-card-content{
+    height: 12rem;
+}
+.create-product-form{
+    display: flex;
+    flex-direction: row;
+    margin-top: 1rem;
+    margin-right: 1rem
+
+}
+
+.status-sale-card{
+    margin: 0 .5rem 0 .5rem;
+}
+
+.buttons-sale{
+    text-align: center;
 }

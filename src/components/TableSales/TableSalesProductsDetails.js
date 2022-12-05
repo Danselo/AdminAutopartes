@@ -12,7 +12,6 @@ import { OverlayPanel } from "primereact/overlaypanel";
 import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 
-
 const _productService = new ProductService();
 
 export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
@@ -36,7 +35,6 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
     const isMounted = useRef(false);
     const isEdited = useRef(false);
     const [globalFilter, setGlobalFilter] = useState(null);
-  
 
     useEffect(() => {
         isMounted.current = true;
@@ -76,7 +74,6 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
     };
 
     const saveProduct = (form, product) => {
-        
         // setSubmitted(true);
         if (product.idProduct) {
             let _AddedProducts = [...AddedProducts];
@@ -107,7 +104,6 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
         return id;
     };
     const editProduct = (product) => {
-        
         isEdited.current = true;
         products.forEach((productMap) => {
             if (productMap.id === product.idProduct) {
@@ -220,21 +216,20 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
-    
-    
+
     const filterProductsSelected = () => {
         if (AddedProducts.length > 0) {
-            return products.filter(product => {
-                return !AddedProducts.some(element => {
-                  return product.id === element.idProduct;
+            return products.filter((product) => {
+                return !AddedProducts.some((element) => {
+                    return product.id === element.idProduct;
                 });
-              });
+            });
         } else {
-            return products
+            return products;
         }
     };
     const productosFiltrados = filterProductsSelected();
-   
+
     return (
         <div className="datatable-crud-demo">
             <Toast ref={toast} />
@@ -251,7 +246,7 @@ export default function TableSalesProductsDetail({ setAddedProductsAtSale }) {
                 </DataTable>
             </div>
 
-            <Dialog visible={productDialog} style={{ width: "450px" }} header="Informacion del producto" modal className="p-fluid" onHide={hideDialog}>
+            <Dialog visible={productDialog} style={{ width: "450px" }} header="Información del producto" modal className="p-fluid" onHide={hideDialog}>
                 <Form
                     onSubmit={onSubmit}
                     initialValues={initialValues}

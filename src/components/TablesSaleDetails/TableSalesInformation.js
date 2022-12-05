@@ -20,7 +20,7 @@ export const TableSalesInformation = () => {
     }, []);
 
     return (
-        <DataTable header="Informacion venta" value={Sales} resizableColumns columnResizeMode="expand" stripedRows responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <DataTable header="Información venta" value={Sales} resizableColumns columnResizeMode="expand" stripedRows responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
             <Column field="id_venta" header="Id venta "></Column>
             <Column field="id_cliente" header="Id cliente"></Column>
             <Column field="fecha_pedido" header="Fecha pedido"></Column>

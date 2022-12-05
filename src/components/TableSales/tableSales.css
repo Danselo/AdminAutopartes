@@ -21,3 +21,43 @@
 .dialog-sale-panel-products__detail-item{
     padding: 0 1.5rem 0 1.5rem;
 }
+.sale-badge-sale{
+    background-color: rgb(79, 79, 83);
+    width: 5rem;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: white;
+    font-weight: 500;
+    font-size: .8rem;
+}
+
+
+.sale-badge-order{
+    background-color: rgb(15, 31, 152);
+    width: 5rem;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: white;
+    font-weight: 500;
+    font-size: .8rem;
+}
+
+.product-badge-state-na{
+    background-color: rgb(243, 59, 59);
+    width: 5rem;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: white;
+    font-weight: bold;
+   
+}
+
+.sale-badge-cancel{
+    background-color: rgb(243, 59, 59);
+    width: 5rem;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: white;
+    font-weight: 500;
+    font-size: .8rem;
+}

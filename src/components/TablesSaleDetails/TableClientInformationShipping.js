@@ -20,7 +20,7 @@ export const TableClientInformationShipping = () => {
     }, []);
 
     return (
-        <DataTable header="Informacion Envio" value={Client} resizableColumns columnResizeMode="expand" stripedRows responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
+        <DataTable header="Información Envio" value={Client} resizableColumns columnResizeMode="expand" stripedRows responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-product" rows={10}>
             <Column field="pais" header="Pais"></Column>
             <Column field="departamento" header="Departamento"></Column>
             <Column field="ciudad" header="Ciudad"></Column>
