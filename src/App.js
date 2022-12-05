@@ -35,11 +35,10 @@ import Categories from "./pages/Categories/Categories";
 import Vehicles from "./pages/Vehicle/Vehicle";
 import ProductsBrands from "./pages/ProductsBrands/ProductsBrands";
 import Guard from "./pages/Guard";
-import {PermisisonsCheckService} from "./service/PermissionsCheckService"
+import { PermisisonsCheckService } from "./service/PermissionsCheckService";
 
-const _permissionsCheckService = new PermisisonsCheckService()
+const _permissionsCheckService = new PermisisonsCheckService();
 const App = () => {
-    
     const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
     const [inputStyle, setInputStyle] = useState("outlined");
@@ -50,7 +49,6 @@ const App = () => {
     const [mobileTopbarMenuActive, setMobileTopbarMenuActive] = useState(false);
     const copyTooltipRef = useRef();
     const location = useLocation();
-
     PrimeReact.ripple = true;
 
     let menuClick = false;
@@ -156,16 +154,18 @@ const App = () => {
                     label: "Dashboard",
                     icon: "pi pi-fw pi-chart-pie",
                     to: "/",
+                    disabled: !_permissionsCheckService?.userHasPermission(1),
                 },
             ],
         },
         {
-            label: "Configuracion",
+            label: "Configuración",
             items: [
                 {
                     label: "Roles",
                     icon: "pi pi-fw pi-user",
                     to: "/pages/Roles/Roles",
+                    disabled: !_permissionsCheckService?.userHasPermission(12),
                 },
             ],
         },
@@ -176,11 +176,13 @@ const App = () => {
                     label: "Proveedores",
                     icon: "pi pi-fw pi-building",
                     to: "/Providers",
+                    disabled: !_permissionsCheckService?.userHasPermission(2),
                 },
                 {
                     label: "Compras",
                     icon: "pi pi-fw pi-shopping-bag",
                     to: "/Buys",
+                    disabled: !_permissionsCheckService?.userHasPermission(3),
                 },
             ],
         },
@@ -188,34 +190,36 @@ const App = () => {
             label: "Productos",
             items: [
                 {
-                    label: "Categorias",
+                    label: "Categorías",
                     icon: "pi pi-fw pi-book",
                     to: "/Categories",
+                    disabled: !_permissionsCheckService?.userHasPermission(4),
                 },
                 {
-                    label: "Marcas vehiculos",
+                    label: "Marcas vehículos",
                     icon: "pi pi-fw pi-car",
                     to: "/Brand",
+                    disabled: !_permissionsCheckService?.userHasPermission(5),
                 },
                 {
-                    label: "Vehiculos",
+                    label: "Vehículos",
                     icon: "pi pi-fw pi-car",
                     to: "/Vehicles",
+                    disabled: !_permissionsCheckService?.userHasPermission(6),
                 },
                 {
                     label: "Marcas productos",
                     icon: "pi pi-fw pi-car",
                     to: "/ProductsBrands",
+                    disabled: !_permissionsCheckService?.userHasPermission(7),
                 },
                 {
                     label: "Productos",
                     icon: "pi pi-fw pi-box",
                     to: "/Products",
-                    // disabled: !_permissionsCheckService?.userHasPermission(6),
+                    disabled: !_permissionsCheckService?.userHasPermission(8),
                 },
-                
             ],
-            
         },
         {
             label: "Ventas",
@@ -224,19 +228,27 @@ const App = () => {
                     label: "Clientes",
                     icon: "pi pi-fw pi-users",
                     to: "/pages/Client/Client",
+                    disabled: !_permissionsCheckService?.userHasPermission(9),
                 },
                 {
                     label: "Ventas",
                     icon: "pi pi-fw pi-credit-card",
                     to: "/Sales",
+                    disabled: !_permissionsCheckService?.userHasPermission(10),
                 },
-                
             ],
         },
 
         {
-            label: "Gestion de Usuarios",
-            items: [{ label: "Usuarios", icon: "pi pi-fw pi-users", to: "/pages/Users/Users" }],
+            label: "Gestión de Usuarios",
+            items: [
+                {
+                    label: "Usuarios",
+                    icon: "pi pi-fw pi-users",
+                    to: "/pages/Users/Users",
+                    disabled: !_permissionsCheckService?.userHasPermission(11),
+                },
+            ],
         },
     ];
 
@@ -262,9 +274,16 @@ const App = () => {
     });
     function GuardWrapper() {
         let { token } = useParams();
-        localStorage.setItem('token',token)
-        return <Guard token={token}/>
-      }
+        localStorage.setItem("token", token);
+        return <Guard token={token} />;
+    }
+    // const CartGuard = () => {
+    //     if (!_cart.getSize()) {
+    //         window.location.href = "/Store";
+    //         return <></>;
+    //     }
+    //     return <Dashboard />;
+    // };
 
     return (
         <div className={wrapperClass} onClick={onWrapperClick}>
@@ -278,25 +297,34 @@ const App = () => {
 
             <div className="layout-main-container">
                 <div className="layout-main">
-                    <Route path="/validation-token/:token" render={() => <GuardWrapper/>} />
+                    <Route path="/validation-token/:token" render={() => <GuardWrapper />} />
                     <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
-                    <Route path="/products" exact render={() => <Products />} />
+                    <Route
+                        path="/products"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(8)) {
+                                return <Products />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
                     <Route path="/Providers" exact render={() => <Providers />} />
                     <Route path="/pages/Client/Client" exact render={() => <Client />} />
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
                     <Route path="/Sales" exact render={() => <Sales />} />
                     <Route path="/CreateSales" exact render={() => <CreateSales />} />
-                    <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />                             
+                    <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
                     <Route path="/pages/Roles/Roles" exact render={() => <Roles />} />
-                    <Route path="/Brand" exact render={() => <Brand />} />                
-                    <Route path="/SalesDetails" exact render={() => <SalesDetails />} />   
+                    <Route path="/Brand" exact render={() => <Brand />} />
+                    <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
                     <Route path="/Buys" exact render={() => <Buys />} />
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
-                    <Route path="/Categories" exact render={() => <Categories />} />                  
+                    <Route path="/Categories" exact render={() => <Categories />} />
                     <Route path="/Vehicles" exact render={() => <Vehicles />} />
-                    <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} /> 
-              
+                    <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />

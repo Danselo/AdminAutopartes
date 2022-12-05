@@ -1,8 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import config from "./config/config";
+
+const baseLoginURL = config.userURL + "/login";
 
 export const AppTopbar = (props) => {
+
+    const logOut = () => {
+        localStorage.clear();
+        window.location.replace(baseLoginURL)
+        
+    }
     return (
         <div className="layout-topbar">
             <Link to="/" className="layout-topbar-logo">
@@ -26,9 +35,9 @@ export const AppTopbar = (props) => {
                     </button>
                 </li>
                 <li>
-                    <button className="p-link layout-topbar-button" onClick={props.onMobileSubTopbarMenuClick}>
-                        <i className="pi pi-user" />
-                        <span>Perfil</span>
+                    <button className="p-link layout-topbar-button" onClick={logOut}>
+                        <i className="pi pi-power-off" />
+                        <span>Cerrar sesión</span>
                     </button>
                 </li>
             </ul>

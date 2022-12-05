@@ -46,6 +46,7 @@
 .create-product-form__inputTextarea{
     height: 15rem;
     width: 42rem;
+    display: flex;
 }
 
 .create-product-form__grid{

@@ -24,6 +24,7 @@ export class ProductService {
                 idBrand,
                 name,
                 description,
+                
             })
             .then((response) => {
                 return response.data;
@@ -82,6 +83,10 @@ export class ProductService {
             idProduct: idProduct,
             file: file
         })
+    }
+    changeStatusOfProduct(idProduct, status){
+        return axios
+        .put(`${baseProductURL}/update-status-of-product/${idProduct}`, status);
     }
 
     
