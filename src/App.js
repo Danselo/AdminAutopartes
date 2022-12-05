@@ -219,7 +219,7 @@ const App = () => {
                     label: "Productos",
                     icon: "pi pi-fw pi-box",
                     to: "/Products",
-                    disabled: !_permissionsCheckService?.userHasPermission(8),
+                    visible: !_permissionsCheckService?.userHasPermission(8),
                 },
             ],
         },
