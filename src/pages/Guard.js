@@ -10,7 +10,6 @@ export default function Guard({ token }) {
         _authService
             .getModules(token)
             .then((response) => {
-                console.log("response desde el guard", response);
                 localStorage.setItem("modules", JSON.stringify(response));
                 window.location.replace(`${baseDashboardURL}`);
             })

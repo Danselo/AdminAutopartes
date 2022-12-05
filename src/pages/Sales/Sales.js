@@ -13,8 +13,6 @@ import { Password } from "primereact/password";
 
 import { Toast } from "primereact/toast";
 
-
-
 const _saleService = new SaleService();
 
 export default function Sales() {
@@ -28,7 +26,7 @@ export default function Sales() {
     const [password, setPassword] = useState("");
     const validateStatusPayment = saleSelected.statusPayment;
     const validateStatusSale = saleSelected.statusSale;
-
+    console.log(saleSelected);
     const leftContents = (
         <React.Fragment>
             <Link to={"/CreateSales"}>
@@ -85,10 +83,10 @@ export default function Sales() {
     };
     const rightContents = (
         <React.Fragment>
-            <Button label="Cambiar estados" className="p-button-raised p-button-info dc-space-between" icon="pi pi-sync" onClick={() => setDisplayDialogStatusSales(true)} />
+            <Button label="Estados de la venta" className="p-button-raised p-button-info dc-space-between" icon="pi pi-sync" onClick={() => setDisplayDialogStatusSales(true)} disabled={!saleSelected.id || saleSelected === null} />
         </React.Fragment>
     );
-
+    console.log(saleSelected);
     useEffect(() => {
         _saleService.getSales().then((response) => {
             setSales(response);
@@ -156,23 +154,20 @@ export default function Sales() {
 
                 <div className="create-product-form"></div>
             </Dialog>
-            <Dialog header="Seleccionar la funcuión a realizar" visible={displayDialogStatusSales} onHide={() => setDisplayDialogStatusSales(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "75vw" }}>
-                <h5>Seleccione la función</h5>
-
+            <Dialog header="Estados de la venta" visible={displayDialogStatusSales} onHide={() => setDisplayDialogStatusSales(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "75vw" }}>
                 <div className="create-product-form">
                     <div className="status-sale-card">
                         <Card className="create-sale-form__card" title="Estado de la venta" subTitle="Cambiar estado de la venta" style={{ width: "20em", height: "18em", border: "0.1em solid darkblue" }}>
                             <div className="create-sale-form__card">
                                 <p className="m-0" style={{ lineHeight: "1.5" }}>
-                                    ¿Ya se pago la venta y entregaste los productos al cliente?
+                                    ¿Ya se pagó la venta y entregaste los productos al cliente?
                                 </p>
                                 <Button
                                     label="Finalizar venta"
-                                    className={saleSelected.statusSale ? "p-button-raised p-button-warning  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
-                                    icon={saleSelected.id ? "pi pi-eye-slash" : "pi pi-eye"}
+                                    className="p-button-success p-button-raised  dc-space-between"
+                                    icon="pi pi-check-circle"
                                     onClick={() => editStatusSaleAlert()}
                                     disabled={validateStatusPayment === "Pendiente" || validateStatusSale === "Terminado" || validateStatusSale === "Anulada"}
-                                    // tooltip="Esta de la venta"
                                 />
                             </div>
                         </Card>
@@ -181,31 +176,33 @@ export default function Sales() {
                         <Card className="create-sale-form__card" title="Estado de pago" subTitle="Cambiar estado de pago de la venta" style={{ width: "20em", height: "18em", border: "0.1em solid darkblue" }}>
                             <div className="create-sale-form__card">
                                 <p className="m-0" style={{ lineHeight: "1.5" }}>
-                                    ¿Ya se pago la venta?
+                                    ¿Ya se pagó la venta? Cambia el estado de pago
                                 </p>
                                 <Button
-                                    label="Pagado"
-                                    className={"p-button-raised p-button-warning  dc-space-between"}
+                                    label="Cambiar a pagado"
+                                    className={"p-button-raised p-button-success dc-space-between"}
                                     onClick={() => {
                                         changeStatusPayment();
                                     }}
                                     disabled={validateStatusPayment === "Pagado"}
+                                    icon="pi pi-dollar"
                                 />
                             </div>
                         </Card>
                     </div>
                     <div className="status-sale-card">
-                        <Card className="" title="Estado de anular venta" subTitle="Cambiar estado para anular la venta" style={{ width: "20em", height: "18em", border: "0.1em solid darkblue" }}>
+                        <Card className="" title="Anular venta" subTitle="Anular venta" style={{ width: "20em", height: "18em", border: "0.1em solid darkblue" }}>
                             <div className="create-sale-form__card">
                                 <p className="m-0" style={{ lineHeight: "1.5" }}>
-                                    Anular venta
+                                    Al dar clic en anular venta, el stock de los productos aumentará.
                                 </p>
                                 <Button
                                     label="Anular venta"
-                                    className={"p-button-success p-button-raised  dc-space-between"}
+                                    className={"p-button-danger p-button-raised  dc-space-between"}
                                     onClick={() => {
                                         setCancelSaleDialog(true);
                                     }}
+                                    icon="pi pi-ban"
                                 />
                             </div>
                         </Card>

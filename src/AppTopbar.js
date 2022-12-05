@@ -6,12 +6,11 @@ import config from "./config/config";
 const baseLoginURL = config.userURL + "/login";
 
 export const AppTopbar = (props) => {
-
     const logOut = () => {
         localStorage.clear();
-        window.location.replace(baseLoginURL)
-        
-    }
+        console.log(baseLoginURL);
+        window.location.replace(baseLoginURL);
+    };
     return (
         <div className="layout-topbar">
             <Link to="/" className="layout-topbar-logo">
@@ -28,13 +27,12 @@ export const AppTopbar = (props) => {
             </button>
 
             <ul className={classNames("layout-topbar-menu lg:flex origin-top", { "layout-topbar-menu-mobile-active": props.mobileTopbarMenuActive })}>
-                 <li>
-                 <Link to="/MyPerfil">
-
-                    <button className="p-link layout-topbar-button">
-                        <i className="pi pi-user" />
-                        <span>Mi Perfil</span>
-                    </button>
+                <li>
+                    <Link to="/MyPerfil">
+                        <button className="p-link layout-topbar-button">
+                            <i className="pi pi-user" />
+                            <span>Mi Perfil</span>
+                        </button>
                     </Link>
                 </li>
                 <li>

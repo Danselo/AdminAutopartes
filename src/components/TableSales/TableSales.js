@@ -202,7 +202,6 @@ export const TableSales = ({ setSaleSelected, sales }) => {
             </Dialog>
 
             <Dialog visible={saleClientInfoDialog} style={{ width: "60vw" }} header={"Información general del cliente " + clientInfo.name} modal className="p-fluid" footer={infoSaleClientDialogFooter} onHide={hideDialogClientInfo}>
-                {console.log(clientInfo)}
                 <Panel header="Información general del cliente" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
@@ -315,11 +314,18 @@ export const TableSales = ({ setSaleSelected, sales }) => {
                 rows={10}
                 globalFilter={globalFilter}
                 selection={TableSaleSelected}
-                onSelectionChange={(e) => setTableSaleSelected(e.value)}
+                onSelectionChange={(e) => {
+                    if (e.value === null) {
+                        setTableSaleSelected([]);
+                    }
+                    setTableSaleSelected(e.value);
+
+                    console.log(e);
+                }}
             >
                 <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
                 <Column field="id" frozen={true} sortable header="Id"></Column>
-                <column body={actionBodyTemplateClientDetail} header="Información del cliente"></column>
+                <Column body={actionBodyTemplateClientDetail} header="Información del cliente"></Column>
                 <Column field="saleDate" sortable header="Fecha de venta"></Column>
                 <Column field="statusSale" sortable body={statusSaleTemplate} header="Estado"></Column>
                 <Column field="statusPayment" body={statusPaymentTemplate} header="Estado del pago"></Column>
