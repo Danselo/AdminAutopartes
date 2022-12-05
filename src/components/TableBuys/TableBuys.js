@@ -10,20 +10,14 @@ import { BuyService } from "../../service/BuyService";
 
 const _buyService = new BuyService();
 
-export const TableBuys = ({ buys }) => {
+export const TableBuys = ({ setBuySelected,buys }) => {
     let emptyBuyInfo = {
         createdAt: null,
         datePurchase: null,
-        discountsPercentage: 0,
         id: null,
         idProvider: null,
-        invoiceUrl: null,
-        ivaPercentage: 0,
         provider: {},
-        shippingPrice: 0,
         status: true,
-        totalDiscounts: 0,
-        totalIva: 0,
         totalPurchase: 0,
     };
 
@@ -32,6 +26,13 @@ export const TableBuys = ({ buys }) => {
     const [TableBuysSelected, setTableBuysSelected] = useState([]);
     const [buyInfo, setBuyInfo] = useState(emptyBuyInfo);
     const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
+    const [buysDetail, setBuyDetails] = useState([]);
+    
+    useEffect(() => {
+        if (TableBuysSelected) {
+            setBuySelected(TableBuysSelected);
+        }
+    }, [TableBuysSelected, setBuySelected]);
 
     const getBuyDetail = (id) => {
         _buyService
@@ -54,6 +55,11 @@ export const TableBuys = ({ buys }) => {
         setBuyInfo({ ...info });
         setBuyInfoDialog(true);
     };
+    useEffect(() => {
+        if (buyInfo.id != null) {
+            getBuyDetail(buyInfo.id);
+        }
+    }, [buyInfo]);
 
     useEffect(() => {
         if (buyInfo.id != null) {
@@ -61,7 +67,7 @@ export const TableBuys = ({ buys }) => {
         }
     }, [buyInfo]);
 
-    console.log(productsDetailOfBuy);
+
     
     const infoBuyDialogFooter = (
         <React.Fragment>
@@ -80,7 +86,7 @@ export const TableBuys = ({ buys }) => {
     return (
         <>
             <Dialog visible={buyInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoBuyDialogFooter} onHide={hideDialog}>
-                <Panel header="Informacion general de la compra" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general de la compra" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div className = "">
                             <strong>
@@ -96,7 +102,7 @@ export const TableBuys = ({ buys }) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Fecha de creacion de la compra</p>
+                                <p>Fecha de creación de la compra</p>
                             </strong>
                             <p>{buyInfo.createdAt}</p>
                         </div>
@@ -108,37 +114,23 @@ export const TableBuys = ({ buys }) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Precio de envio</p>
+                                <p>Estado</p>
                             </strong>
-                            <p>{buyInfo.shippingPrice}</p>
+                            <p>{buyInfo.totalPurchase}</p>
                         </div>
-                        <div>
-                            <strong>
-                                <p>Total IVA</p>
-                            </strong>
-                            <p>{buyInfo.totalIva}</p>
-                        </div>
-                        <div>
-                            <strong>
-                                <p>Total descuentos</p>
-                            </strong>
-                            <p>{buyInfo.totalDiscounts}</p>
-                        </div>
-                        <div>
-                            <strong>
-                                <p>Factura</p>
-                            </strong>
-                            <p>{buyInfo.invoiceUrl}</p>
-                        </div>
+
+
+        
                         <div>
                             <strong>
                                 <p>Estado de la compra</p>
                             </strong>
-                            <p>{buyInfo.status}</p>
+                            <p className={buyInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{buyInfo.status === true ? "Activo" : "Anulado"}</p>
+                            
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion del proveedor" className="dialog-buy-panel" toggleable>
+                <Panel header="Información del proveedor" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -160,13 +152,13 @@ export const TableBuys = ({ buys }) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Telefono de contacto</p>
+                                <p>Teléfono de contacto</p>
                             </strong>
                             <p>{buyInfo.provider.telephone}</p>
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Informacion de los productos de la compra" className="dialog-buy-panel">
+                <Panel header="Información de los productos de la compra" className="dialog-buy-panel">
                     <div className="dialog-buy-panel-products">
                         {productsDetailOfBuy.map((element) => (
                             <div className="dialog-buy-panel-products__detail" key="products_detail_panel">
@@ -175,8 +167,10 @@ export const TableBuys = ({ buys }) => {
                                         <p>Id producto</p>
                                     </strong>
                                     <p>{element.idProduct}</p>
+
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item"   >                                <strong><p>Cantidad</p></strong>
+                                <div className = "dialog-buy-panel-products__detail-item"   >                            
+                                    <strong><p>Cantidad</p></strong>
                                     
                                     <p>{element.amount}</p>
                                 </div>
@@ -187,20 +181,8 @@ export const TableBuys = ({ buys }) => {
 
                                     <p>{element.netPrice}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item">
-                                    <strong>
-                                        <p>Porcentaje IVA</p>
-                                    </strong>
-
-                                    <p>{element.ivaPercentage}</p>
-                                </div>
-                                <div className = "dialog-buy-panel-products__detail-item">
-                                    <strong>
-                                        <p>Porcentaje Descuento</p>
-                                    </strong>
-
-                                    <p>{element.discountsPercentage}</p>
-                                </div>
+                  
+            
                                 <div className = "dialog-buy-panel-products__detail-item">
                                     <strong>
                                         {" "}
@@ -219,6 +201,7 @@ export const TableBuys = ({ buys }) => {
                             </div>
                         ))}
                     </div>
+                    <br />
                 </Panel>
             </Dialog>
 
@@ -248,13 +231,6 @@ export const TableBuys = ({ buys }) => {
                 <Column field="provider.companyName" header="Id proveedor"></Column>
                 <Column field="datePurchase" sortable header="Fecha de compra"></Column>
                 <Column field="totalPurchase" className="table-product--column-gray" header="Total compra"></Column>
-                <Column field="shippingPrice" className="table-product--column-gray" header="Precio de envio"></Column>
-                <Column field="ivaPercentage" className="table-product--column-gray" hidden header="IVA"></Column>
-                <Column field="totalIva" className="table-product--column-gray" header="Total IVA"></Column>
-
-                <Column field="discountsPercentage" className="table-product--column-gray" hidden header="Descuento"></Column>
-                <Column field="totalDiscounts" className="table-product--column-gray" header="Total descuentos"></Column>
-                <Column field="invoiceUrl" className="" header="Factura"></Column>
                 <Column header="Ver detalle de compra" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
         </>

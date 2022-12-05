@@ -2,6 +2,7 @@ import axios from "axios";
 const baseURL = "http://localhost:5000";
 const baseUserURL = baseURL + "/users";
 export class UserService {
+
     getUser(id) {
         return axios.get(`${baseUserURL}/${id}`).then((res) => res.data);
     }
@@ -20,13 +21,25 @@ export class UserService {
             
             })
     }
-
     updateUser(user) {
-       
         const url = `${baseUserURL}/update/${user.id}`
         delete user.id
         delete user.createdAt
+        delete user.roles_users
+        delete user.recoveryToken
          return axios
              .put(url,user)
     }
+    async getRealPassword(password,realPassword) {
+        return axios.post(baseUserURL + '/post-real-password',{
+            password,
+            realPassword
+        })
+    }
+    async getPreviousUser(token) {
+        let config = {
+          headers: { Authorization: "Bearer " + token },
+        };
+        return axios.get(`${baseUserURL}/get-previous-user`, config);
+      }
 }

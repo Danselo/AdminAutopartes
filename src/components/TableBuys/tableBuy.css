@@ -22,3 +22,12 @@
 .dialog-buy-panel-products__detail-item{
     margin: 0 1.5rem 0 1.5rem;
 }
+.button-table-buy-detail{
+    display: flex;
+    flex-direction: row;
+}
+.dialog-buy-panel-products{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

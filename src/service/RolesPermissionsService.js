@@ -27,7 +27,13 @@ export class RolesPermissionsService {
                 return response.data;
             });
     }
-
+    updateRolPermissions(idRol,idPermissions){
+        return axios
+            .put(`${baseRolesPermissionsURL}/update/${idRol}`,{
+                idRol,
+                idPermissions
+            })
+        }
     getModulesOfRolSelected(idRol) {
         return axios.get(`${baseRolesPermissionsURL}/get-permissions-of-rol/${idRol}`).then((res) => res.data);
     }

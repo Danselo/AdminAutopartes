@@ -29,6 +29,7 @@
 } */
 .tittle-client{
     margin: auto;
+    text-align: center;
 }
 
 .create-product-buttons{
@@ -41,8 +42,29 @@
 .create-client-form{
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     align-items: center;
-    gap: 1.2em;
-    padding: 2px;
-    text-align: center;
+    gap: 1em;
+}
+.form-client-two{
+    display: inherit;
+    flex-direction: row;
+    gap: 5em;
+}
+.inputClients{
+    width: 17.5rem;
+
+}
+.create-client-tittle__button{
+    display: flex;
+    flex-direction: column;
+    padding: 1.5em 0;
+    width: 16rem;
+}
+.inputClientsIndications{
+    width: 40rem;
+}
+.submit-client-create{
+    padding: 1em 0;
+    text-align: end;
 }

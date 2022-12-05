@@ -10,7 +10,7 @@ getClients() {
   return axios.get(baseClientsURL).then((res) => res.data);
 }
 
-    createClient(idUser,name,lastname,documentType,document,telephone,email,country,department,city,neightboorhood,address,indications) {
+    createClient(idUser,name,lastname,documentType,document,telephone,email,country,department,city,neightboorhood,address,indications,status) {
         
         return axios
           .post(baseClientsURL + '/create', {
@@ -26,7 +26,8 @@ getClients() {
             city,
             neightboorhood,
             address,
-            indications
+            indications,
+            status
             
 
           })
@@ -38,6 +39,7 @@ getClients() {
       updateClient(client) {
         const url = `${baseClientsURL}/update/${client.id}`
          delete client.id
+         delete client.users
          return axios
              .put(url,client)
     }

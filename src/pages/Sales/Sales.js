@@ -13,6 +13,8 @@ import { Password } from "primereact/password";
 
 import { Toast } from "primereact/toast";
 
+
+
 const _saleService = new SaleService();
 
 export default function Sales() {
@@ -124,7 +126,7 @@ export default function Sales() {
         <div>
             <Toast ref={toast} />
             <div className="text-center">
-                <h3>Gestión de ventas</h3>
+                <h4>Gestión de ventas</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents} />
             <Dialog header="Anular venta" visible={cancelSaleDialog} onHide={() => setCancelSaleDialog(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "75vw" }}>

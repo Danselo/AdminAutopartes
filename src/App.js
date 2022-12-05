@@ -33,6 +33,8 @@ import Buys from "./pages/Buys/Buys";
 import CreatePurchase from "./pages/Buys/CreatePurchase";
 import Categories from "./pages/Categories/Categories";
 import Vehicles from "./pages/Vehicle/Vehicle";
+import MyPerfil from "./pages/MyPerfil/Perfil";
+
 import ProductsBrands from "./pages/ProductsBrands/ProductsBrands";
 import Guard from "./pages/Guard";
 import { PermisisonsCheckService } from "./service/PermissionsCheckService";
@@ -217,7 +219,7 @@ const App = () => {
                     label: "Productos",
                     icon: "pi pi-fw pi-box",
                     to: "/Products",
-                    disabled: !_permissionsCheckService?.userHasPermission(8),
+                    visible: !_permissionsCheckService?.userHasPermission(8),
                 },
             ],
         },
@@ -227,7 +229,7 @@ const App = () => {
                 {
                     label: "Clientes",
                     icon: "pi pi-fw pi-users",
-                    to: "/pages/Client/Client",
+                    to: "/Clients",
                     disabled: !_permissionsCheckService?.userHasPermission(9),
                 },
                 {
@@ -310,21 +312,135 @@ const App = () => {
                             }
                         }}
                     />
-                    <Route path="/Providers" exact render={() => <Providers />} />
-                    <Route path="/pages/Client/Client" exact render={() => <Client />} />
+                      <Route
+                        path="/providers"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(2)) {
+                                return <Providers />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/clients"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(9)) {
+                                return <Client />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/sales"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(10)) {
+                                return <Sales />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/brand"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(7)) {
+                                return <Brand />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/buys"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(3)) {
+                                return <Buys />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/categories"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(4)) {
+                                return <Categories />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/vehicles"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(6)) {
+                                return <Vehicles />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/ProductsBrands"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(7)) {
+                                return <ProductsBrands />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/users"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(11)) {
+                                return <Users />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    <Route
+                        path="/roles"
+                        exact
+                        render={() => {
+                            if (_permissionsCheckService?.userHasPermission(12)) {
+                                return <Roles />;
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}
+                    />
+                    
+                    
+                    {/* <Route path="/Providers" exact render={() => <Providers />} /> */}
+                    {/* <Route path="/pages/Client/Client" exact render={() => <Client />} /> */}
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
-                    <Route path="/Sales" exact render={() => <Sales />} />
+                    {/* <Route path="/Sales" exact render={() => <Sales />} /> */}
                     <Route path="/CreateSales" exact render={() => <CreateSales />} />
                     <Route path="/pages/CreateUser/CreateUser" exact render={() => <CreateUser />} />
                     <Route path="/pages/Users/Users" exact render={() => <Users />} />
                     <Route path="/pages/Roles/Roles" exact render={() => <Roles />} />
-                    <Route path="/Brand" exact render={() => <Brand />} />
+                    {/* <Route path="/Brand" exact render={() => <Brand />} /> */}
                     <Route path="/SalesDetails" exact render={() => <SalesDetails />} />
-                    <Route path="/Buys" exact render={() => <Buys />} />
+                    {/* <Route path="/Buys" exact render={() => <Buys />} /> */}
                     <Route path="/CreatePurchase" exact render={() => <CreatePurchase />} />
-                    <Route path="/Categories" exact render={() => <Categories />} />
-                    <Route path="/Vehicles" exact render={() => <Vehicles />} />
-                    <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} />
+                    {/* <Route path="/Categories" exact render={() => <Categories />} /> */}
+                    {/* <Route path="/Vehicles" exact render={() => <Vehicles />} /> */}
+                    {/* <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} /> */}
+                    <Route path="/MyPerfil" exact render={() => <MyPerfil />} />
+
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function buttonBodyTemplate() {
     // const accept = () => {
-    //     toast1.current.show({ severity: "info", summary: "Confirmacion", detail: "Ha cancelado el proceso", life: 3000 });
+    //     toast1.current.show({ severity: "info", summary: "Confirmación", detail: "Ha cancelado el proceso", life: 3000 });
     // };
 
     // const reject = () => {
@@ -15,7 +15,7 @@ export default function buttonBodyTemplate() {
     // const confirm = () => {
     //     confirmDialog({
     //         message: "¿Esta seguro que desea desactivar este proveedor?",
-    //         header: "Confirmacion",
+    //         header: "Confirmación",
     //         icon: "pi pi-exclamation-triangle",
     //         accept,
     //         reject,
