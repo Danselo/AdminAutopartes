@@ -26,9 +26,6 @@ export default function CreateSales() {
     const toast = useRef(null);
     const [clients, setClients] = useState([]);
     const [saleClientSelected, setSaleClientSelected] = useState(null);
-    // const [statusSaleSelected, setStatusSaleSelected] = useState([]);
-    // const [statusPaymentSelected, setStatusPaymentSelected] = useState([]);
-    // const [saleDate, setSaleDate] = useState("");
     const [totalSale, setTotalSale] = useState(0);
     const [addedProductsAtSale, setAddedProductsAtSale] = useState([]);
     const [products, setProducts] = useState([]);
@@ -41,8 +38,7 @@ export default function CreateSales() {
             op.current.hide();
             toast.current.show({ severity: "info", summary: "Cliente seleccionado", detail: saleClientSelected.name, life: 3000 });
         }
-    }, [saleClientSelected]); // eslint-disable-line react-hooks/exhaustive-deps
-
+    }, [saleClientSelected]);
     useEffect(() => {
         isMounted.current = true;
         _clientService
@@ -83,10 +79,6 @@ export default function CreateSales() {
         if (!data.statusPayment) {
             errors.statusPayment = "El estado de pago es requerido";
         }
-
-        // if (!data.totalSale) {
-        //     errors.totalSale = "Debe asociar productos a la venta para poder continuar";
-        // }
 
         return errors;
     };

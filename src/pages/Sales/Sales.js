@@ -10,6 +10,10 @@ import { Toolbar } from "primereact/toolbar";
 import { Card } from "primereact/card";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Password } from "primereact/password";
+import { Form, Field } from "react-final-form";
+import { classNames } from "primereact/utils";
+import { Tooltip } from "primereact/tooltip";
+import { Badge } from "primereact/badge";
 
 import { Toast } from "primereact/toast";
 
@@ -23,10 +27,22 @@ export default function Sales() {
     const [cancelSaleDialog, setCancelSaleDialog] = useState(false);
     const [cancelSaleDialogPassword, setCancelSaleDialogPassword] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
-    const [password, setPassword] = useState("");
+    const [verifyCancelSaleAcces, setCancelAcces] = useState(null);
     const validateStatusPayment = saleSelected.statusPayment;
     const validateStatusSale = saleSelected.statusSale;
-    console.log(saleSelected);
+    const [productsDetailOfSale, setProductsDetailOfSale] = useState([]);
+    console.log(verifyCancelSaleAcces);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        _saleService
+            .verifyRol(token)
+            .then((response) => {
+                setCancelAcces(response);
+            })
+            .catch((error) => {
+                console.error("Error al verificar el rol del usuario", error);
+            });
+    }, []);
     const leftContents = (
         <React.Fragment>
             <Link to={"/CreateSales"}>
@@ -34,6 +50,7 @@ export default function Sales() {
             </Link>
         </React.Fragment>
     );
+
     const changeStatusPaymentSale = () => {
         _saleService
             .changeStatusPayment(saleSelected.id)
@@ -62,10 +79,10 @@ export default function Sales() {
                 toast.current.show({ severity: "error", summary: "Error al cambiar el estado de la venta", detail: "Ocurrio un error al cambiar el estado de la venta", life: 3000 });
             });
     };
-    const cancelSale = () => {
+    const cancelSale = (data) => {
         const token = localStorage.getItem("token");
         _saleService
-            .cancelSale(token, password, saleSelected.id)
+            .cancelSale(token, data.password, saleSelected.id, cancelReason, productsDetailOfSale)
             .then((response) => {
                 setDisplayDialogStatusSales(false);
                 console.log(response);
@@ -78,15 +95,16 @@ export default function Sales() {
                 loadSales();
                 setCancelSaleDialogPassword(false);
                 console.error("Ocurrio un error al anular la venta", error);
-                toast.current.show({ severity: "error", summary: "Error", detail: "Ocurrio un error al anular la venta", life: 3000 });
+                toast.current.show({ severity: "error", summary: "Error", detail: "Verifica tu contraseña", life: 3000 });
             });
     };
+    console.log(productsDetailOfSale);
     const rightContents = (
         <React.Fragment>
             <Button label="Estados de la venta" className="p-button-raised p-button-info dc-space-between" icon="pi pi-sync" onClick={() => setDisplayDialogStatusSales(true)} disabled={!saleSelected.id || saleSelected === null} />
         </React.Fragment>
     );
-    console.log(saleSelected);
+
     useEffect(() => {
         _saleService.getSales().then((response) => {
             setSales(response);
@@ -119,6 +137,52 @@ export default function Sales() {
             setSales(response);
         });
     };
+    const onSubmit = (data, form) => {
+        setCancelSaleDialogPassword(true);
+        setCancelSaleDialog(false);
+        setCancelReason(data.cancelReason);
+        getSaleDetail();
+    };
+    const onSubmitPassword = (data, form) => {
+        cancelSale(data);
+    };
+
+    const initialValues = {
+        cancelReason: "",
+    };
+    const initialValuesPassword = {
+        password: "",
+    };
+    const validate = (data) => {
+        let errors = {};
+
+        if (!data.cancelReason) {
+            errors.cancelReason = "Debe ingresar una razón válida por la cual desea anular la venta.";
+        }
+        return errors;
+    };
+    const validatePassword = (data) => {
+        let errors = {};
+
+        if (!data.password) {
+            errors.password = "Debe ingresar una contraseña.";
+        }
+        return errors;
+    };
+    const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
+    const getFormErrorMessage = (meta) => {
+        return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
+    };
+    const getSaleDetail = () => {
+        _saleService
+            .getSaleDetailById(saleSelected.id)
+            .then((response) => {
+                setProductsDetailOfSale(response);
+            })
+            .catch((e) => {
+                console.log("Falle desde la tabla", e);
+            });
+    };
 
     return (
         <div>
@@ -127,31 +191,77 @@ export default function Sales() {
                 <h4>Gestión de ventas</h4>
             </div>
             <Toolbar left={leftContents} right={rightContents} />
-            <Dialog header="Anular venta" visible={cancelSaleDialog} onHide={() => setCancelSaleDialog(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "75vw" }}>
-                <h5>Esta seguro que desea anular la venta?</h5>
-                <p>Deja un motivo de anulacion</p>
-                <InputTextarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} rows={5} cols={30} />
-                <Button
-                    label="Anular"
-                    onClick={() => {
-                        setCancelSaleDialogPassword(true);
-                        setCancelSaleDialog(false);
-                    }}
+            <Dialog header="Anular venta" visible={cancelSaleDialog} onHide={() => setCancelSaleDialog(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "45vw" }}>
+                <h5>¿Está seguro que desea anular la venta?</h5>
+                <p>
+                    Deja un motivo por el cual estás anulando la venta, ten presente que una vez la venta sea anulada no podrás revertir la venta. También tenga en cuenta que al anular la venta, el stock de los productos asociados a la venta aumentaran con relación a la cantidad de los mismos en la
+                    venta.
+                </p>
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={initialValues}
+                    validate={validate}
+                    render={({ handleSubmit }) => (
+                        <>
+                            <form onSubmit={handleSubmit}>
+                                <div className="">
+                                    <Field
+                                        name="cancelReason"
+                                        render={({ input, meta }) => (
+                                            <div className="field">
+                                                <span className="create-sale-form__span">
+                                                    <label htmlFor="cancelReason" className={classNames({ "p-error": isFormFieldValid("cancelReason") })}></label>
+                                                    <InputTextarea id="cancelReason" {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "cancel-sale-form__input": true })} placeholder="Razón por la cual se anula la venta" />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="create-product-buttons">
+                                    <Button label="Anular" type="submit" />
+                                </div>
+                            </form>
+                        </>
+                    )}
                 />
 
                 <div className="create-product-form"></div>
             </Dialog>
-            <Dialog header="Ingrese credenciales de administrador" visible={cancelSaleDialogPassword} onHide={() => setCancelSaleDialogPassword(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "75vw" }}>
-                <h5>Pr favor ingrese la clave del administrador</h5>
-                <p>Solo el administrador principal puede anular una compra</p>
-                <Password value={password} onChange={(e) => setPassword(e.target.value)} toggleMask />
-                <Button
-                    label="Anular"
-                    onClick={() => {
-                        cancelSale();
-                    }}
-                />
+            <Dialog header="Una ultima cosa" visible={cancelSaleDialogPassword} onHide={() => setCancelSaleDialogPassword(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "45vw" }}>
+                <p>Solo el administrador principal puede anular una venta, por favor ingresa la clave del administrador para verificar tu identidad.</p>
+                <Form
+                    onSubmit={onSubmitPassword}
+                    initialValues={initialValuesPassword}
+                    validate={validatePassword}
+                    render={({ handleSubmit }) => (
+                        <>
+                            <form onSubmit={handleSubmit}>
+                                <div className="">
+                                    <Field
+                                        name="password"
+                                        render={({ input, meta }) => (
+                                            <div className="field">
+                                                <span className="create-sale-form__span">
+                                                    <label htmlFor="password" className={classNames({ "p-error": isFormFieldValid("password") })}>
+                                                        Contraseña*
+                                                    </label>
+                                                    <Password id="password" feedback={false} toggleMask {...input} autoFocus className={classNames({ "p-invalid": isFormFieldValid(meta), "": true })} placeholder="Contraseña" />
+                                                </span>
+                                                {getFormErrorMessage(meta)}
+                                            </div>
+                                        )}
+                                    />
+                                </div>
 
+                                <div className="create-product-buttons">
+                                    <Button label="Anular" type="submit" />
+                                </div>
+                            </form>
+                        </>
+                    )}
+                />
                 <div className="create-product-form"></div>
             </Dialog>
             <Dialog header="Estados de la venta" visible={displayDialogStatusSales} onHide={() => setDisplayDialogStatusSales(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "75vw" }}>
@@ -195,14 +305,27 @@ export default function Sales() {
                             <div className="create-sale-form__card">
                                 <p className="m-0" style={{ lineHeight: "1.5" }}>
                                     Al dar clic en anular venta, el stock de los productos aumentará.
+                                    <Tooltip target=".custom-target-icon" />
+                                    <i
+                                        className="custom-target-icon pi pi-question-circle p-overlay-badge"
+                                        data-pr-tooltip="La venta ya esta anulada o no tienes permiso para anular la venta."
+                                        data-pr-position="right"
+                                        data-pr-at="right+5 top"
+                                        data-pr-my="left center-2"
+                                        style={{ fontSize: "1rem", cursor: "pointer" }}
+                                    >
+                                        <Badge severity="danger"></Badge>{" "}
+                                    </i>
                                 </p>
                                 <Button
                                     label="Anular venta"
                                     className={"p-button-danger p-button-raised  dc-space-between"}
                                     onClick={() => {
                                         setCancelSaleDialog(true);
+                                        setDisplayDialogStatusSales(false);
                                     }}
                                     icon="pi pi-ban"
+                                    disabled={validateStatusSale === "Anulada" || !verifyCancelSaleAcces}
                                 />
                             </div>
                         </Card>

@@ -18,7 +18,6 @@ import { UserService } from "../../service/UserService";
 
 const _rolService = new RolesService();
 const _userService = new UserService();
-
 const _rolesPermissionsService = new RolesPermissionsService();
 const _modulesService = new ModulesService();
 
@@ -31,8 +30,6 @@ export default function Roles() {
     const [roles, setRoles] = useState([]);
     const [users, setUsers] = useState([]);
     const [rolSelectedWithUser, setRolSelectedWithUser] = useState();
-
-    const [permissionSelected, setPermissionSelected] = useState([]);
     const [selectedModules, setSelectedModules] = useState([]);
     const [modules, setModules] = useState([]);
     const [modulesOfRol, setModulesOfRol] = useState([]);
@@ -90,9 +87,6 @@ export default function Roles() {
         });
     }, []);
 
-    const reject = () => {
-        toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
-    };
     const createRolAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea crear esta rol?",
@@ -206,16 +200,7 @@ export default function Roles() {
         cancelEdit();
         setDisplayDialogEdit(false);
     };
-    // const getRolesPermissions = () => {
-    //     _permissionsService
-    //         .getModules()
-    //         .then((response) => {
-    //             setPermissions(response);
-    //         })
-    //         .catch((e) => {
-    //             console.log("Algo salio mal al traer los permisos de la bd", e);
-    //         });
-    // };
+
     useEffect(() => {
         users.map((element) => {
             if (rolSelected.id === element.idRol) {
@@ -231,7 +216,7 @@ export default function Roles() {
         if (rolSelectedWithUser) {
             toast.current.show({ severity: "error", summary: "Error", detail: "El rol esta asociado a un usuario", life: 3000 });
             setRolSelectedWithUser(null);
-        } else if (rolSelected.status == false) {
+        } else if (rolSelected.status === false) {
             rolSelected.status = true;
 
             _rolService
@@ -362,15 +347,7 @@ export default function Roles() {
     const onSubmit = (data, form) => {
         onHideDialogCreate();
     };
-    // const onEditModuleSelected = (e) => {
 
-    //     const moduleUpdate = {
-    //         ...selectedModules,
-    //         [e.target.name]: e.target.value,
-    //     };
-    //     setSelectedModules(moduleUpdate);
-    // };
-    //------------------------EDIT_______________ROLLL
     const initialValuesEdit = {
         modulesPermissions: modulesOfRol,
         name: rolSelected.name,
@@ -400,7 +377,7 @@ export default function Roles() {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
-    
+
     return (
         <>
             <Toast ref={toast} />
@@ -430,12 +407,7 @@ export default function Roles() {
                                                     Nombre del rol
                                                 </label>
                                                 <br />
-                                                <InputText 
-                                                value={rolName} 
-                                                {...input} 
-                                                onChange={(e) => setRolName(e.target.value)} 
-                                                placeholder="Digite el nombre"
-                                                 className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })} />
+                                                <InputText value={rolName} {...input} onChange={(e) => setRolName(e.target.value)} placeholder="Digite el nombre" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-rol-form__input": true })} />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}

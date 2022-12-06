@@ -34,3 +34,7 @@ height: 100%;
 .buttons-sale{
     text-align: center;
 }
+.cancel-sale-form__input{
+    width: 46rem;
+    height: 6rem;
+}

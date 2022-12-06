@@ -72,7 +72,7 @@ export class SaleService {
                 return response.data;
             });
     }
-    cancelSale(token, password, idSale) {
+    cancelSale(token, password, idSale, cancelReason, productsDetailOfSale) {
         let config = {
             headers: { Authorization: "Bearer " + token },
         };
@@ -82,11 +82,22 @@ export class SaleService {
                 {
                     password,
                     idSale,
+                    cancelReason,
+                    productsDetailOfSale,
                 },
                 config
             )
             .then((response) => {
                 return response.data;
             });
+    }
+
+    verifyRol(token) {
+        let config = {
+            headers: { Authorization: "Bearer " + token },
+        };
+        return axios.post(baseSaleURL + "/verify-rol", {}, config).then((response) => {
+            return response.data;
+        });
     }
 }

@@ -77,7 +77,7 @@ export const TableSales = ({ setSaleSelected, sales }) => {
             getSaleDetail(saleInfo.id);
         }
     }, [saleInfo]);
-
+    console.log(clientInfo);
     const infoSaleDialogFooter = (
         <React.Fragment>
             <Button label="Cerrar" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
