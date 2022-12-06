@@ -14,9 +14,11 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
 import { Tooltip } from "primereact/tooltip";
+import { SaleService } from "../../service/SaleService";
 
 const _buyService = new BuyService();
 const _userService = new UserService();
+const _saleService = new SaleService();
 
 export default function Buys() {
     const toast = useRef(null);
@@ -29,6 +31,8 @@ export default function Buys() {
     const [visibleFalse, setVisibleFalse] = useState(false);
     const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
     const [reason, setReason] = useState("");
+    const [verifyCancelSaleAcces, setVerifyCancelSaleAcces] = useState(null);
+
     const refreshPage2 = () => {
         setDisplayDialogStatus(false);
         setDisplayDialogStatusPassword(false);
@@ -44,6 +48,17 @@ export default function Buys() {
     const refreshPage3 = () => {
         setDisplayDialogStatusPassword(true);
     };
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        _saleService
+            .verifyRol(token)
+            .then((response) => {
+                setVerifyCancelSaleAcces(response);
+            })
+            .catch((error) => {
+                console.error("Error al verificar el rol del usuario", error);
+            });
+    }, []);
 
     useEffect(() => {
         _userService.getUser(1).then((response) => {
@@ -63,7 +78,7 @@ export default function Buys() {
                 label={buySelected.status ? "Anular compra" : "Compra anulada"}
                 className={buySelected.status ? "p-button-danger p-button-raised  dc-space-between" : "p-button-anulado p-button-raised  dc-space-between"}
                 icon="pi pi-eye-slash"
-                disabled={!buySelected.id || buySelected.status === false}
+                disabled={!buySelected.id || buySelected.status === false || !verifyCancelSaleAcces}
                 onClick={() => {
                     onClickDialogStatus();
                     getBuyDetail();
@@ -110,10 +125,9 @@ export default function Buys() {
     function cancelBuy() {
         if (buySelected.status === true) {
             buySelected.status = false;
-            console.log(reason);
-            console.log(productsDetailOfBuy);
+            const token = localStorage.getItem("token");
             _buyService
-                .cancelBuy(buySelected, reason, productsDetailOfBuy)
+                .cancelBuy(buySelected, reason, productsDetailOfBuy, token)
                 .then(() => {
                     toast.current.show({ severity: "success", summary: "Anulado!", detail: "La compra se anulo exitosamente", life: 3000 });
                     refreshPage2();

@@ -40,11 +40,12 @@ export class BuyService {
 
         return axios.put(url, buy);
     }
-    cancelBuy(buy, reason, productsDetailOfBuy) {
-        console.log("buy", buy);
-        console.log("products", productsDetailOfBuy);
+    cancelBuy(buy, reason, productsDetailOfBuy, token) {
+        let config = {
+            headers: { Authorization: "Bearer " + token },
+        };
         const url = `${baseBuyURL}/cancel-buy/${buy.id}`;
-        return axios.post(url, { reason, productsDetailOfBuy });
+        return axios.post(url, { reason, productsDetailOfBuy }, config);
     }
 
     deleteBuy(id) {

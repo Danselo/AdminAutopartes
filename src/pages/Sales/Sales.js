@@ -31,7 +31,6 @@ export default function Sales() {
     const validateStatusPayment = saleSelected.statusPayment;
     const validateStatusSale = saleSelected.statusSale;
     const [productsDetailOfSale, setProductsDetailOfSale] = useState([]);
-    console.log(verifyCancelSaleAcces);
     useEffect(() => {
         const token = localStorage.getItem("token");
         _saleService
@@ -98,7 +97,6 @@ export default function Sales() {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Verifica tu contraseña", life: 3000 });
             });
     };
-    console.log(productsDetailOfSale);
     const rightContents = (
         <React.Fragment>
             <Button label="Estados de la venta" className="p-button-raised p-button-info dc-space-between" icon="pi pi-sync" onClick={() => setDisplayDialogStatusSales(true)} disabled={!saleSelected.id || saleSelected === null} />
