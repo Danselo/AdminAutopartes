@@ -114,8 +114,8 @@ export default function Client() {
     const editClientAlert = () => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta Cliente?",
-            header: "Confirmación",
-            onHide: () => refreshPage2(),
+            header: "Confirmación ",
+            closable: false,
             icon: "pi pi-exclamation-triangle",
             acceptLabel: "Editar",
             rejectLabel: "Cancelar",
@@ -193,22 +193,18 @@ export default function Client() {
             .updateClient({
                 ...clientSelected,
                 documentType: clientSelected.documentType.name,
-                idUser: clientSelected.idUser,
+                idUser: selectedClientUser.id,
             })
 
             .then(() => {
                 setClientSelected({});
                 loadClients();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cliente editado exitosamente", life: 3000 });
+                setTimeout('window.location.reload()',2000);
+
             })
             .catch((e) => {
-                clients.forEach((element) => {
-                    const clientMail = element.email;
-
-                    if (clientSelected.email === clientMail) {
-                        toast.current.show({ severity: "warn", summary: "Correo incorrecto", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
-                    }
-                });
+                        toast.current.show({ severity: "warn", summary: "petición incorrecta", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
             });
     }
     function getUsers() {
@@ -413,6 +409,7 @@ export default function Client() {
             return <span className="role-badge-status-na">NA</span>;
         }
     };
+    console.log(selectedClientUser.id);
     return (
         <div>
             <Toast ref={toast} />
