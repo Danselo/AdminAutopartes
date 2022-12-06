@@ -9,33 +9,31 @@ import { Dialog } from "primereact/dialog";
 import { ClientService } from "../../service/ClientService";
 import { UserService } from "../../service/UserService";
 
-
 const _clientService = new ClientService();
 const _userService = new UserService();
 
-export const TableClient = ({setClientSelected,clients}) => {
+export const TableClient = ({ setClientSelected, clients }) => {
     const [globalFilter, setGlobalFilter] = useState(null);
     const [clientsTableSelected, setClientsSelected] = useState([]);
     const [clientInfoDialog, setClientInfoDialog] = useState(false);
     const [clientInfo, setClientInfo] = useState({});
-    const [clientUserInfo, setClientUserInfo] = useState({})
-  
-    useEffect(() => {   
+    const [clientUserInfo, setClientUserInfo] = useState({});
+
+    useEffect(() => {
         if (clientsTableSelected) {
-            setClientSelected(clientsTableSelected)
+            setClientSelected(clientsTableSelected);
         }
-    }, [clientsTableSelected, setClientSelected])
+    }, [clientsTableSelected, setClientSelected]);
 
     const statusBodyTemplate = (rowData) => {
         if (rowData.status === true) {
             return <span className="role-badge-status-active">ACTIVO</span>;
-        }else if(rowData.status === false){
+        } else if (rowData.status === false) {
             return <span className="role-badge-status-inactive">INACTIVO</span>;
-        }else{
-            return <span className="role-badge-status-na">NA</span>; 
+        } else {
+            return <span className="role-badge-status-na">NA</span>;
         }
-        
-    }
+    };
     const hideDialog = () => {
         setClientInfoDialog(false);
     };
@@ -50,11 +48,10 @@ export const TableClient = ({setClientSelected,clients}) => {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-eye" className="p-button-rounded p-button-info" onClick={() => viewClientDetail(rowData)}aria-label="Detail" />
+                <Button icon="pi pi-eye" className="p-button-rounded p-button-info" onClick={() => viewClientDetail(rowData)} aria-label="Detail" />
             </React.Fragment>
         );
     };
-
 
     const viewClientDetail = (info) => {
         _clientService
@@ -66,7 +63,8 @@ export const TableClient = ({setClientSelected,clients}) => {
             .catch((e) => {
                 console.error("Error al traer a info del cliente", e);
             });
-            _userService.getUser(info.idUser)
+        _userService
+            .getUser(info.idUser)
             .then((response) => {
                 setClientUserInfo(response);
             })
@@ -75,8 +73,8 @@ export const TableClient = ({setClientSelected,clients}) => {
             });
     };
     return (
-        <>        
-        <Dialog visible={clientInfoDialog} style={{ width: "60vw" }} header="Detalle de el cliente" modal className="p-fluid" footer={infoClientDialogFooter} onHide={hideDialog}>
+        <>
+            <Dialog visible={clientInfoDialog} style={{ width: "60vw" }} header="Detalle de el cliente" modal className="p-fluid" footer={infoClientDialogFooter} onHide={hideDialog}>
                 <Panel header="Información general de el cliente" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
@@ -181,7 +179,7 @@ export const TableClient = ({setClientSelected,clients}) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Correo Electrónico  </p>
+                                <p>Correo Electrónico </p>
                             </strong>
                             <p>{clientUserInfo.email}</p>
                         </div>
@@ -189,38 +187,24 @@ export const TableClient = ({setClientSelected,clients}) => {
                             <strong>
                                 <p>Estado del usuario </p>
                             </strong>
-                            <p className={clientInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{clientUserInfo.status === true ? "Activo" : "Inactivo"}</p>
-
+                            <p className={clientInfo.status === true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"}>{clientUserInfo.status === true ? "Activo" : "Inactivo"}</p>
                         </div>
-                        
                     </div>
                 </Panel>
             </Dialog>
-                <div className="p-inputgroup create-brand__table">
+            <div className="p-inputgroup create-brand__table">
                 <InputText placeholder="Buscar Cliente" onInput={(e) => setGlobalFilter(e.target.value)} />
                 <Button icon="pi pi-search" className="p-button-primary" />
             </div>
-        <DataTable value={clients} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={clientsTableSelected} onSelectionChange={(e) => setClientsSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
-             <Column selectionMode="single" headerStyle={{width: '3em'}}></Column>
-            <Column field="document" sortable header="Documento"></Column>
-            <Column field="status"  body={statusBodyTemplate}  sortable header="Estado"></Column>
-            <Column field="name" sortable header="Nombre"></Column>
-            <Column field="lastname" sortable header="Apellido"></Column>
-            <Column field="users.name" sortable header="Usuario Asociado"></Column>
-            {/* <Column field="documentType" sortable header="Tipo Documento"></Column>
-            <Column field="document" sortable header="Documento"></Column>
-            <Column field="telephone" sortable header="Telefono"></Column>
-            <Column field="email" sortable header="Email"></Column>
-            <Column field="country" sortable header="Pais"></Column>
-            <Column field="department" sortable header="Departamento"></Column>
-            <Column field="city" sortable header="Ciudad"></Column>
-            <Column field="neightboorhood" sortable header="Vecindario "></Column>
-            <Column field="address" sortable header="Direccion"></Column>
-            <Column field="indications" sortable header="Indicaciones"></Column> */}
-            <Column header="Ver detalle de cliente" body={actionBodyTemplate} exportable={false}></Column>
-
-        </DataTable>
+            <DataTable value={clients} paginator responsiveLayout="scroll" emptyMessage="No se encontraron datos" className="table-user" showGridlines rows={10} selection={clientsTableSelected} onSelectionChange={(e) => setClientsSelected(e.value)} dataKey="id" globalFilter={globalFilter}>
+                <Column selectionMode="single" headerStyle={{ width: "3em" }}></Column>
+                <Column field="document" sortable header="Documento"></Column>
+                <Column field="status" body={statusBodyTemplate} sortable header="Estado"></Column>
+                <Column field="name" sortable header="Nombre"></Column>
+                <Column field="lastname" sortable header="Apellido"></Column>
+                <Column field="users.name" sortable header="Usuario Asociado"></Column>
+                <Column header="Ver detalle de cliente" body={actionBodyTemplate} exportable={false}></Column>
+            </DataTable>
         </>
-
     );
 };

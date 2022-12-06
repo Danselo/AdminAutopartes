@@ -18,7 +18,7 @@ export default function ProductsBrand() {
     const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [productsBrandName, setProductsBrandsName] = useState("");
+
     const [productsbrandsIdSelected, setProductsBrandsIdSelected] = useState("");
     const [productsBrandNameSelected, setProductsBrandsNameSelected] = useState("");
     const [brandSelected, setBrandSelected] = useState({});
@@ -158,7 +158,6 @@ export default function ProductsBrand() {
         _productsBrandsService
             .updateProductsBrands(id, newName)
             .then(() => {
-                setProductsBrandsName(newName);
                 loadProductsBrands();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca edita exitosamente", life: 3000 });
             })
@@ -171,22 +170,8 @@ export default function ProductsBrand() {
         _productsBrandsService
             .createProductsBrands(productsBrandName)
             .then(() => {
-                setProductsBrandsName("");
                 loadProductsBrands();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca creada exitosamente", life: 3000 });
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-    }
-
-    function deleteProductsBrands(id) {
-        _productsBrandsService
-            .deleteProductsBrands(id)
-            .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca eliminada exitosamente", life: 3000 });
-                loadProductsBrands();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });

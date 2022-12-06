@@ -165,20 +165,6 @@ export default function Providers() {
             });
     }
 
-    function deleteProvider(provider) {
-        _providerService
-            .deleteProvider(provider.id)
-            .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Proveedor eliminado exitosamente", life: 3000 });
-                loadProviders();
-                setProviderSelected({});
-            })
-            .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                console.log(e);
-            });
-    }
-
     const loadProviders = () => {
         _providerService.getProviders().then((response) => {
             setProviders(response);

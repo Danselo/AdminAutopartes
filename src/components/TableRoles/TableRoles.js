@@ -7,45 +7,26 @@ import "./tableRoles.css";
 import { Panel } from "primereact/panel";
 import { Dialog } from "primereact/dialog";
 import { RolesPermissionsService } from "../../service/RolesPermissionsService";
-import { ModuleService } from "../../service/ModuleService";
 
 const _rolesPermissionsService = new RolesPermissionsService();
-const _moduleService = new ModuleService();
+
 export const TableRoles = ({ setRolSelected, roles }) => {
     const [globalFilter, setGlobalFilter] = useState(null);
     const [TableRolSelected, setTableRolSelected] = useState([]);
     const [rolInfo, setRolInfo] = useState({});
-    const [rolPermissionsInfo, setRolPermissionsInfo] = useState({});
-    const [moduleName, setModuleName] = useState([]);
+    const [rolPermissionsInfo, setRolPermissionsInfo] = useState({
+        id: 0,
+        name: "",
+        description: "",
+    });
+
     const [rolInfoDialog, setRolInfoDialog] = useState(false);
-    const [modules, setModules] = useState([]);
 
     useEffect(() => {
         if (TableRolSelected) {
             setRolSelected(TableRolSelected);
         }
     }, [TableRolSelected, setRolSelected]);
-
-    useEffect(() => {
-        _moduleService
-            .getModules()
-            .then((response) => {
-                setModules(response);
-            })
-            .catch((e) => {
-                console.log(e, "Error al traer los módulos");
-            });
-    }, []);
-
-    useEffect(() => {
-        modules.forEach((element) => {
-            Object.values(rolPermissionsInfo).forEach((element2) => {
-                if (element.id === element2.idModule) {
-                    setModuleName(element.name);
-                }
-            });
-        });
-    }, [rolPermissionsInfo, modules]);
 
     const statusBodyTemplate = (rowData) => {
         if (rowData.status === true) {
@@ -68,7 +49,6 @@ export const TableRoles = ({ setRolSelected, roles }) => {
     };
     const viewRolDetail = (info) => {
         setRolInfo(info);
-        setRolInfoDialog(true);
         _rolesPermissionsService
             .getModulesOfRolSelected(info.id)
             .then((response) => {
@@ -80,6 +60,7 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                     };
                 });
                 setRolPermissionsInfo(responseMapped);
+                setRolInfoDialog(true);
             })
             .catch((e) => {
                 console.log("Falle aqui", e);
@@ -119,24 +100,13 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                 </Panel>
                 <Panel header="Información de los permisos del rol seleccionado" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-roles">
-                        {Object.values(rolPermissionsInfo).map((element) => (
-                            <div className="dialog-buy-panel-products__detail" key={element.id}>
-                                <div className="dialog-buy-panel-products__detail-item">
-                                    <strong className="title_buy_detail">Id módulo</strong>
-
-                                    <p>{element.id}</p>
-                                </div>
-                                <div className="dialog-buy-panel-products__detail-item">
-                                    <strong className="title_buy_detail">Nombre del módulo</strong>
-                                    <p>{element.name}</p>
-                                </div>
-
-                                <div className="dialog-buy-panel-products__detail-item">
-                                    <strong className="title_buy_detail">Descripción</strong>
-                                    <p>{element.description}</p>
-                                </div>
-                            </div>
-                        ))}
+                        <div className="dialog-buy-panel-products__detail">
+                            <DataTable header="Permisos" stripedRows showGridlines value={rolPermissionsInfo} paginator responsiveLayout="scroll" dataKey="id" emptyMessage="No se encontraron datos" className="table-rol" rows={10}>
+                                <Column field="id" frozen header="Id"></Column>
+                                <Column field="name" header="Nombre módulo"></Column>
+                                <Column field="description" className="table-rol--column-gray" header="Descripción"></Column>
+                            </DataTable>
+                        </div>
                     </div>
                 </Panel>
             </Dialog>

@@ -33,12 +33,13 @@ export default function Roles() {
     const [selectedModules, setSelectedModules] = useState([]);
     const [modules, setModules] = useState([]);
     const [modulesOfRol, setModulesOfRol] = useState([]);
-
     useEffect(() => {
         _modulesService
             .getModules()
             .then((response) => {
-                setModules(response);
+                const modulesFilter = response.filter((module) => module.id !== 1 && module.id !== 12);
+
+                setModules(modulesFilter);
             })
             .catch((error) => {
                 console.log("Algo salio mal al traer los módulos de la bd", error);
@@ -210,46 +211,32 @@ export default function Roles() {
     }, [setRolSelectedWithUser, users, rolSelected]);
 
     function EditStatus() {
-        if (rolSelectedWithUser) {
-            toast.current.show({ severity: "error", summary: "Error", detail: "El rol esta asociado a un usuario", life: 3000 });
-            setRolSelectedWithUser(null);
-        } else if (rolSelected.status === false) {
-            rolSelected.status = true;
-
-            _rolService
-                .updateStatus(rolSelected)
-                .then(() => {
-                    setRolSelected({});
-                    setRolSelectedWithUser(null);
-                    loadRoles();
-                    toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del rol se cambio exitosamente", life: 3000 });
-                })
-                .catch((e) => {
-                    toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                    console.log(e);
-                    setRolSelectedWithUser(null);
-                    setRolSelected({});
-                    loadRoles();
-                });
-        } else if (rolSelected.status === true && rolSelectedWithUser !== true) {
-            rolSelected.status = false;
-
-            _rolService
-                .updateStatus(rolSelected)
-                .then(() => {
-                    setRolSelected({});
-                    setRolSelectedWithUser(null);
-                    loadRoles();
-                    toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del rol se cambio exitosamente", life: 3000 });
-                })
-                .catch((e) => {
-                    toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                    console.log(e);
-                    setRolSelectedWithUser(null);
-                    setRolSelected({});
-                    loadRoles();
-                });
+        let newStatus = rolSelected.status;
+        // if (rolSelectedWithUser) {
+        //     toast.current.show({ severity: "error", summary: "Error", detail: "El rol esta asociado a un usuario", life: 3000 });
+        //     setRolSelectedWithUser(null);
+        // }
+        if (rolSelected.status === false) {
+            newStatus = true;
+        } else if (rolSelected.status === true) {
+            newStatus = false;
         }
+        console.log(rolSelected);
+        _rolService
+            .updateStatus(rolSelected, newStatus)
+            .then(() => {
+                setRolSelected({});
+                setRolSelectedWithUser(null);
+                loadRoles();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "El estado del rol se cambio exitosamente", life: 3000 });
+            })
+            .catch((e) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "No puedes desactivar un rol que tenga usuarios asociados", life: 3000 });
+                console.log(e);
+                setRolSelectedWithUser(null);
+                setRolSelected({});
+                loadRoles();
+            });
     }
 
     function EditRol() {
@@ -274,6 +261,8 @@ export default function Roles() {
     }
 
     function CreateRol() {
+        selectedModules.push({ id: 1, name: "Dashboard", description: "Módulo de reportes." });
+        console.log(selectedModules);
         _rolService
             .createRol(rolName, selectedModules)
             .then((response) => {

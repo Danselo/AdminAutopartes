@@ -30,7 +30,7 @@ export class RolesService {
                 return response.data;
             });
     }
-    
+
     updateRol(id, name, selectedModules) {
         return axios
             .put(baseRolURL + `/update/${id}`, {
@@ -41,11 +41,13 @@ export class RolesService {
                 return response.data;
             });
     }
-    updateStatus(rol) {
-        const url = `${baseRolURL}/updateStatus/${rol.id}`
+    updateStatus(rol, newStatus) {
+        console.log(newStatus);
+        const url = `${baseRolURL}/updateStatus/${rol.id}`;
         delete rol.id;
         delete rol.createdAt;
-         return axios
-             .put(url,rol)
+        return axios.post(url, {
+            newStatus,
+        });
     }
 }

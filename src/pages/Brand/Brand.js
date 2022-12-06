@@ -19,7 +19,6 @@ export default function Brand() {
     const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    const [brandName, setBrandName] = useState("");
     const [brandIdSelected, setBrandIdSelected] = useState("");
     const [brandNameSelected, setBrandNameSelected] = useState("");
     const [brandSelected, setBrandSelected] = useState({});
@@ -29,7 +28,6 @@ export default function Brand() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            {/* <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteBrandAlert()} disabled={!brandIdSelected} /> */}
             <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-pencil" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
         </React.Fragment>
     );
@@ -91,17 +89,6 @@ export default function Brand() {
             reject: () => setDisplayDialogEdit(true),
         });
     };
-    // const deleteBrandAlert = () => {
-    //     confirmDialog({
-    //         message: "¿Esta seguro que desea eliminar esta Marca?",
-    //         header: "Confirmación",
-    //         icon: "pi pi-exclamation-triangle",
-    //         acceptLabel: "Eliminar",
-    //         rejectLabel: "Cancelar",
-    //         accept: () => deleteBrand(brandIdSelected),
-    //         reject: () => setDisplayDialogCreate(true),
-    //     });
-    // };
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -189,7 +176,6 @@ export default function Brand() {
         _brandService
             .updateBrand(id, newName)
             .then(() => {
-                setBrandName(newName);
                 loadBrands();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca edita exitosamente", life: 3000 });
                 form.restart();
@@ -200,11 +186,9 @@ export default function Brand() {
             });
     }
     function CreateBrand(brandName, form) {
-        // setBrandName(brandName)
         _brandService
             .createBrand(brandName)
             .then(() => {
-                setBrandName("");
                 loadBrands();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Marca creada exitosamente", life: 3000 });
                 form.restart();

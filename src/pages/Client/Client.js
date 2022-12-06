@@ -18,7 +18,6 @@ import { InputTextarea } from "primereact/inputtextarea";
 import "./createClient.css";
 import { Column } from "primereact/column";
 import { classNames } from "primereact/utils";
-import { InputNumber } from "primereact/inputnumber";
 const _saleService = new SaleService();
 const _userService = new UserService();
 const _clientService = new ClientService();
@@ -26,7 +25,6 @@ export default function Client() {
     const [clientSelected, setClientSelected] = useState({});
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
-    const [validationSales, setValidationSales] = useState([]);
     const [documentTypeName, setDocumentTypeName] = useState("");
 
     const toast = useRef(null);

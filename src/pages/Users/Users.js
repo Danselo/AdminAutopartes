@@ -27,11 +27,6 @@ export default function Users() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    // const [userEmail, setUserEmail] = useState("");
-    // const [userName, setUserName] = useState("");
-    // const [userPassword, setUserPassword] = useState("");
-
-    // const [userLastname, setUserLastname] = useState("");
     const [userStatus] = useState(true);
     const [users, setUsers] = useState([]);
     const [clients, setClients] = useState([]);
@@ -39,20 +34,13 @@ export default function Users() {
     const [roles, setRoles] = useState([]);
     const [rolName, setRoleName] = useState("");
     const [userWithSales, setUserWithSales] = useState({});
-    // const refreshPage = ()=>{
-    //     window.location.reload();  }
+
     const refreshPage2 = () => {
         setDisplayDialogEdit(false);
         setUserSelected({});
         loadUsers();
     };
 
-    // const rightContents = (
-    //         <Link to={"/pages/CreateUser/CreateUser"}>
-    //         <Button label="Agregar Usuario" className="p-button-raised dc-space-between" icon="pi pi-plus-circle"  />
-    //         </Link>
-
-    // );
     //----- GET SALES FOR VALIDATION AND CLIENTS
     useEffect(() => {
         _saleService
@@ -202,10 +190,6 @@ export default function Users() {
                     }
                     setUserSelected({});
                     loadUsers();
-                    // else{
-                    //     toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                    //     console.log(e);
-                    // }
                 });
             });
     }
@@ -395,8 +379,6 @@ export default function Users() {
             errors.lastname = "El apellido es requerido";
         }
         users.forEach((element) => {
-            const userMail = element.email;
-
             if (data.email === userSelected.email) {
             } else {
                 errors.email = "el correo ya existe";
