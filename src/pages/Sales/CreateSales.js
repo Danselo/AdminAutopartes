@@ -57,9 +57,8 @@ export default function CreateSales() {
 
     const initialValues = {
         saleDate: "",
-        statusSale: "",
-        statusPayment: "",
-        // totalSale: totalSale,
+        statusSale: "Pendiente",
+        statusPayment: "Activo",
     };
 
     const validate = (data) => {
@@ -124,7 +123,7 @@ export default function CreateSales() {
         var formatDate = dateSelected.toISOString().split("T")[0];
         const typeSale = false;
         _saleService
-            .createSale(saleClientSelected.id, formatDate, data.statusSale.name, data.statusPayment.name, totalSale, typeSale)
+            .createSale(saleClientSelected.id, formatDate, "Activo", "Pagado", totalSale, typeSale)
             .then((responseCreateSale) => {
                 products.forEach((element) => {
                     _saleService
@@ -253,7 +252,7 @@ export default function CreateSales() {
                                                 <label htmlFor="statusSale" className={classNames({ "p-error": isFormFieldValid("statusSale") })}>
                                                     Estado de la venta*
                                                 </label>
-                                                <Dropdown id="statusSale" {...input} options={statusSale} optionLabel="name" placeholder="Seleccione el estado" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                <Dropdown id="statusSale" value="Activo" {...input} disabled options={statusSale} optionLabel="name" placeholder="Activo" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                             </span>
                                             {getFormErrorMessage(meta)}
                                         </div>
@@ -267,7 +266,7 @@ export default function CreateSales() {
                                                 <label htmlFor="statusPayment" className={classNames({ "p-error": isFormFieldValid("statusPayment") })}>
                                                     Estado de pago*
                                                 </label>
-                                                <Dropdown id="statusPayment" {...input} options={statusPayment} optionLabel="name" placeholder="Seleccione el estado" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                <Dropdown id="statusPayment" disabled {...input} options={statusPayment} optionLabel="name" placeholder="Pendiente" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                             </span>
                                             {getFormErrorMessage(meta)}
                                         </div>
