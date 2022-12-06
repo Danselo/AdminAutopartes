@@ -30,7 +30,7 @@ export default function Brand() {
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
             {/* <Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteBrandAlert()} disabled={!brandIdSelected} /> */}
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-pencil" onClick={() => onClickDialogEdit()} disabled={!brandIdSelected} />
         </React.Fragment>
     );
     const rightContents = (
@@ -114,10 +114,10 @@ export default function Brand() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
-const confirmCancel = () =>{
+    const confirmCancel = () => {
         setDisplayDialogEdit(false);
         reject();
-    }
+    };
     const cancelEdit = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -163,25 +163,26 @@ const confirmCancel = () =>{
         setDisplayDialogCreate(false);
     };
 
-
     function changeBrandStatus(brandData) {
         let newState;
-       
-        if (brandData.status === false) {
 
+        if (brandData.status === false) {
             newState = true;
         } else if (brandData.status === true) {
             newState = false;
         }
-        console.log("estado",newState)
-        _brandService.changeStatusOfBrand(brandData.id, {status: newState}).then((response) => {
-            loadBrands();
-            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
-            setDisplayDialogStatus(false)
-        }).catch((error) => {
-            toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
-            setDisplayDialogStatus(false)
-        });
+        console.log("estado", newState);
+        _brandService
+            .changeStatusOfBrand(brandData.id, { status: newState })
+            .then((response) => {
+                loadBrands();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
+                setDisplayDialogStatus(false);
+            })
+            .catch((error) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
+                setDisplayDialogStatus(false);
+            });
     }
 
     function EditBrand(id, newName, form) {
@@ -213,8 +214,6 @@ const confirmCancel = () =>{
                 console.log(e);
             });
     }
-
-
 
     useEffect(() => {
         if (brandSelected.id !== undefined) {
@@ -277,7 +276,7 @@ const confirmCancel = () =>{
             }
         });
         let errors = {};
-        console.log(validateExistingName)
+        console.log(validateExistingName);
         if (validateExistingName.includes(true)) {
             errors.newBrandName = "El nombre " + data.newBrandName + " ya existe, ingrese otro nombre";
         }
@@ -288,8 +287,7 @@ const confirmCancel = () =>{
     };
 
     const onSubmit = (data, form) => {
-       
-        console.log("entre al onSubmit",data);
+        console.log("entre al onSubmit", data);
         let brandName = data.brandName;
         onHideDialogCreate(brandName, form);
     };
@@ -348,7 +346,7 @@ const confirmCancel = () =>{
                                     />
                                 </div>
                                 <div className="create-brand-buttons">
-                                    <Button label="Cancelar" icon="pi pi-times"  type="button" onClick={() => onHideDialogCancel()} className="p-button-text" />
+                                    <Button label="Cancelar" icon="pi pi-times" type="button" onClick={() => onHideDialogCancel()} className="p-button-text" />
                                     <Button type="submit" label="Crear marca" icon="pi pi-check" />
                                 </div>
                             </form>
@@ -389,14 +387,24 @@ const confirmCancel = () =>{
                 />
             </Dialog>
 
-            <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") +" la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog
+                header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") + " la marca " + brandSelected.name + "?"}
+                footer={renderFooterDialog()}
+                visible={displayDialogStatus}
+                onHide={() => setDisplayDialogStatus(false)}
+                breakpoints={{ "960px": "75vw" }}
+                style={{ width: "50vw" }}
+            >
                 <p>Los siguientes vehículos están asociados a esta marca</p>
                 <strong>Nota:</strong>
-                
-                <p><strong>-Si vas a desactivar la marca, el vehículo se desactivara</strong>  </p>
-                <p><strong>-Si vas a activar la marca el vehículo seguirá desactivado</strong>  </p>
 
-                
+                <p>
+                    <strong>-Si vas a desactivar la marca, el vehículo se desactivara</strong>{" "}
+                </p>
+                <p>
+                    <strong>-Si vas a activar la marca el vehículo seguirá desactivado</strong>{" "}
+                </p>
+
                 <TableVehiclesOfBrandSelected className="table-products" vehicles={vehiclesWhereBrand} />
             </Dialog>
 

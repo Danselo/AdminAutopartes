@@ -19,7 +19,6 @@ export default function ProductsBrand() {
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
     const [productsBrandName, setProductsBrandsName] = useState("");
-    const [newProductsBrandsName, setNewProductsBrandsName] = useState("");
     const [productsbrandsIdSelected, setProductsBrandsIdSelected] = useState("");
     const [productsBrandNameSelected, setProductsBrandsNameSelected] = useState("");
     const [brandSelected, setBrandSelected] = useState({});
@@ -29,8 +28,7 @@ export default function ProductsBrand() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            {//<Button label="Eliminar" className="p-button-raised p-button-danger dc-space-between" icon="pi pi-trash" onClick={() => deleteProductsBrandsAlert()} disabled={!productsbrandsIdSelected} />}
-            }<Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!productsbrandsIdSelected} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-pencil" onClick={() => onClickDialogEdit()} disabled={!productsbrandsIdSelected} />
         </React.Fragment>
     );
 
@@ -92,17 +90,7 @@ export default function ProductsBrand() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
-    const deleteProductsBrandsAlert = () => {
-        confirmDialog({
-            message: "¿Está seguro que desea eliminar esta marca de productos?",
-            header: "Confirmación",
-            icon: "pi pi-exclamation-triangle",
-            acceptLabel: "Eliminar",
-            rejectLabel: "Cancelar",
-            accept: () => deleteProductsBrands(productsbrandsIdSelected),
-            reject: () => setDisplayDialogCreate(true),
-        });
-    };
+
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Está seguro que desea perder el progreso?",
@@ -124,10 +112,9 @@ export default function ProductsBrand() {
     }
 
     const onHideDialogEdit = (newProductsBrandsName, form) => {
-        editProductsBrandsAlert(newProductsBrandsName, form)
+        editProductsBrandsAlert(newProductsBrandsName, form);
         setDisplayDialogEdit(false);
-
-    }
+    };
 
     const onHideDialogCreate = (productsBrandName, form) => {
         createProductsBrandsAlert(productsBrandName, form);
@@ -146,27 +133,30 @@ export default function ProductsBrand() {
 
     function changeBrandStatus(productBrandData) {
         let newState;
-        console.log(productBrandData.status)
+        console.log(productBrandData.status);
         if (productBrandData.status === false) {
-
             newState = true;
         } else if (productBrandData.status === true) {
             newState = false;
         }
-        console.log("estado", newState)
+        console.log("estado", newState);
         console.log(productBrandData);
-        _productsBrandsService.changeStatusOfBrand(productBrandData.id, { status: newState }).then((response) => {
-            loadProductsBrands();
-            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
-            setDisplayDialogStatus(false)
-        }).catch((error) => {
-            toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
-            setDisplayDialogStatus(false)
-        });
+        _productsBrandsService
+            .changeStatusOfBrand(productBrandData.id, { status: newState })
+            .then((response) => {
+                loadProductsBrands();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
+                setDisplayDialogStatus(false);
+            })
+            .catch((error) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
+                setDisplayDialogStatus(false);
+            });
     }
 
     function EditProductsBrands(id, newName, form) {
-        _productsBrandsService.updateProductsBrands(id, newName)
+        _productsBrandsService
+            .updateProductsBrands(id, newName)
             .then(() => {
                 setProductsBrandsName(newName);
                 loadProductsBrands();
@@ -228,7 +218,6 @@ export default function ProductsBrand() {
         _productsBrandsService.getProductsBrands().then((response) => {
             setProductsBrands(response);
         });
-
     }, []);
 
     const initialValues = {
@@ -239,7 +228,6 @@ export default function ProductsBrand() {
     };
 
     const validateEdit = (data) => {
-
         let validateExistingName = productsbrands.map((productsbrand) => {
             if (productsbrand.name === data.newProductsBrandsName) {
                 return true;
@@ -252,16 +240,13 @@ export default function ProductsBrand() {
             errors.newProductsBrandsName = "El nombre " + data.newProductsBrandsName + " ya existe, ingrese otro nombre";
         }
         if (!data.newProductsBrandsName) {
-
             errors.newProductsBrandsName = "Debe ingresar un nombre de marca.";
         }
         return errors;
     };
 
     const validateCreate = (data) => {
-
         let validateExistingName = productsbrands.map((productsbrand) => {
-
             if (productsbrand.name === data.productsBrandName) {
                 return true;
             } else {
@@ -272,7 +257,6 @@ export default function ProductsBrand() {
         let errors = {};
 
         if (!data.productsBrandName) {
-
             errors.productsBrandName = "Debe ingresar un nombre de marca.";
         }
         if (validateExistingName.includes(true)) {
@@ -283,23 +267,20 @@ export default function ProductsBrand() {
     };
 
     const onSubmit = (data, form) => {
-
         let productsBrandName = data.productsBrandName;
         onHideDialogCreate(productsBrandName, form);
     };
 
     const onSubmitEdit = (data, form) => {
-
         let newProductsBrandsName = data.newProductsBrandsName;
         onHideDialogEdit(newProductsBrandsName, form);
     };
 
     const isFormFieldValid = (meta) => {
         let a = !!(meta.touched && meta.error);
-        return a
-    }
+        return a;
+    };
     const getFormErrorMessage = (meta) => {
-
         return isFormFieldValid(meta) ? <small className="p-error">{meta.error}</small> : <small className="p-error"></small>;
     };
     const renderFooterDialog = () => {
@@ -366,14 +347,11 @@ export default function ProductsBrand() {
                                     <Field
                                         name="newProductsBrandsName"
                                         render={({ input, meta }) => (
-
                                             <span className="create-sale-form__span">
-
                                                 <label htmlFor="newProductsBrandsName" className={classNames({ "p-error": isFormFieldValid("newProductsBrandsName") })}>
                                                     Nombre de marca*
                                                 </label>
-                                                <InputText id="newProductsBrandsName" {...input} autoFocus
-                                                    placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                <InputText id="newProductsBrandsName" {...input} autoFocus placeholder="Ingrese el nuevo nombre de la marca" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 {getFormErrorMessage(meta)}
                                             </span>
                                         )}
@@ -389,11 +367,17 @@ export default function ProductsBrand() {
                 />
             </Dialog>
 
-            <Dialog header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") + " la marca " + brandSelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog
+                header={"¿Esta seguro que desea " + (brandSelected.status ? "desactivar" : "activar") + " la marca " + brandSelected.name + "?"}
+                footer={renderFooterDialog()}
+                visible={displayDialogStatus}
+                onHide={() => setDisplayDialogStatus(false)}
+                breakpoints={{ "960px": "75vw" }}
+                style={{ width: "50vw" }}
+            >
                 <p>Los siguientes productos estan asociados a esta marca</p>
                 <TableProductsOfBrandSelected className="table-products" products={productsWhereBrand} />
             </Dialog>
-
 
             <TableProductsBrands className="table-products" productsbrands={productsbrands} setBrandSelected={setBrandSelected} setProductsBrandsIdSelected={setProductsBrandsIdSelected} setProductsBrandsNameSelected={setProductsBrandsNameSelected} />
         </div>

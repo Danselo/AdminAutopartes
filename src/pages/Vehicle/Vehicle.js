@@ -22,9 +22,6 @@ export default function Vehicles() {
     const [displayDialogCreate, setDisplayDialogCreate] = useState(false);
     const [displayDialogEdit, setDisplayDialogEdit] = useState(false);
     const toast = useRef(null);
-    // const [vehicleName, setVehicleName] = useState("");
-    // const [vehicleModel, setVehicleModel] = useState("");
-    // const [selectedVehicleBrand, setSelectedVehicleBrand] = useState("");
     const [vehicles, setVehicles] = useState([]);
     const [brands, setBrands] = useState([]);
     const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
@@ -33,7 +30,7 @@ export default function Vehicles() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!vehicleSelected.name} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-pencil" onClick={() => onClickDialogEdit()} disabled={!vehicleSelected.name} />
         </React.Fragment>
     );
 

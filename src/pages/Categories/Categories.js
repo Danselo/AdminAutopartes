@@ -10,9 +10,7 @@ import { Toolbar } from "primereact/toolbar";
 import { CategoryService } from "../../service/CategoryService";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
-import {TableProductsWhereCategory } from "../../components/TableCategories/TableProductsWhereCategory";
-
-
+import { TableProductsWhereCategory } from "../../components/TableCategories/TableProductsWhereCategory";
 
 const _categoryService = new CategoryService();
 export default function Categories() {
@@ -25,11 +23,11 @@ export default function Categories() {
     const [categorySelected, setCategorySelected] = useState({});
     const [productsWhereCategory, setProductsWhereCategory] = useState({});
     const [displayDialogStatus, setDisplayDialogStatus] = useState(false);
-   
+
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!categoryIdSelected} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-pencil" onClick={() => onClickDialogEdit()} disabled={!categoryIdSelected} />
         </React.Fragment>
     );
 
@@ -43,11 +41,8 @@ export default function Categories() {
                 onClick={() => {
                     if (categorySelected.status) {
                         productsWhereCategory.length !== 0 ? setDisplayDialogStatus(true) : onChangeCategoryStatusDialog(categorySelected);
-                        
                     } else {
-                         onChangeCategoryStatusDialog(categorySelected);
-
-                        
+                        onChangeCategoryStatusDialog(categorySelected);
                     }
                 }}
             />
@@ -98,7 +93,7 @@ export default function Categories() {
             reject: () => setDisplayDialogCreate(true),
         });
     };
- 
+
     const cancelCreate = () => {
         confirmDialog({
             message: "¿Está seguro que desea perder el progreso?",
@@ -120,10 +115,9 @@ export default function Categories() {
     }
 
     const onHideDialogEdit = (newCategoryName, form) => {
-        editCategoryAlert(newCategoryName, form)
+        editCategoryAlert(newCategoryName, form);
         setDisplayDialogEdit(false);
-
-    }
+    };
 
     const onHideDialogCreate = (categoryName, form) => {
         createCategoryAlert(categoryName, form);
@@ -142,30 +136,33 @@ export default function Categories() {
 
     function changeCategoryStatus(categoryData) {
         let newState;
-       
-        if (categoryData.status === false) {
 
+        if (categoryData.status === false) {
             newState = true;
         } else if (categoryData.status === true) {
             newState = false;
         }
-        console.log("estado",newState)
-        _categoryService.changeStatusOfCategory(categoryData.id, {status: newState}).then((response) => {
-            loadCategories();
-            toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
-            setDisplayDialogStatus(false)
-        }).catch((error) => {
-            toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
-            setDisplayDialogStatus(false)
-        });
+        console.log("estado", newState);
+        _categoryService
+            .changeStatusOfCategory(categoryData.id, { status: newState })
+            .then((response) => {
+                loadCategories();
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
+                setDisplayDialogStatus(false);
+            })
+            .catch((error) => {
+                toast.current.show({ severity: "error", summary: "Error", detail: "error", life: 3000 });
+                setDisplayDialogStatus(false);
+            });
     }
 
     function EditCategory(id, newName, form) {
-        _categoryService.updateCategory(id, newName)
+        _categoryService
+            .updateCategory(id, newName)
             .then(() => {
                 loadCategories();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoría editada exitosamente", life: 3000 });
-                form.reset()
+                form.reset();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -178,7 +175,7 @@ export default function Categories() {
             .then(() => {
                 loadCategories();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Categoría creada exitosamente", life: 3000 });
-                form.reset()
+                form.reset();
             })
             .catch((e) => {
                 toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
@@ -218,7 +215,6 @@ export default function Categories() {
     };
 
     const validateEdit = (data) => {
-
         let validateExistingName = categories.map((category) => {
             if (category.name === data.newCategoryName) {
                 return true;
@@ -231,16 +227,13 @@ export default function Categories() {
             errors.newCategoryName = "El nombre " + data.newCategoryName + " ya existe, ingrese otro nombre";
         }
         if (!data.newCategoryName) {
-
             errors.newCategoryName = "Debe ingresar un nombre de categoría.";
         }
         return errors;
     };
 
     const validateCreate = (data) => {
-
         let validateExistingName = categories.map((category) => {
-
             if (category.name === data.categoryName) {
                 return true;
             } else {
@@ -251,7 +244,6 @@ export default function Categories() {
         let errors = {};
 
         if (!data.categoryName) {
-
             errors.categoryName = "Debe ingresar un nombre de categoría.";
         }
         if (validateExistingName.includes(true)) {
@@ -262,23 +254,20 @@ export default function Categories() {
     };
 
     const onSubmit = (data, form) => {
-
         let categoryName = data.categoryName;
         onHideDialogCreate(categoryName, form);
     };
 
     const onSubmitEdit = (data, form) => {
-
         let newCategoryName = data.newCategoryName;
         onHideDialogEdit(newCategoryName, form);
     };
 
     const isFormFieldValid = (meta) => {
         let a = !!(meta.touched && meta.error);
-        return a
-    }
+        return a;
+    };
     const getFormErrorMessage = (meta) => {
-
         return isFormFieldValid(meta) ? <small className="p-error">{meta.error}</small> : <small className="p-error"></small>;
     };
 
@@ -290,7 +279,6 @@ export default function Categories() {
             </div>
         );
     };
-
 
     return (
         <div>
@@ -348,14 +336,11 @@ export default function Categories() {
                                     <Field
                                         name="newCategoryName"
                                         render={({ input, meta }) => (
-
                                             <span className="create-sale-form__span">
-
                                                 <label htmlFor="newCategoryName" className={classNames({ "p-error": isFormFieldValid("newCategoryName") })}>
                                                     Nombre de categoría*
                                                 </label>
-                                                <InputText id="newCategoryName" {...input} autoFocus
-                                                    placeholder="Ingrese el nuevo nombre de la categoría" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
+                                                <InputText id="newCategoryName" {...input} autoFocus placeholder="Ingrese el nuevo nombre de la categoría" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-sale-form__input": true })} />
                                                 {getFormErrorMessage(meta)}
                                             </span>
                                         )}
@@ -371,13 +356,19 @@ export default function Categories() {
                 />
             </Dialog>
 
-            <Dialog header={"¿Está seguro que desea " + (categorySelected.status ? "desactivar" : "activar") +" la categoría " + categorySelected.name + "?"} footer={renderFooterDialog()} visible={displayDialogStatus} onHide={() => setDisplayDialogStatus(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}>
+            <Dialog
+                header={"¿Está seguro que desea " + (categorySelected.status ? "desactivar" : "activar") + " la categoría " + categorySelected.name + "?"}
+                footer={renderFooterDialog()}
+                visible={displayDialogStatus}
+                onHide={() => setDisplayDialogStatus(false)}
+                breakpoints={{ "960px": "75vw" }}
+                style={{ width: "50vw" }}
+            >
                 <p>Los siguientes productos estan asociados a esta categoría, si desactiva la categoría los productos asociados tambien se desactivaran</p>
                 <TableProductsWhereCategory className="table-products" products={productsWhereCategory} />
             </Dialog>
 
-
-            <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected={setCategoryNameSelected} setCategorySelected={setCategorySelected}/>
+            <TableCategories className="table-products" categories={categories} setCategoryIdSelected={setCategoryIdSelected} setCategoryNameSelected={setCategoryNameSelected} setCategorySelected={setCategorySelected} />
         </div>
     );
 }

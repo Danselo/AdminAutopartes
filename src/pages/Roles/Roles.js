@@ -60,7 +60,7 @@ export default function Roles() {
     const leftContents = (
         <React.Fragment>
             <Button label="Registrar" className="p-button-raised dc-space-between" icon="pi pi-plus-circle" onClick={() => onClickDialogCreate()} />
-            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-trash" onClick={() => onClickDialogEdit()} disabled={!rolSelected.name} />
+            <Button label="Editar" className="p-button-raised p-button-info dc-space-between" icon="pi pi-pencil" onClick={() => onClickDialogEdit()} disabled={!rolSelected.name} />
         </React.Fragment>
     );
     const rightContents = (
@@ -149,12 +149,9 @@ export default function Roles() {
     };
     function onClickDialogCreate() {
         setDisplayDialogCreate(true);
-        // getRolesPermissions();
     }
 
     function onClickDialogEdit() {
-        // getModulesOfRolSelected(rolSelected.id);
-        // getRolesPermissions();
         _rolesPermissionsService
             .getModulesOfRolSelected(rolSelected.id)
             .then((response) => {
@@ -260,14 +257,14 @@ export default function Roles() {
         _rolService
             .updateRol(rolSelected.id, rolSelected.name, modulesOfRol)
             .then(() => {
-                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol Editado exitosamente", life: 3000 });
+                toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol editado exitosamente", life: 3000 });
                 loadRoles();
                 setRolSelected([]);
             })
             .catch((e) => {
                 console.log(e);
                 roles.map((element) => {
-                    if (rolSelected.name === element.name) {
+                    if (rolSelected.name === element.name && rolSelected.id !== element.id) {
                         toast.current.show({ severity: "error", summary: "Error", detail: "El nombre del rol ya se encuentra registrado", life: 3000 });
                     }
                     setRolSelected([]);
@@ -352,7 +349,6 @@ export default function Roles() {
         modulesPermissions: modulesOfRol,
         name: rolSelected.name,
     };
-    console.log(modulesOfRol);
 
     const validateEdit = (data) => {
         let errors = {};
@@ -464,7 +460,7 @@ export default function Roles() {
                         render={({ handleSubmit }) => (
                             <form onSubmit={handleSubmit}>
                                 <div className="create-rol-form--header">
-                                    <h5 className="text-center">Ingrese los datos del nuevo rol</h5>
+                                    <h5 className="text-center">Ingrese los datos que desea modificar del rol</h5>
                                     <div className="create-rol-form--input multiselect_modules_roles">
                                         <Field
                                             name="name"
@@ -487,7 +483,7 @@ export default function Roles() {
                                 <div className="create-rol-form--body multiselect_modules_roles">
                                     <div className="create-rol-form--body-text">
                                         <h5 className="text-center">Acceso por módulo</h5>
-                                        <p>A continuación encontrara cada uno de los módulos del sistema, por favor seleccione los módulos a los que desea darle acceso a este rol</p>
+                                        <p>A continuación encontrara seleccionados cada uno de los módulos del sistema a los que este rol tiene acceso, por favor seleccione los módulos a los que desea darle o quitarle acceso a este rol</p>
                                     </div>
                                     <Field
                                         name="modulesPermissions"

@@ -4,14 +4,12 @@ import { DataTable } from "primereact/datatable";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import "./tableRoles.css";
-import { RolesService } from "../../service/RolesService";
 import { Panel } from "primereact/panel";
 import { Dialog } from "primereact/dialog";
 import { RolesPermissionsService } from "../../service/RolesPermissionsService";
 import { ModuleService } from "../../service/ModuleService";
 
 const _rolesPermissionsService = new RolesPermissionsService();
-const _rolService = new RolesService();
 const _moduleService = new ModuleService();
 export const TableRoles = ({ setRolSelected, roles }) => {
     const [globalFilter, setGlobalFilter] = useState(null);
@@ -27,7 +25,7 @@ export const TableRoles = ({ setRolSelected, roles }) => {
             setRolSelected(TableRolSelected);
         }
     }, [TableRolSelected, setRolSelected]);
-    
+
     useEffect(() => {
         _moduleService
             .getModules()
@@ -40,14 +38,14 @@ export const TableRoles = ({ setRolSelected, roles }) => {
     }, []);
 
     useEffect(() => {
-        modules.forEach((element) => { 
-            Object.values(rolPermissionsInfo).forEach((element2)=>{
-                if (element.id === element2.idModule ){
-                    setModuleName(element.name)
+        modules.forEach((element) => {
+            Object.values(rolPermissionsInfo).forEach((element2) => {
+                if (element.id === element2.idModule) {
+                    setModuleName(element.name);
                 }
-            })
+            });
         });
-    }, [rolPermissionsInfo,modules]);
+    }, [rolPermissionsInfo, modules]);
 
     const statusBodyTemplate = (rowData) => {
         if (rowData.status === true) {
@@ -71,36 +69,33 @@ export const TableRoles = ({ setRolSelected, roles }) => {
     const viewRolDetail = (info) => {
         setRolInfo(info);
         setRolInfoDialog(true);
-            _rolesPermissionsService.getModulesOfRolSelected(info.id)
-                .then((response) => {
-                    let responseMapped = response.map((element) => {
-                        return {
-                                id: element.modules.id,
-                                description: element.modules.description,
-                                name: element.modules.name,
-
-                        };
-                    });
-                    setRolPermissionsInfo(responseMapped);
-                })
-                .catch((e) => {
-                    console.log("Falle aqui", e);
+        _rolesPermissionsService
+            .getModulesOfRolSelected(info.id)
+            .then((response) => {
+                let responseMapped = response.map((element) => {
+                    return {
+                        id: element.modules.id,
+                        description: element.modules.description,
+                        name: element.modules.name,
+                    };
                 });
-       
+                setRolPermissionsInfo(responseMapped);
+            })
+            .catch((e) => {
+                console.log("Falle aqui", e);
+            });
     };
-
 
     const infoRolDialogFooter = (
         <React.Fragment>
             <Button label="Cerrar" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
         </React.Fragment>
     );
-    
 
     return (
         <>
             <Dialog visible={rolInfoDialog} style={{ width: "60vw" }} header="Detalle de rol" modal className="p-fluid" footer={infoRolDialogFooter} onHide={hideDialog}>
-                <Panel header="Informacion sobre el rol" className="dialog-buy-panel" toggleable>
+                <Panel header="Información general del rol seleccionado" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
                         <div>
                             <strong>
@@ -110,7 +105,7 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                         </div>
                         <div>
                             <strong>
-                                <p>Nombre de cliente</p>
+                                <p>Nombre del rol</p>
                             </strong>
                             <p>{rolInfo.name}</p>
                         </div>
@@ -118,36 +113,28 @@ export const TableRoles = ({ setRolSelected, roles }) => {
                             <strong>
                                 <p>Estado del rol</p>
                             </strong>
-                            <p className={rolInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{rolInfo.status === true ? "Activo" : "Inactivo"}</p>
+                            <p className={rolInfo.status === true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"}>{rolInfo.status === true ? "Activo" : "Inactivo"}</p>
                         </div>
                     </div>
                 </Panel>
-                <Panel header="Información de los permisos del rol" className="dialog-buy-panel" toggleable>
+                <Panel header="Información de los permisos del rol seleccionado" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-roles">
                         {Object.values(rolPermissionsInfo).map((element) => (
                             <div className="dialog-buy-panel-products__detail" key={element.id}>
-                            
-                                <div className = "dialog-buy-panel-products__detail-item"   >                  
-                                <strong className="title_buy_detail">
-                                    Id Modulo
-                                  </strong>
-                                    
+                                <div className="dialog-buy-panel-products__detail-item">
+                                    <strong className="title_buy_detail">Id módulo</strong>
+
                                     <p>{element.id}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item"   >                  
-                                  <strong className="title_buy_detail">
-                                    Nombre Modulo
-                                  </strong>
+                                <div className="dialog-buy-panel-products__detail-item">
+                                    <strong className="title_buy_detail">Nombre del módulo</strong>
                                     <p>{element.name}</p>
                                 </div>
 
-                                <div className = "dialog-buy-panel-products__detail-item"   >                  
-                                  <strong className="title_buy_detail">
-                                    Descripción
-                                  </strong>
+                                <div className="dialog-buy-panel-products__detail-item">
+                                    <strong className="title_buy_detail">Descripción</strong>
                                     <p>{element.description}</p>
                                 </div>
-
                             </div>
                         ))}
                     </div>
