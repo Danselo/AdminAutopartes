@@ -15,9 +15,6 @@ import TableBuyDetail from "../../components/TableBuys/TableBuyDetail";
 import { useHistory } from "react-router-dom";
 import { Form, Field } from "react-final-form";
 import { classNames } from "primereact/utils";
-import { Dialog } from "primereact/dialog";
-import { FileUpload } from "primereact/fileupload";
-import config from "../../config/config";
 
 const _buyService = new BuyService();
 const _providersService = new ProviderService();
@@ -29,36 +26,21 @@ export default function CreatePurchase() {
     const [providers, setProviders] = useState([]);
     const [buyProviderSelected, setSelectedProvider] = useState([]);
     const [buyId, setBuyId] = useState("");
-    
-  function handleChange(e) {
-    setBuyId(e.target.value);
-  }
+
+    function handleChange(e) {
+        setBuyId(e.target.value);
+    }
     const [buyDatePurchase, setBuyDatePurchase] = useState("");
     const [buyTotalPurchase, setBuyTotalPurchase] = useState(0);
-    const [displayDialogUploadFiles, setDisplayDialogUploadFiles] = useState(false);
-    const [buyReferenceId, setBuyReferenceId] = useState("");
-
-    // const [buyDiscountsPercentage, setBuyDiscountsPercentage] = useState(0);
     const [addedProductsAtBuy, setAddedProductsAtBuy] = useState([]);
     const [globalTotal, setGlobalTotal] = useState(0);
     const [products, setProducts] = useState([]);
     const [buys, setBuys] = useState([]);
-    const chooseOptions = { label: "Seleccionar imagen", icon: "pi pi-fw pi-images", className: "p-button-raised" };
-    const uploadOptions = { label: "Guardar imagen", icon: "pi pi-fw pi-cloud-upload", className: "p-button-raised" };
-    const cancelOptions = { label: "Cancelar", icon: "pi pi-fw pi-times", className: "p-button-raised" };
-    const onBasicUploadAuto = () => {
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded with Auto Mode'});
-    }
-    const onUpload = () => {
-        toast.current.show({ severity: "info", summary: "Success", detail: "Archivo cargado" });
-        setDisplayDialogUploadFiles(false);
-    };
 
     if (addedProductsAtBuy) {
-        
-    }if (addedProductsAtBuy.length  > 1) {
-
-        console.log(addedProductsAtBuy[0].discountsPercentage)
+    }
+    if (addedProductsAtBuy.length > 1) {
+        console.log(addedProductsAtBuy[0].discountsPercentage);
     }
     useEffect(() => {
         let cosamappeada = addedProductsAtBuy.map((p) => {
@@ -67,7 +49,6 @@ export default function CreatePurchase() {
         });
         setProducts(cosamappeada);
     }, [addedProductsAtBuy]);
-
 
     useEffect(() => {
         _providersService
@@ -80,12 +61,12 @@ export default function CreatePurchase() {
             });
     }, []);
 
-        //---LOAD BUYS
-        useEffect(() => {
-            _buyService.getBuys().then((response) => {
-                setBuys(response);
-            });
-        }, []);
+    //---LOAD BUYS
+    useEffect(() => {
+        _buyService.getBuys().then((response) => {
+            setBuys(response);
+        });
+    }, []);
 
     //Verifica si hay applicados descuentos previos y luuego aplica el iva, actualiza automaticamente el campo del formulario
 
@@ -98,7 +79,6 @@ export default function CreatePurchase() {
         }, 4000);
     }
     function handleClickRedirectCancel() {
-      
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado, te redireccionaremos al inicio", life: 3000 });
         setTimeout(() => {
             history.push("/buys");
@@ -130,10 +110,6 @@ export default function CreatePurchase() {
             });
     };
 
-    const accept = () => {
-        toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
-    };
-
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
     };
@@ -148,13 +124,7 @@ export default function CreatePurchase() {
             reject,
         });
     };
-    const renderFooterDialog = () => {
-        return (
-            <div>
-                <Button label="Cancelar" icon="pi pi-times" onClick={() => setDisplayDialogUploadFiles(false)} className="p-button-text" />
-            </div>
-        );
-    };
+
     const cancelBuy = () => {
         confirmDialog({
             message: "¿Esta seguro que desea perder el progreso?",
@@ -172,30 +142,27 @@ export default function CreatePurchase() {
         idBuy: buyId,
         providerId: buyProviderSelected.id,
         Data: buyDatePurchase,
-        buyTotalPurchase: buyTotalPurchase
+        buyTotalPurchase: buyTotalPurchase,
     };
 
     const validate = (data) => {
-
         let errors = {};
-        if(!data.providerId){
+        if (!data.providerId) {
             errors.providerId = "el Proveedor es requerido";
         }
-        if(!data.idBuy){
+        if (!data.idBuy) {
             errors.idBuy = "el numero de la factura es requerido";
-        }else if (data.idBuy < 0){
+        } else if (data.idBuy < 0) {
             errors.idBuy = "el numero de la factura debe ser positivo";
-        }else if (data.idBuy <=1){
+        } else if (data.idBuy <= 1) {
             errors.idBuy = "el numero de la factura debe ser mayor que 1";
-            
         }
         if (!data.buyTotalPurchase) {
             errors.buyTotalPurchase = "Este campo es requerido";
         }
-        if(!data.Data){
+        if (!data.Data) {
             errors.Data = "este campo es requerido";
         }
-
 
         buys.forEach((element) => {
             const buyId = element.id;
@@ -205,25 +172,9 @@ export default function CreatePurchase() {
             }
         });
 
-
-
         return errors;
     };
-    const onSubmit = (data, form) => {
- 
-        // setUserEmail(data.email);
-        // setUserName(data.name);
-        // setUserLastname(data.lastname);
-        // setUserPassword(data.password);
-        // setSelectedUserRole(data.idRol);
-        // const userObject = {
-        //     email : data.email,
-        //     name : data.name,
-        //     lastname: data.lastname,
-        //     password : data.password,
-        //     rol: data.idRol,
-        // }
-    };
+    const onSubmit = (data, form) => {};
     const isFormFieldValid = (meta) => !!(meta.touched && meta.error);
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
@@ -250,8 +201,19 @@ export default function CreatePurchase() {
                                 render={({ input, meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="providerId" className={classNames({ "p-error": isFormFieldValid("providerId") })}>Proveedor</label>
-                                            <Dropdown id="providerId" {...input}  options={providers} value={buyProviderSelected} optionLabel="companyName" placeholder="Proveedor"  onChange={(e) => setSelectedProvider(e.value)} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <label htmlFor="providerId" className={classNames({ "p-error": isFormFieldValid("providerId") })}>
+                                                Proveedor
+                                            </label>
+                                            <Dropdown
+                                                id="providerId"
+                                                {...input}
+                                                options={providers}
+                                                value={buyProviderSelected}
+                                                optionLabel="companyName"
+                                                placeholder="Proveedor"
+                                                onChange={(e) => setSelectedProvider(e.value)}
+                                                className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })}
+                                            />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -263,8 +225,10 @@ export default function CreatePurchase() {
                                 render={({ input, meta }) => (
                                     <div className="field">
                                         <span>
-                                            <label htmlFor="idBuy" className={classNames({ "p-error": isFormFieldValid("idBuy") })}>Numero de factura</label>
-                                            <InputText id="idBuy"   {...input}  placeholder="Numero de Factura"  value={buyId}  onChange={handleChange} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })}  />
+                                            <label htmlFor="idBuy" className={classNames({ "p-error": isFormFieldValid("idBuy") })}>
+                                                Numero de factura
+                                            </label>
+                                            <InputText id="idBuy" {...input} placeholder="Numero de Factura" value={buyId} onChange={handleChange} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -279,7 +243,7 @@ export default function CreatePurchase() {
                                             <label htmlFor="Data" className={classNames({ "p-error": isFormFieldValid("Data") })}>
                                                 Fecha de compra
                                             </label>
-                                            <Calendar id="Data" {...input}  placeholder="AAAA-MM-DD" value={buyDatePurchase}  onChange={(e) => setBuyDatePurchase(e.value)} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <Calendar id="Data" {...input} placeholder="AAAA-MM-DD" value={buyDatePurchase} onChange={(e) => setBuyDatePurchase(e.value)} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
@@ -291,52 +255,27 @@ export default function CreatePurchase() {
                                 render={({ input, meta }) => (
                                     <div className="globalTotal">
                                         <span>
-                                            <label htmlFor="globalTotal" className={classNames({ "p-error": isFormFieldValid("globalTotal") })}>Total Compra</label>
-                                            <InputNumber id="globalTotal" value={globalTotal}  placeholder="Total compra" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} mode="currency" currency="COP" locale="es" disabled />
+                                            <label htmlFor="globalTotal" className={classNames({ "p-error": isFormFieldValid("globalTotal") })}>
+                                                Total Compra
+                                            </label>
+                                            <InputNumber id="globalTotal" value={globalTotal} placeholder="Total compra" className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} mode="currency" currency="COP" locale="es" disabled />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}
                                     </div>
                                 )}
                             />
-
-                          
-                        </div>    
+                        </div>
                     </form>
-                    
                 )}
-                
             />
-                {/* <Dialog header="Seleccionar la imagen del producto" visible={displayDialogUploadFiles} onHide={() => setDisplayDialogUploadFiles(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
-                <div className="create-product-form">
-                    <h5>Seleccione las imagenes del producto</h5>
-                    <FileUpload
-                        name="photo"
-                        url={`${config.baseURL}/filesBuys/create/${buyReferenceId}`}
-                        onUpload={onUpload}
-                        accept="image/*"
-                        maxFileSize={1000000}
-                        chooseOptions={chooseOptions}
-                        uploadOptions={uploadOptions}
-                        cancelOptions={cancelOptions}
-                        // customUpload
-                        // uploadHandler={customBase64Uploader}
-                        // mode="basic"
-                        // auto={true}
-                        emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
-                    />
-                </div>
-            </Dialog> */}
 
-                <TableBuyDetail   idBuy={buyId}  Provider={buyProviderSelected} 
-                setAddedProductsAtBuy={setAddedProductsAtBuy} setGlobalTotal = {setGlobalTotal} buyDate = {buyDatePurchase} />
+            <TableBuyDetail idBuy={buyId} Provider={buyProviderSelected} setAddedProductsAtBuy={setAddedProductsAtBuy} setGlobalTotal={setGlobalTotal} buyDate={buyDatePurchase} />
 
-                <div className="create-product-buttons">
-                    <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2" disabled={addedProductsAtBuy.length<= 0} ></Button>
-                    <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
-                </div>
-
-     
+            <div className="create-product-buttons">
+                <Button onClick={create} icon="pi pi-check" label="Crear compra" className="mr-2" disabled={addedProductsAtBuy.length <= 0}></Button>
+                <Button onClick={cancelBuy} icon="pi pi-times" label="Cancelar"></Button>
+            </div>
         </div>
     );
 }

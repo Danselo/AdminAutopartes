@@ -13,6 +13,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Password } from "primereact/password";
 import { Toast } from "primereact/toast";
+import { Tooltip } from "primereact/tooltip";
 
 const _buyService = new BuyService();
 const _userService = new UserService();
@@ -26,6 +27,8 @@ export default function Buys() {
     const [userAdmin, setUserAdmin] = useState([]);
     const [visibleTrue, setVisibleTrue] = useState(false);
     const [visibleFalse, setVisibleFalse] = useState(false);
+    const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
+    const [reason, setReason] = useState("");
     const refreshPage2 = () => {
         setDisplayDialogStatus(false);
         setDisplayDialogStatusPassword(false);
@@ -47,7 +50,7 @@ export default function Buys() {
             setUserAdmin(response);
         });
     }, []);
-    console.log(userAdmin);
+
     useEffect(() => {
         _buyService.getBuys().then((response) => {
             setBuys(response);
@@ -55,12 +58,16 @@ export default function Buys() {
     }, []);
     const rightContents = (
         <React.Fragment>
+            <Tooltip target=".custom-target-icon" />
             <Button
                 label={buySelected.status ? "Anular compra" : "Compra anulada"}
                 className={buySelected.status ? "p-button-danger p-button-raised  dc-space-between" : "p-button-anulado p-button-raised  dc-space-between"}
                 icon="pi pi-eye-slash"
                 disabled={!buySelected.id || buySelected.status === false}
-                onClick={() => onClickDialogStatus()}
+                onClick={() => {
+                    onClickDialogStatus();
+                    getBuyDetail();
+                }}
             />
         </React.Fragment>
     );
@@ -99,19 +106,21 @@ export default function Buys() {
         cancelCreate();
         setDisplayDialogStatus(false);
     };
-    console.log();
-    function EditStatus() {
+
+    function cancelBuy() {
         if (buySelected.status === true) {
             buySelected.status = false;
+            console.log(reason);
+            console.log(productsDetailOfBuy);
             _buyService
-                .updateBuy(buySelected)
+                .cancelBuy(buySelected, reason, productsDetailOfBuy)
                 .then(() => {
                     toast.current.show({ severity: "success", summary: "Anulado!", detail: "La compra se anulo exitosamente", life: 3000 });
                     refreshPage2();
                 })
                 .catch((e) => {
                     toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
-                    console.log(e);
+
                     setBuySelected({});
                     setDisplayDialogStatusPassword(false);
                 });
@@ -139,7 +148,8 @@ export default function Buys() {
     const initialValuesStatus = {
         reason: buySelected.reason,
     };
-    const onSubmitStatus = () => {
+    const onSubmitStatus = (data) => {
+        setReason(data.reason);
         setDisplayDialogStatusPassword(true);
         setDisplayDialogStatus(false);
     };
@@ -167,7 +177,7 @@ export default function Buys() {
                 }
             })
             .catch((error) => {
-                toast.current.show({ severity: "error", summary: "ACCESO DENEGADO", detail: "La contraseña de administrador no es la correcta", life: 3000 });
+                toast.current.show({ severity: "error", summary: "Denegado", detail: "La contraseña de administrador no es la correcta", life: 3000 });
                 refreshPage2();
             });
     };
@@ -183,6 +193,16 @@ export default function Buys() {
         };
 
         setBuySelected(buyUpdated);
+    };
+    const getBuyDetail = () => {
+        _buyService
+            .getBuyDetailById(buySelected.id)
+            .then((response) => {
+                setProductsDetailOfBuy(response);
+            })
+            .catch((e) => {
+                console.log("Falle desde la tabla", e);
+            });
     };
     return (
         <div>
@@ -260,7 +280,7 @@ export default function Buys() {
                 />
             </Dialog>
             {/* Validacion para la contraseña al la hora de anular compra  */}
-            <ConfirmDialog visible={visibleTrue} onHide={() => onHideDialogCancelPassword(true)} header="Acceso concedido" message="¿Desea anular la compra?" icon="pi pi-exclamation-triangle" acceptLabel="Anular" rejectLabel="Cancelar" accept={EditStatus} reject={refreshPage2} />
+            <ConfirmDialog visible={visibleTrue} onHide={() => onHideDialogCancelPassword(true)} header="Acceso concedido" message="¿Desea anular la compra?" icon="pi pi-exclamation-triangle" acceptLabel="Anular" rejectLabel="Cancelar" accept={cancelBuy} reject={refreshPage2} />
             <ConfirmDialog visible={visibleFalse} onHide={() => onHideDialogCancelPassword(true)} message="La contraseña no coincide" header="Acceso denegado" icon="pi pi-exclamation-triangle" acceptLabel="Cerrar" rejectLabel="Volver" accept={refreshPage2} reject={refreshPage3} />
             <TableBuys buys={buys} setBuySelected={setBuySelected} className="table-products" />
         </div>

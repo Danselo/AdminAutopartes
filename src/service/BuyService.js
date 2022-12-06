@@ -12,11 +12,14 @@ export class BuyService {
     }
 
     getBuyDetailById(idBuy) {
-        return axios.get(`${baseBuyURL}/get-buy-details/${idBuy}`).then((res) => res.data).catch((e) =>{
-            console.error("Aqui falle", e)
-        });
+        return axios
+            .get(`${baseBuyURL}/get-buy-details/${idBuy}`)
+            .then((res) => res.data)
+            .catch((e) => {
+                console.error("Aqui falle", e);
+            });
     }
-   
+
     createBuy(id, idProvider, datePurchase, totalPurchase) {
         return axios
             .post(baseBuyURL + "/create", {
@@ -30,15 +33,20 @@ export class BuyService {
             });
     }
     updateBuy(buy) {
-        const url = `${baseBuyURL}/update/${buy.id}`
-        delete buy.id
-        delete buy.provider
-        delete buy.createdAt
+        const url = `${baseBuyURL}/update/${buy.id}`;
+        delete buy.id;
+        delete buy.provider;
+        delete buy.createdAt;
 
-         return axios
-             .put(url,buy)
+        return axios.put(url, buy);
     }
-    
+    cancelBuy(buy, reason, productsDetailOfBuy) {
+        console.log("buy", buy);
+        console.log("products", productsDetailOfBuy);
+        const url = `${baseBuyURL}/cancel-buy/${buy.id}`;
+        return axios.post(url, { reason, productsDetailOfBuy });
+    }
+
     deleteBuy(id) {
         return axios.delete(`${baseBuyURL}/delete/${id}`);
     }

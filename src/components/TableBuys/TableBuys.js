@@ -10,7 +10,7 @@ import { BuyService } from "../../service/BuyService";
 
 const _buyService = new BuyService();
 
-export const TableBuys = ({ setBuySelected,buys }) => {
+export const TableBuys = ({ setBuySelected, buys }) => {
     let emptyBuyInfo = {
         createdAt: null,
         datePurchase: null,
@@ -26,8 +26,7 @@ export const TableBuys = ({ setBuySelected,buys }) => {
     const [TableBuysSelected, setTableBuysSelected] = useState([]);
     const [buyInfo, setBuyInfo] = useState(emptyBuyInfo);
     const [productsDetailOfBuy, setProductsDetailOfBuy] = useState([]);
-    const [buysDetail, setBuyDetails] = useState([]);
-    
+
     useEffect(() => {
         if (TableBuysSelected) {
             setBuySelected(TableBuysSelected);
@@ -38,7 +37,6 @@ export const TableBuys = ({ setBuySelected,buys }) => {
         _buyService
             .getBuyDetailById(id)
             .then((response) => {
-                console.log(response);
                 setProductsDetailOfBuy(response);
             })
             .catch((e) => {
@@ -67,8 +65,6 @@ export const TableBuys = ({ setBuySelected,buys }) => {
         }
     }, [buyInfo]);
 
-
-    
     const infoBuyDialogFooter = (
         <React.Fragment>
             <Button label="Cerrar" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
@@ -82,13 +78,22 @@ export const TableBuys = ({ setBuySelected,buys }) => {
             </React.Fragment>
         );
     };
+    const statusBuyTemplate = (rowData) => {
+        if (rowData.status) {
+            return <span className="product-badge-state-active">ACTIIVA</span>;
+        } else if (!rowData.status) {
+            return <span className="product-badge-state-inactive">ANULADA</span>;
+        } else {
+            return <span className="product-badge-state-na">NA</span>;
+        }
+    };
 
     return (
         <>
             <Dialog visible={buyInfoDialog} style={{ width: "60vw" }} header="Detalle de la compra" modal className="p-fluid" footer={infoBuyDialogFooter} onHide={hideDialog}>
                 <Panel header="Información general de la compra" className="dialog-buy-panel" toggleable>
                     <div className="dialog-buy-panel-detail">
-                        <div className = "">
+                        <div className="">
                             <strong>
                                 <p>Numero de factura</p>
                             </strong>
@@ -119,14 +124,11 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                             <p>{buyInfo.totalPurchase}</p>
                         </div>
 
-
-        
                         <div>
                             <strong>
                                 <p>Estado de la compra</p>
                             </strong>
-                            <p className={buyInfo.status == true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"} >{buyInfo.status === true ? "Activo" : "Anulado"}</p>
-                            
+                            <p className={buyInfo.status === true ? "role-badge-status-active-details" : "role-badge-status-inactive-details"}>{buyInfo.status === true ? "Activo" : "Anulado"}</p>
                         </div>
                     </div>
                 </Panel>
@@ -162,28 +164,28 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                     <div className="dialog-buy-panel-products">
                         {productsDetailOfBuy.map((element) => (
                             <div className="dialog-buy-panel-products__detail" key="products_detail_panel">
-                                <div className = "dialog-buy-panel-products__detail-item">
+                                <div className="dialog-buy-panel-products__detail-item">
                                     <strong>
                                         <p>Id producto</p>
                                     </strong>
                                     <p>{element.idProduct}</p>
-
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item"   >                            
-                                    <strong><p>Cantidad</p></strong>
-                                    
+                                <div className="dialog-buy-panel-products__detail-item">
+                                    <strong>
+                                        <p>Cantidad</p>
+                                    </strong>
+
                                     <p>{element.amount}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item">
+                                <div className="dialog-buy-panel-products__detail-item">
                                     <strong>
                                         <p>Precio neto</p>
                                     </strong>
 
                                     <p>{element.netPrice}</p>
                                 </div>
-                  
-            
-                                <div className = "dialog-buy-panel-products__detail-item">
+
+                                <div className="dialog-buy-panel-products__detail-item">
                                     <strong>
                                         {" "}
                                         <p>Porcentaje de ganancia</p>
@@ -191,7 +193,7 @@ export const TableBuys = ({ setBuySelected,buys }) => {
 
                                     <p>{element.profitPercentage}</p>
                                 </div>
-                                <div className = "dialog-buy-panel-products__detail-item">
+                                <div className="dialog-buy-panel-products__detail-item">
                                     <strong>
                                         <p>Precio de venta</p>
                                     </strong>
@@ -231,6 +233,7 @@ export const TableBuys = ({ setBuySelected,buys }) => {
                 <Column field="provider.companyName" header="Id proveedor"></Column>
                 <Column field="datePurchase" sortable header="Fecha de compra"></Column>
                 <Column field="totalPurchase" className="table-product--column-gray" header="Total compra"></Column>
+                <Column header="Estado de la compra" body={statusBuyTemplate} exportable={false}></Column>
                 <Column header="Ver detalle de compra" body={actionBodyTemplate} exportable={false}></Column>
             </DataTable>
         </>
