@@ -49,6 +49,86 @@ const App = () => {
     const [overlayMenuActive, setOverlayMenuActive] = useState(false);
     const [mobileMenuActive, setMobileMenuActive] = useState(false);
     const [mobileTopbarMenuActive, setMobileTopbarMenuActive] = useState(false);
+    const [menu, setMenu] = useState([
+        {
+            label: "Inicio",
+            icon: "pi pi-fw pi-home",
+            items: [
+                {
+                    label: "Dashboard",
+                    icon: "pi pi-fw pi-chart-pie",
+                    to: "/",
+                    id: 1,
+                },
+                {
+                    label: "Roles",
+                    icon: "pi pi-fw pi-user",
+                    to: "/pages/Roles/Roles",
+                    id: 12,
+                },
+                {
+                    label: "Proveedores",
+                    icon: "pi pi-fw pi-building",
+                    to: "/Providers",
+                    id: 2,
+                },
+                {
+                    label: "Compras",
+                    icon: "pi pi-fw pi-shopping-bag",
+                    to: "/Buys",
+                    id: 3,
+                },
+                {
+                    label: "Categorías",
+                    icon: "pi pi-fw pi-book",
+                    to: "/Categories",
+                    id: 4,
+                },
+                {
+                    label: "Marcas vehículos",
+                    icon: "pi pi-fw pi-car",
+                    to: "/Brand",
+                    id: 5,
+                },
+                {
+                    label: "Vehículos",
+                    icon: "pi pi-fw pi-car",
+                    to: "/Vehicles",
+                    id: 6,
+                },
+                {
+                    label: "Marcas productos",
+                    icon: "pi pi-fw pi-car",
+                    to: "/ProductsBrands",
+                    id: 7,
+                },
+                {
+                    label: "Productos",
+                    icon: "pi pi-fw pi-box",
+                    to: "/Products",
+                    id: 8,
+                },
+                {
+                    label: "Clientes",
+                    icon: "pi pi-fw pi-users",
+                    to: "/Clients",
+                    id: 9,
+                },
+                {
+                    label: "Ventas",
+                    icon: "pi pi-fw pi-credit-card",
+                    to: "/Sales",
+                    id: 10,
+                },
+                {
+                    label: "Usuarios",
+                    icon: "pi pi-fw pi-users",
+                    to: "/pages/Users/Users",
+                    id: 11,
+                },
+            ],
+        },
+    ]);
     const copyTooltipRef = useRef();
     const location = useLocation();
     PrimeReact.ripple = true;
@@ -147,112 +227,21 @@ const App = () => {
         return window.innerWidth >= 992;
     };
 
-    const menu = [
-        {
-            label: "Inicio",
-            icon: "pi pi-fw pi-home",
-            items: [
-                {
-                    label: "Dashboard",
-                    icon: "pi pi-fw pi-chart-pie",
-                    to: "/",
-                    disabled: !_permissionsCheckService?.userHasPermission(1),
-                },
-            ],
-        },
-        {
-            label: "Configuración",
-            items: [
-                {
-                    label: "Roles",
-                    icon: "pi pi-fw pi-user",
-                    to: "/pages/Roles/Roles",
-                    disabled: !_permissionsCheckService?.userHasPermission(12),
-                },
-            ],
-        },
-        {
-            label: "Compras",
-            items: [
-                {
-                    label: "Proveedores",
-                    icon: "pi pi-fw pi-building",
-                    to: "/Providers",
-                    disabled: !_permissionsCheckService?.userHasPermission(2),
-                },
-                {
-                    label: "Compras",
-                    icon: "pi pi-fw pi-shopping-bag",
-                    to: "/Buys",
-                    disabled: !_permissionsCheckService?.userHasPermission(3),
-                },
-            ],
-        },
-        {
-            label: "Productos",
-            items: [
-                {
-                    label: "Categorías",
-                    icon: "pi pi-fw pi-book",
-                    to: "/Categories",
-                    disabled: !_permissionsCheckService?.userHasPermission(4),
-                },
-                {
-                    label: "Marcas vehículos",
-                    icon: "pi pi-fw pi-car",
-                    to: "/Brand",
-                    disabled: !_permissionsCheckService?.userHasPermission(5),
-                },
-                {
-                    label: "Vehículos",
-                    icon: "pi pi-fw pi-car",
-                    to: "/Vehicles",
-                    disabled: !_permissionsCheckService?.userHasPermission(6),
-                },
-                {
-                    label: "Marcas productos",
-                    icon: "pi pi-fw pi-car",
-                    to: "/ProductsBrands",
-                    disabled: !_permissionsCheckService?.userHasPermission(7),
-                },
-                {
-                    label: "Productos",
-                    icon: "pi pi-fw pi-box",
-                    to: "/Products",
-                    visible: !_permissionsCheckService?.userHasPermission(8),
-                },
-            ],
-        },
-        {
-            label: "Ventas",
-            items: [
-                {
-                    label: "Clientes",
-                    icon: "pi pi-fw pi-users",
-                    to: "/Clients",
-                    disabled: !_permissionsCheckService?.userHasPermission(9),
-                },
-                {
-                    label: "Ventas",
-                    icon: "pi pi-fw pi-credit-card",
-                    to: "/Sales",
-                    disabled: !_permissionsCheckService?.userHasPermission(10),
-                },
-            ],
-        },
+    useEffect(() => {
+        const auxiliarItems = menu[0].items.filter((itemBlock) => {
+            const validation = _permissionsCheckService.userHasPermission(itemBlock.id);
+            return validation;
+        });
 
-        {
-            label: "Gestión de Usuarios",
-            items: [
-                {
-                    label: "Usuarios",
-                    icon: "pi pi-fw pi-users",
-                    to: "/pages/Users/Users",
-                    disabled: !_permissionsCheckService?.userHasPermission(11),
-                },
-            ],
-        },
-    ];
+        const auxiliarMenu = [
+            {
+                label: "Inicio",
+                icon: "pi pi-fw pi-home",
+                items: auxiliarItems,
+            },
+        ];
+        setMenu(auxiliarMenu);
+    }, []);
 
     const addClass = (element, className) => {
         if (element.classList) element.classList.add(className);
@@ -312,7 +301,7 @@ const App = () => {
                             }
                         }}
                     />
-                      <Route
+                    <Route
                         path="/providers"
                         exact
                         render={() => {
@@ -422,8 +411,7 @@ const App = () => {
                             }
                         }}
                     />
-                    
-                    
+
                     {/* <Route path="/Providers" exact render={() => <Providers />} /> */}
                     {/* <Route path="/pages/Client/Client" exact render={() => <Client />} /> */}
                     <Route path="/pages/Client/CreateClient" exact render={() => <CreateClient />} />
@@ -440,7 +428,6 @@ const App = () => {
                     {/* <Route path="/Vehicles" exact render={() => <Vehicles />} /> */}
                     {/* <Route path="/ProductsBrands" exact render={() => <ProductsBrands />} /> */}
                     <Route path="/MyPerfil" exact render={() => <MyPerfil />} />
-
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
