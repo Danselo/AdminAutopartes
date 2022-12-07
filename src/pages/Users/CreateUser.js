@@ -5,19 +5,16 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import axios from 'axios'
-import { Password } from 'primereact/password';
+import axios from "axios";
+import { Password } from "primereact/password";
 import { UserService } from "../../service/UserService";
- 
-const urlRoles = 'http://localhost:5000/roles/'
 
+const urlRoles = "http://localhost:5000/roles/";
 
 export default function CreateUser() {
     const _userService = new UserService();
-    
-    const acceptModalConfirmation = (lifeTime) => {
-       
-    };
+
+    const acceptModalConfirmation = (lifeTime) => {};
 
     const reject = () => {
         toast.current.show({ severity: "warn", summary: "Denegado", detail: "Has cancelado el proceso", life: 3000 });
@@ -42,9 +39,9 @@ export default function CreateUser() {
             reject,
         });
     };
-    
+
     const toast = useRef(null);
-    const [selectedRol, setSelectedRol] = useState([null]);
+    const [selectedRol, setSelectedRol] = useState([]);
 
     const [userAdress, setUserAdress] = useState("");
     const [userName, setUserName] = useState("");
@@ -54,26 +51,25 @@ export default function CreateUser() {
     const [userPassword, setUserPassword] = useState("");
     useEffect(() => {
         axios.get(urlRoles).then((response) => {
-            setUserRoles(response.data);    
-        });    
-
+            setUserRoles(response.data);
+        });
     }, []);
     const onRolChange = (e) => {
         setSelectedRol(e.value);
     };
     function createUser() {
-        _userService.createUser(userAdress,userPassword,userName,userLastName,userStatus,selectedRol.id)
-        .then((data)=>{
-            const lifeTime = 3000;
-            toast.current.show({ severity: "info", summary: "Confirmación", detail: "Usuario Creado exitosamente", life: lifeTime });
-            setTimeout(() => {
-               console.log('Redirigiendo a otra pagina') 
-            }, lifeTime);
-            console.log('user created successfully', data);
-        })
-        .catch(console.error);
-      }
-    
+        _userService
+            .createUser(userAdress, userPassword, userName, userLastName, userStatus, selectedRol.id)
+            .then((data) => {
+                const lifeTime = 3000;
+                toast.current.show({ severity: "info", summary: "Confirmación", detail: "Usuario Creado exitosamente", life: lifeTime });
+                setTimeout(() => {
+                    console.log("Redirigiendo a otra pagina");
+                }, lifeTime);
+                console.log("user created successfully", data);
+            })
+            .catch(console.error);
+    }
 
     return (
         <div>
@@ -106,15 +102,24 @@ export default function CreateUser() {
                             <label htmlFor="lastname">Apellido</label>
                         </span>
                     </div>
-                   
+
                     <div className="col-sm-12 pt-5">
                         <span className="p-float-label">
-                             <Password value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
+                            <Password value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
                             <label htmlFor="telefono">Contraseña</label>
                         </span>
                     </div>
                     <div className="col-sm-12 pt-5">
-                        <Dropdown value={selectedRol} options={userRoles} onChange={onRolChange} optionLabel="name" placeholder="Seleccione Rol"  />
+                        <Dropdown
+                            value={selectedRol}
+                            options={userRoles.filter((item) => {
+                                console.log(item);
+                                return item.id !== 1;
+                            })}
+                            onChange={onRolChange}
+                            optionLabel="name"
+                            placeholder="Seleccione Rol"
+                        />
                     </div>
                 </div>
             </div>

@@ -211,7 +211,6 @@ export default function Users() {
             }
         });
     }, [setUserWithSales, sales, userSelected, clients]);
-    console.log(userWithSales);
 
     function EditStatus() {
         if (userWithSales.statusSale === "Activo" && userSelected.status === true && userWithSales.idUser === userSelected.id) {
@@ -408,7 +407,6 @@ export default function Users() {
     const getFormErrorMessage = (meta) => {
         return isFormFieldValid(meta) && <small className="p-error">{meta.error}</small>;
     };
-    console.log(rolName);
     return (
         <div>
             <Toast ref={toast} />
@@ -516,7 +514,17 @@ export default function Users() {
                                                     Rol{" "}
                                                 </label>
                                                 <br />
-                                                <Dropdown id="idRol" {...input} options={roles} optionLabel="name" placeholder="Seleccione rol" className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })} />
+                                                <Dropdown
+                                                    id="idRol"
+                                                    {...input}
+                                                    options={roles.filter((item) => {
+                                                        console.log(item);
+                                                        return item.id !== 1;
+                                                    })}
+                                                    optionLabel="name"
+                                                    placeholder="Seleccione rol"
+                                                    className={classNames({ "p-invalid": isFormFieldValid(meta), inputUsers: true })}
+                                                />
                                             </span>
                                             <br />
                                             {getFormErrorMessage(meta)}
@@ -602,7 +610,10 @@ export default function Users() {
                                                 <Dropdown
                                                     id="idRol"
                                                     {...input}
-                                                    options={roles}
+                                                    options={roles.filter((item) => {
+                                                        console.log(item);
+                                                        return item.id !== 1;
+                                                    })}
                                                     value={userSelected.idRol}
                                                     place
                                                     onChange={onEditUserSelected}

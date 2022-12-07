@@ -162,19 +162,6 @@ export default function Products() {
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
             }
         });
-
-        // _productService
-        //     .updateProduct({
-        //         id: productData.id,
-        //         state: newState,
-        //     })
-        //     .then((e) => {
-        //         loadProducts();
-        //         toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cambio de estado exitoso", life: 3000 });
-        //     })
-        //     .catch((error) => {
-        //         toast.current.show({ severity: "error", summary: "Error", detail: error, life: 3000 });
-        //     });
     };
     console.log(selectedVehicles);
     function onClickDialogCreate() {

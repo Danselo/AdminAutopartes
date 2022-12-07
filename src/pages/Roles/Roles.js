@@ -71,7 +71,7 @@ export default function Roles() {
                 className={rolSelected.status ? "p-button-warning p-button-raised  dc-space-between" : "p-button-success p-button-raised  dc-space-between"}
                 icon="pi pi-eye-slash"
                 onClick={() => editRolStatusAlert()}
-                disabled={!rolSelected.name}
+                disabled={!rolSelected.name || [1, 2].includes(rolSelected.id)}
             />
         </React.Fragment>
     );
@@ -101,7 +101,7 @@ export default function Roles() {
         });
     };
 
-    const editRolAlert = () => {
+    const editRolAlert = (data) => {
         confirmDialog({
             message: "¿Esta seguro que desea editar esta rol?",
             header: "Confirmación",
@@ -109,7 +109,7 @@ export default function Roles() {
             acceptLabel: "Editar",
             onHide: cancelEditRol(),
             rejectLabel: "Cancelar",
-            accept: () => EditRol(),
+            accept: () => EditRol(data),
             reject: () => cancelEditRol(),
         });
     };
@@ -171,8 +171,8 @@ export default function Roles() {
         setDisplayDialogEdit(true);
     }
 
-    const onHideDialogEdit = () => {
-        editRolAlert();
+    const onHideDialogEdit = (data) => {
+        editRolAlert(data);
         setDisplayDialogEdit(false);
     };
 
@@ -239,10 +239,11 @@ export default function Roles() {
             });
     }
 
-    function EditRol() {
+    function EditRol(data) {
+        console.log(data);
         // let id = rolSelected.id;
         _rolService
-            .updateRol(rolSelected.id, rolSelected.name, modulesOfRol)
+            .updateRol(rolSelected.id, data.name, modulesOfRol)
             .then(() => {
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Rol editado exitosamente", life: 3000 });
                 loadRoles();
@@ -291,7 +292,6 @@ export default function Roles() {
     };
 
     const onChangeRolSelectedEditForm = (e) => {
-        console.log(e.target);
         const rolUpdated = {
             ...rolSelected,
             [e.target.name]: e.target.value,
@@ -353,8 +353,8 @@ export default function Roles() {
 
         return errors;
     };
-    const onSubmitEdit = () => {
-        onHideDialogEdit();
+    const onSubmitEdit = (data) => {
+        onHideDialogEdit(data);
     };
 
     //----------------------------------------------------------------

@@ -32,6 +32,7 @@ export class RolesService {
     }
 
     updateRol(id, name, selectedModules) {
+        console.log(name);
         return axios
             .put(baseRolURL + `/update/${id}`, {
                 name,
