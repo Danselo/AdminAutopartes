@@ -200,11 +200,10 @@ export default function Client() {
                 setClientSelected({});
                 loadClients();
                 toast.current.show({ severity: "success", summary: "Confirmación", detail: "Cliente editado exitosamente", life: 3000 });
-                setTimeout('window.location.reload()',2000);
-
+                setTimeout("window.location.reload()", 2000);
             })
             .catch((e) => {
-                        toast.current.show({ severity: "warn", summary: "petición incorrecta", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
+                toast.current.show({ severity: "warn", summary: "petición incorrecta", detail: "El correo ya existe intente editarlo con otro", life: 3000 });
             });
     }
     function getUsers() {
@@ -409,7 +408,6 @@ export default function Client() {
             return <span className="role-badge-status-na">NA</span>;
         }
     };
-    console.log(selectedClientUser.id);
     return (
         <div>
             <Toast ref={toast} />

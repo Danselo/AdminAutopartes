@@ -412,8 +412,6 @@ export default function Products() {
         return errors;
     };
     const validateEdit = (data) => {
-        console.log(data);
-        console.log(productSelected);
         let errors = {};
         let validateExistingId = products.map((product) => {
             if (product.id === data.productReferenceId) {
@@ -479,7 +477,7 @@ export default function Products() {
             <Toolbar left={leftContents} right={rightContents} />
 
             <Dialog header="Crear un nuevo producto" visible={displayDialogCreate} onHide={() => onHideDialogCreateX()} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }}>
-                <div className="create-product-form">
+                <div className="dc-create-product-form">
                     <h5>Ingrese los datos del nuevo producto</h5>
                     <p>Por favor diligencie todos los campos del formulario</p>
                     <Form
@@ -715,7 +713,7 @@ export default function Products() {
                 </div>
             </Dialog>
             <Dialog header="Seleccionar la imagen del producto" visible={displayDialogUploadImages} onHide={() => setDisplayDialogUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialog()}>
-                <div className="create-product-form">
+                <div className="dc-create-product-form">
                     <h5>Seleccione la imagen del producto</h5>
                     <FileUpload
                         name="photo"
@@ -731,7 +729,7 @@ export default function Products() {
                 </div>
             </Dialog>
             <Dialog header="Editar la imagen del producto" visible={displayDialogEditUploadImages} onHide={() => setDisplayDialogEditUploadImages(false)} breakpoints={{ "960px": "75vw" }} style={{ width: "65vw" }} footer={renderFooterDialogEdit()}>
-                <div className="create-product-form">
+                <div className="dc-create-product-form">
                     <h5>Imagen actual del producto</h5>
                     <div className="edit-product-form__img">{photoBodyTemplate(productSelected)}</div>
                     <p>Si desea modificar la imagen, seleccione una nueva, por el contrario, cierre este dialogo con normalidad</p>
@@ -744,10 +742,6 @@ export default function Products() {
                         chooseOptions={chooseOptions}
                         uploadOptions={uploadOptionsEdit}
                         cancelOptions={cancelOptions}
-                        // customUpload
-                        // uploadHandler={customBase64Uploader}
-                        // mode="basic"
-                        // auto={true}
                         emptyTemplate={<p className="m-0">Arrastre y suelte las imagenes.</p>}
                     />
                 </div>

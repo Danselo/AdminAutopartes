@@ -133,7 +133,7 @@ export default function Buys() {
                     refreshPage2();
                 })
                 .catch((e) => {
-                    toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, vuelve a intentarlo", life: 3000 });
+                    toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, no hay suficiente stock para anular la venta", life: 3000 });
 
                     setBuySelected({});
                     setDisplayDialogStatusPassword(false);

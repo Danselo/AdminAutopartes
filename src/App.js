@@ -40,6 +40,86 @@ import Guard from "./pages/Guard";
 import { PermisisonsCheckService } from "./service/PermissionsCheckService";
 
 const _permissionsCheckService = new PermisisonsCheckService();
+const originalMenu = [
+    {
+        label: "Inicio",
+        icon: "pi pi-fw pi-home",
+        items: [
+            {
+                label: "Dashboard",
+                icon: "pi pi-fw pi-chart-pie",
+                to: "/",
+                id: 1,
+            },
+            {
+                label: "Roles",
+                icon: "pi pi-fw pi-user",
+                to: "/pages/Roles/Roles",
+                id: 12,
+            },
+            {
+                label: "Proveedores",
+                icon: "pi pi-fw pi-building",
+                to: "/Providers",
+                id: 2,
+            },
+            {
+                label: "Compras",
+                icon: "pi pi-fw pi-shopping-bag",
+                to: "/Buys",
+                id: 3,
+            },
+            {
+                label: "Categorías",
+                icon: "pi pi-fw pi-book",
+                to: "/Categories",
+                id: 4,
+            },
+            {
+                label: "Marcas vehículos",
+                icon: "pi pi-fw pi-car",
+                to: "/Brand",
+                id: 5,
+            },
+            {
+                label: "Vehículos",
+                icon: "pi pi-fw pi-car",
+                to: "/Vehicles",
+                id: 6,
+            },
+            {
+                label: "Marcas productos",
+                icon: "pi pi-fw pi-car",
+                to: "/ProductsBrands",
+                id: 7,
+            },
+            {
+                label: "Productos",
+                icon: "pi pi-fw pi-box",
+                to: "/Products",
+                id: 8,
+            },
+            {
+                label: "Clientes",
+                icon: "pi pi-fw pi-users",
+                to: "/Clients",
+                id: 9,
+            },
+            {
+                label: "Ventas",
+                icon: "pi pi-fw pi-credit-card",
+                to: "/Sales",
+                id: 10,
+            },
+            {
+                label: "Usuarios",
+                icon: "pi pi-fw pi-users",
+                to: "/pages/Users/Users",
+                id: 11,
+            },
+        ],
+    },
+];
 const App = () => {
     const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
@@ -49,86 +129,7 @@ const App = () => {
     const [overlayMenuActive, setOverlayMenuActive] = useState(false);
     const [mobileMenuActive, setMobileMenuActive] = useState(false);
     const [mobileTopbarMenuActive, setMobileTopbarMenuActive] = useState(false);
-    const [menu, setMenu] = useState([
-        {
-            label: "Inicio",
-            icon: "pi pi-fw pi-home",
-            items: [
-                {
-                    label: "Dashboard",
-                    icon: "pi pi-fw pi-chart-pie",
-                    to: "/",
-                    id: 1,
-                },
-                {
-                    label: "Roles",
-                    icon: "pi pi-fw pi-user",
-                    to: "/pages/Roles/Roles",
-                    id: 12,
-                },
-                {
-                    label: "Proveedores",
-                    icon: "pi pi-fw pi-building",
-                    to: "/Providers",
-                    id: 2,
-                },
-                {
-                    label: "Compras",
-                    icon: "pi pi-fw pi-shopping-bag",
-                    to: "/Buys",
-                    id: 3,
-                },
-                {
-                    label: "Categorías",
-                    icon: "pi pi-fw pi-book",
-                    to: "/Categories",
-                    id: 4,
-                },
-                {
-                    label: "Marcas vehículos",
-                    icon: "pi pi-fw pi-car",
-                    to: "/Brand",
-                    id: 5,
-                },
-                {
-                    label: "Vehículos",
-                    icon: "pi pi-fw pi-car",
-                    to: "/Vehicles",
-                    id: 6,
-                },
-                {
-                    label: "Marcas productos",
-                    icon: "pi pi-fw pi-car",
-                    to: "/ProductsBrands",
-                    id: 7,
-                },
-                {
-                    label: "Productos",
-                    icon: "pi pi-fw pi-box",
-                    to: "/Products",
-                    id: 8,
-                },
-                {
-                    label: "Clientes",
-                    icon: "pi pi-fw pi-users",
-                    to: "/Clients",
-                    id: 9,
-                },
-                {
-                    label: "Ventas",
-                    icon: "pi pi-fw pi-credit-card",
-                    to: "/Sales",
-                    id: 10,
-                },
-                {
-                    label: "Usuarios",
-                    icon: "pi pi-fw pi-users",
-                    to: "/pages/Users/Users",
-                    id: 11,
-                },
-            ],
-        },
-    ]);
+    const [menu, setMenu] = useState(originalMenu);
     const copyTooltipRef = useRef();
     const location = useLocation();
     PrimeReact.ripple = true;
@@ -228,19 +229,21 @@ const App = () => {
     };
 
     useEffect(() => {
-        const auxiliarItems = menu[0].items.filter((itemBlock) => {
-            const validation = _permissionsCheckService.userHasPermission(itemBlock.id);
-            return validation;
-        });
+        setTimeout(() => {
+            const auxiliarItems = originalMenu[0].items.filter((itemBlock) => {
+                const validation = _permissionsCheckService.userHasPermission(itemBlock.id);
+                return validation;
+            });
 
-        const auxiliarMenu = [
-            {
-                label: "Inicio",
-                icon: "pi pi-fw pi-home",
-                items: auxiliarItems,
-            },
-        ];
-        setMenu(auxiliarMenu);
+            const auxiliarMenu = [
+                {
+                    label: "Inicio",
+                    icon: "pi pi-fw pi-home",
+                    items: auxiliarItems,
+                },
+            ];
+            setMenu(auxiliarMenu);
+        }, 300);
     }, []);
 
     const addClass = (element, className) => {

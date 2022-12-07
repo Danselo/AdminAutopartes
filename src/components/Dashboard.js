@@ -238,7 +238,7 @@ const Dashboard = (props) => {
                 <div className="card">
                     <h5>Top 10 de los productos más vendidos</h5>
                     <div className="field col-12 md:col-4">
-                        <Calendar id="monthpicker" value={topTenDate} placeholder="Seleccione un mes" locale="es" onChange={(e) => setTopTenDate(e.value)} view="month" dateFormat="mm/yy" />
+                        <Calendar id="monthpicker" value={topTenDate} placeholder="Seleccione un mes" onChange={(e) => setTopTenDate(e.value)} view="month" dateFormat="mm/yy" />
                     </div>
                     <DataTable emptyMessage="No se encontraron productos" value={topTenMostSelled} rows={10} responsiveLayout="scroll">
                         <Column body={photoBodyTemplate} header="Foto" style={{ width: "35%" }}></Column>
@@ -265,7 +265,7 @@ const Dashboard = (props) => {
                 <div className="card">
                     <h5>Ingresos mensuales por año</h5>
                     <div className="field col-12 md:col-4">
-                        <Calendar id="yearpicker" value={monthlyIncomeDate} onChange={(e) => setMonthlyIncomeDate(e.value)} view="year" dateFormat="yy" />
+                        <Calendar id="monthpicker" value={monthlyIncomeDate} placeholder="Seleccione un año" onChange={(e) => setMonthlyIncomeDate(e.value)} view="month" dateFormat="mm/yy" />
                     </div>
 
                     <Chart type="bar" data={lineData} options={lineOptions} />

@@ -188,13 +188,6 @@ export default function Vehicles() {
     const validate = (data) => {
         let letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         let specialCharacters = ["/", "-", "_", "@", "!", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", '"', "'", ":", ";"];
-        let validateExistingNameAndModel = vehicles.map((vehicle) => {
-            if (vehicle.name === data.vehicleName && vehicle.model === data.vehicleModel) {
-                return true;
-            } else {
-                return false;
-            }
-        });
 
         let errors = {};
         if (data.vehicleModel !== undefined) {
@@ -222,7 +215,15 @@ export default function Vehicles() {
         if (!data.vehicleName) {
             errors.vehicleName = "El nombre del vehículo es requerido.";
         }
-        if (validateExistingNameAndModel.includes(true)) {
+        let validateExistingNameAndModel = vehicles.some((vehicle) => {
+            if (vehicle.name === data.vehicleName && vehicle.model === data.vehicleModel) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        console.log(validateExistingNameAndModel);
+        if (validateExistingNameAndModel) {
             errors.vehicleName = "El vehículo " + data.vehicleName + " " + data.vehicleModel + " ya existe, ingrese otro nombre y/o modelo";
         }
 

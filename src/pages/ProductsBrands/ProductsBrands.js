@@ -245,7 +245,7 @@ export default function ProductsBrand() {
             errors.productsBrandName = "Debe ingresar un nombre de marca.";
         }
         if (validateExistingName.includes(true)) {
-            errors.productsBrandName = "El nombre " + data.brandName + " ya existe, ingrese otro nombre";
+            errors.productsBrandName = "El nombre ya existe, ingrese otro";
         }
 
         return errors;

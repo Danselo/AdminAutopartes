@@ -123,7 +123,7 @@ export default function CreateSales() {
         var formatDate = dateSelected.toISOString().split("T")[0];
         const typeSale = false;
         _saleService
-            .createSale(saleClientSelected.id, formatDate, "Activo", "Pagado", totalSale, typeSale)
+            .createSale(saleClientSelected.id, formatDate, "Activo", "Pendiente", totalSale, typeSale)
             .then((responseCreateSale) => {
                 products.forEach((element) => {
                     _saleService

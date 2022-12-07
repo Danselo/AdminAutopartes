@@ -160,7 +160,7 @@ export default function Providers() {
                 form.restart();
             })
             .catch((e) => {
-                toast.current.show({ severity: "error", summary: "Error", detail: "Upss algo salio mal, al crear el proveedor", life: 3000 });
+                toast.current.show({ severity: "error", summary: "Error", detail: "El nit ya esta registrado", life: 3000 });
                 console.log(e);
             });
     }
