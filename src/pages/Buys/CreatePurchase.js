@@ -148,27 +148,27 @@ export default function CreatePurchase() {
     const validate = (data) => {
         let errors = {};
         if (!data.providerId) {
-            errors.providerId = "el Proveedor es requerido";
+            errors.providerId = "El proveedor es requerido";
         }
         if (!data.idBuy) {
-            errors.idBuy = "el numero de la factura es requerido";
+            errors.idBuy = "El número de la factura es requerido";
         } else if (data.idBuy < 0) {
-            errors.idBuy = "el numero de la factura debe ser positivo";
+            errors.idBuy = "El número de la factura debe ser positivo";
         } else if (data.idBuy <= 1) {
-            errors.idBuy = "el numero de la factura debe ser mayor que 1";
+            errors.idBuy = "El número de la factura debe ser mayor que 1";
         }
         if (!data.buyTotalPurchase) {
             errors.buyTotalPurchase = "Este campo es requerido";
         }
         if (!data.Data) {
-            errors.Data = "este campo es requerido";
+            errors.Data = "Este campo es requerido";
         }
 
         buys.forEach((element) => {
             const buyId = element.id;
 
             if (data.idBuy === buyId) {
-                errors.idBuy = "El numero de factura existente";
+                errors.idBuy = "El número de factura existente";
             }
         });
 
@@ -226,9 +226,9 @@ export default function CreatePurchase() {
                                     <div className="field">
                                         <span>
                                             <label htmlFor="idBuy" className={classNames({ "p-error": isFormFieldValid("idBuy") })}>
-                                                Numero de factura
+                                                Número de factura
                                             </label>
-                                            <InputText id="idBuy" {...input} placeholder="Numero de Factura" value={buyId} onChange={handleChange} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
+                                            <InputText id="idBuy" {...input} placeholder="Número de factura" value={buyId} onChange={handleChange} className={classNames({ "p-invalid": isFormFieldValid(meta), "create-buy-form__input": true })} />
                                         </span>
                                         <br />
                                         {getFormErrorMessage(meta)}

@@ -95,7 +95,7 @@ export const TableBuys = ({ setBuySelected, buys }) => {
                     <div className="dialog-buy-panel-detail">
                         <div className="">
                             <strong>
-                                <p>Numero de factura</p>
+                                <p>Número de factura</p>
                             </strong>
                             <p>{buyInfo.id}</p>
                         </div>
